@@ -1,5 +1,5 @@
 let commands = {
-    sayHello : "sayHello",
+    sayHello : "s",
     trump : "trump"
 };
 

@@ -23,7 +23,7 @@
                 "--nolazy"
             ],
             "runtimeExecutable": null,
-            "stopOnEntry": true,
+            "stopOnEntry": false,
             "args": [ ]
         },
 
