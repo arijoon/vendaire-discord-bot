@@ -1,0 +1,7 @@
+build
+node_modules
+obj
+bin
+*.swp
+*.swo
+~*
