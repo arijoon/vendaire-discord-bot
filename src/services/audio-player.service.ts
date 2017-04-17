@@ -12,6 +12,7 @@ export class AudioPlayerService implements IAudioPlayer {
     audios = require('../audios.config.json');
 
     playFromYoutube(channel: VoiceChannel, url: string) {
+        if(!channel || !url) return;
 
         if (!this.ytdl) {
             this.ytdl = require('ytdl-core')
@@ -30,6 +31,8 @@ export class AudioPlayerService implements IAudioPlayer {
     }
 
     playFile(channel: VoiceChannel, filename: string): void {
+        if(!channel || !filename) return;
+
         channel.join().then(con => {
             const listener = con.playFile(this.getFullFilePath(filename));
 

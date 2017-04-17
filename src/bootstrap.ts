@@ -10,4 +10,4 @@ for(let i = 0; i < commands.length; i++) {
     commands[i].attach()
 }
 
-console.log("[+] Attahed " + commands.length + " command" + (commands.length > 1 ? "s" : ""));
+console.log("[bootstrap.ts] Attahed " + commands.length + " command" + (commands.length > 1 ? "s" : ""));

@@ -19,16 +19,20 @@ export class SayHello implements ICommand {
         @inject(TYPES.IAudioPlayer) private _audioPlayer: IAudioPlayer
     ) { }
 
-    attach(): void {
+    public attach(): void {
         this._client
             .getCommandStream(this._command)
             .subscribe(msg => {
                 msg.channel.sendMessage("Hi man!");
+
+                if(!msg.member.voiceChannel)
+                    msg.channel.sendMessage("You aren't in any voice channels asshole");
+
                 this._audioPlayer.playFile(msg.member.voiceChannel, "bebe");
             });
     }
 
-    detach(): void {
+    public detach(): void {
         this._subscription.dispose();
     }
 }

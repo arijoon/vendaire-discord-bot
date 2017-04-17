@@ -2,12 +2,13 @@ import { AudioPlayerService } from './../services/audio-player.service';
 import { IAudioPlayer } from './../contracts/IAudioPlayer';
 import { Container } from 'inversify';
 import { SayHello } from '../commands/say-hello.command';
+import { Help } from "../commands/help.command";
 import { TYPES } from "./types";
 import { Client } from "../client";
 import { IClient } from "../contracts/IClient";
 import { ICommand } from "../contracts/ICommand";
 
-console.log("[+] Building container");
+console.log("[container.ts] Building container");
 
 let container = new Container();
 
@@ -19,5 +20,6 @@ container.bind<IAudioPlayer>(TYPES.IAudioPlayer).to(AudioPlayerService).inSingle
 
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(SayHello);
+container.bind<ICommand>(TYPES.ICommand).to(Help);
 
 export { container };

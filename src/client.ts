@@ -2,7 +2,8 @@ import { Message } from 'discord.js';
 import { Observable, Subject, ISubject, IObservable } from "rx";
 import { injectable } from "inversify";
 import { IClient } from './contracts/IClient';
-import * as discord from 'discord.js' ;
+import { commands } from "./static/commands";
+import * as discord from 'discord.js';
 
 declare let require: any;
 
@@ -11,13 +12,12 @@ let config = require('./config.secret.json');
 @injectable()
 export class Client implements IClient {
 
-    prefix: string = "!";
+    prefix: string = commands.prefix;
     _client: discord.Client;
 
     _mappings: Map<string, ISubject<Message>>;
 
     constructor() {
-
        this._client = new discord.Client();
 
        this._mappings = new Map<string, Subject<Message>>();
@@ -51,9 +51,11 @@ export class Client implements IClient {
 
                 if(msg.content.startsWith(this.prefix + command)) {
 
-                    console.log("[+] Received command:", command);
+                    console.log("[client.ts]: Received command:", command);
 
                     subject.onNext(msg);
+
+                    return true; // Only handle one command
                 }
             });
 
