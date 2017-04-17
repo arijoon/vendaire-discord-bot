@@ -17,7 +17,7 @@ container.bind<IClient>(TYPES.IClient).to(Client).inSingletonScope();
 // Services
 container.bind<IAudioPlayer>(TYPES.IAudioPlayer).to(AudioPlayerService).inSingletonScope();
 
-// Bind commands
+// Commands
 container.bind<ICommand>(TYPES.ICommand).to(SayHello);
 
 export { container };

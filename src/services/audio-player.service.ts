@@ -19,7 +19,7 @@ export class AudioPlayerService implements IAudioPlayer {
 
         channel.join().then(con => {
 
-            let stream = this.ytdl("https://www.youtube.com/watch?v=CevxZvSJLk8", { filter: 'audioonly' });
+            let stream = this.ytdl(url, { filter: 'audioonly' });
             const listener = con.playStream(stream);
 
             listener.on('end', () => con.disconnect());

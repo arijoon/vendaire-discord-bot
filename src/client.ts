@@ -43,7 +43,6 @@ export class Client implements IClient {
     private attachListener() {
         this._client.on("message", (msg) => {
 
-
             if (!msg.content.startsWith(this.prefix)) return;
 
             if (msg.author.bot) return;
@@ -52,7 +51,7 @@ export class Client implements IClient {
 
                 if(msg.content.startsWith(this.prefix + command)) {
 
-                    console.log("[+] Received command: ", command);
+                    console.log("[+] Received command:", command);
 
                     subject.onNext(msg);
                 }
