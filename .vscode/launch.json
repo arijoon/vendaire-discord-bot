@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "name": "Server Debug",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}\\src\\bootstrap.ts",
+            "env": {
+                "NODE_EVN": "development"
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}\\build\\**\\*.js"
+            ],
+            "console": "internalConsole",
+            "preLaunchTask": "compile",
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "runtimeExecutable": null,
+            "stopOnEntry": true,
+            "args": [ ]
+        },
+
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Port",
+            "address": "localhost",
+            "port": 5858,
+            "outFiles": []
+        }
+    ]
+}

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run watch",
     "compile": "npm run copyFiles & tsc",
-    "copyFiles": "copyfiles src/**/*.json dest/",
+    "copyFiles": "copyfiles src/**/*.json build/",
     "watch": "SET NODE_ENV=development && nodemon --watch *.ts --ignore '*.spec.ts' --ext ts --exec ts-node src/bootstrap",
     "test": "nyc -r=text -i ts-node/register -e .ts mocha -t 5000 --require ts-node/register  --require reflect-metadata/Reflect",
     "test:all": "npm test **/*.spec.ts",
@@ -15,8 +15,16 @@
   "author": "Arman Yaraee",
   "license": "MIT",
   "dependencies": {
+    "@types/inversify": "^2.0.33",
+    "@types/rx": "^4.1.1",
     "discord.js": "^11.0.0",
     "inversify": "^3.3.0",
-    "reflect-metadata": "^0.1.10"
+    "reflect-metadata": "^0.1.10",
+    "rx": "^4.1.0",
+    "rxjs": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.12",
+    "copyfiles": "^1.2.0"
   }
 }
