@@ -1,7 +1,6 @@
 let commands = {
-    prefix: "!",
+    prefix: "!!",
     help : [ "help", " --help", " help" ],
-    sayHello : "s",
     trump : "trump"
 };
 

@@ -9,9 +9,9 @@ import { VoiceChannel, Message } from "discord.js";
 
 
 @injectable()
-export class SayHello implements ICommand {
+export class PlayTrump implements ICommand {
 
-    _command: string = commands.sayHello;
+    _command: string = commands.trump;
     _subscription: IDisposable;
 
     constructor(
@@ -23,12 +23,10 @@ export class SayHello implements ICommand {
         this._client
             .getCommandStream(this._command)
             .subscribe(msg => {
-                msg.channel.sendMessage("Hi man!");
-
                 if(!msg.member.voiceChannel)
                     msg.channel.sendMessage("You aren't in any voice channels asshole");
 
-                this._audioPlayer.playFile(msg.member.voiceChannel, "bebe");
+                this._audioPlayer.playRandomFile(msg.member.voiceChannel);
             });
     }
 

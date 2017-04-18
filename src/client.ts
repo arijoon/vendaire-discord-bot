@@ -20,7 +20,7 @@ export class Client implements IClient {
     constructor() {
        this._client = new discord.Client();
 
-       this._mappings = new Map<string, Subject<Message>>();
+       this._mappings = new Map<string, ISubject<Message>>();
 
        this._client.login(config.bot.token);
 

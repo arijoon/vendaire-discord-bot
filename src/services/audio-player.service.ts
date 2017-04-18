@@ -8,19 +8,20 @@ import * as fs from "fs";
 @injectable()
 export class AudioPlayerService implements IAudioPlayer {
 
-    ytdl: any;
-    audios = require('../audios.config.json');
+    _ytdl: any;
+    _audios = require('../audios.config.json');
+    _fileNames = Object.keys(this._audios.files);
 
     playFromYoutube(channel: VoiceChannel, url: string) {
         if(!channel || !url) return;
 
-        if (!this.ytdl) {
-            this.ytdl = require('ytdl-core')
+        if (!this._ytdl) {
+            this._ytdl = require('ytdl-core')
         }
 
         channel.join().then(con => {
 
-            let stream = this.ytdl(url, { filter: 'audioonly' });
+            let stream = this._ytdl(url, { filter: 'audioonly' });
             const listener = con.playStream(stream);
 
             listener.on('end', () => con.disconnect());
@@ -28,6 +29,14 @@ export class AudioPlayerService implements IAudioPlayer {
         }).catch(err => {
             console.error(err);
         })
+    }
+
+    playRandomFile(channel: VoiceChannel): void {
+        if(!channel) return;
+
+        let filename = this._fileNames[this.getRandomNumber(this._fileNames.length)];
+
+        this.playFile(channel, filename);
     }
 
     playFile(channel: VoiceChannel, filename: string): void {
@@ -44,16 +53,20 @@ export class AudioPlayerService implements IAudioPlayer {
     }
 
     private getFullFilePath(filename: string) {
-        if (!this.audios.files[filename]) {
+        if (!this._audios.files[filename]) {
             console.error("[!] Filename not found in audios.config.json file", filename);
         }
 
-        const fullPath = path.join(this.audios.root, this.audios.files[filename]);
+        const fullPath = path.join(this._audios.root, this._audios.files[filename]);
 
         if (!fs.existsSync(fullPath)) {
             console.error("[!] File not found,", filename);
         }
 
         return fullPath;
+    }
+
+    private getRandomNumber(range: number) {
+        return Math.floor(Math.random() * range);
     }
 }
