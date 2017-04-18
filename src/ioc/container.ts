@@ -1,3 +1,4 @@
+import { Disconnect } from './../commands/disconnect.command';
 import { PlayTrump } from './../commands/play-trump.command';
 import { AudioPlayerService } from './../services/audio-player.service';
 import { IAudioPlayer } from './../contracts/IAudioPlayer';
@@ -21,5 +22,6 @@ container.bind<IAudioPlayer>(TYPES.IAudioPlayer).to(AudioPlayerService).inSingle
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(PlayTrump);
 container.bind<ICommand>(TYPES.ICommand).to(Help);
+container.bind<ICommand>(TYPES.ICommand).to(Disconnect);
 
 export { container };

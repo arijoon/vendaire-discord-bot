@@ -1,9 +1,11 @@
 import { injectable } from 'inversify';
 import { IAudioPlayer } from './../contracts/IAudioPlayer';
-import { VoiceChannel } from 'discord.js';
+import { VoiceChannel, VoiceConnection } from 'discord.js';
 
 import * as path from 'path';
 import * as fs from "fs";
+
+// declare let require: any;
 
 @injectable()
 export class AudioPlayerService implements IAudioPlayer {
@@ -11,6 +13,8 @@ export class AudioPlayerService implements IAudioPlayer {
     _ytdl: any;
     _audios = require('../audios.config.json');
     _fileNames = Object.keys(this._audios.files);
+    _working: boolean = false;
+    _voiceConnection: VoiceConnection;
 
     playFromYoutube(channel: VoiceChannel, url: string) {
         if(!channel || !url) return;
@@ -40,16 +44,41 @@ export class AudioPlayerService implements IAudioPlayer {
     }
 
     playFile(channel: VoiceChannel, filename: string): void {
-        if(!channel || !filename) return;
+        if(!channel || !filename || this._working) return;
+
+        this._working = true;
 
         channel.join().then(con => {
             const listener = con.playFile(this.getFullFilePath(filename));
 
-            listener.on('end', () => con.disconnect());
-            listener.once('error', (err) => con.disconnect());
+            listener.on('end', () => this.onEnd(con));
+            listener.once('error', (err) => this.onEnd(con, err));
         }).catch(err => {
-            console.error(err);
-        })
+            this.onEnd(null, err);
+        });
+    }
+
+    connect(channel: VoiceChannel): Promise<VoiceConnection> {
+        let result =  channel.join().then(con => {
+            this._voiceConnection = con;
+            return con;
+        });
+
+        result.catch(err => console.error(err));
+
+        return result;
+    }
+
+    onEnd(con: VoiceConnection, err?: any) {
+
+        if(con)
+            con.disconnect();
+
+        if(err) {
+            console.error(err)
+        }
+
+        this._working = false;
     }
 
     private getFullFilePath(filename: string) {

@@ -4,7 +4,7 @@
   "description": "Make vandaire greate again ",
   "main": "build/bootstrap.js",
   "scripts": {
-    "start": "npm run watch",
+    "start": "npm run compile & nodemon --exec node build/bootstrap.js",
     "compile": "npm run copyFiles & tsc",
     "copyFiles": "copyfiles -u 1 src/**/*.json build/",
     "watch": "SET NODE_ENV=development && nodemon --watch *.ts --ignore '*.spec.ts' --ext ts --exec ts-node src/bootstrap",
