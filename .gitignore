@@ -11,3 +11,6 @@ bin
 
 # Secret files
 *.secret.*
+
+# Ignored directories
+assets/images

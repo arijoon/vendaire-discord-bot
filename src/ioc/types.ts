@@ -1,6 +1,8 @@
 let TYPES = {
     IClient: Symbol("IClient"),
     IAudioPlayer: Symbol("IAudioPlayer"),
+    IConfig: Symbol("IConfig"),
+    IFiles: Symbol("IFiles"),
     ICommand: Symbol("ICommand")
 };
 
