@@ -25,10 +25,18 @@ export class FilesService implements IFiles {
         });
     }
     
-    /** Not implemented yet */
-    getAllFilesWithName(dir: string, pattern: string): Promise<string[]> {
-        throw new Error('Method not implemented.');
+    getAllFilesWithName(dir: string, pattern: RegExp): Promise<string[]> {
+        return this.getAllFiles(dir)
+            .then(lst => {
+                let result = [];
+
+                for (var i = 0; i < lst.length; i++) {
+                    var el = lst[i]
+
+                    if(pattern.test(el)) result.push(el);
+                }
+
+                return result;
+            });
     }
-
-
 }
