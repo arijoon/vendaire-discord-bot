@@ -12,6 +12,7 @@ export class FilesService implements IFiles {
         @inject(TYPES.IConfig) private _config: IConfig
     ) { }
 
+    /** TODO add caching */
     getAllFiles(dir: string): Promise<string[]> {
         let fullPath = this._config.pathFromRoot(dir);
 

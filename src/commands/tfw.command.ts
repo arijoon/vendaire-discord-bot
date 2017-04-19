@@ -12,6 +12,7 @@ import * as path from 'path';
 export class ThatFeel implements ICommand {
 
     _command: string = commands.tfw;
+    _commandBog: string = commands.bog;
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
@@ -23,19 +24,26 @@ export class ThatFeel implements ICommand {
         this._client
             .getCommandStream(this._command)
             .subscribe(msg => {
-                this.selectRandomFile()
+                this.selectRandomFile(this._command)
+                    .then(filename => msg.channel.sendFile(filename));
+            });
+
+        this._client
+            .getCommandStream(this._commandBog)
+            .subscribe(msg => {
+                this.selectRandomFile(this._commandBog)
                     .then(filename => msg.channel.sendFile(filename));
             });
     }
 
-    selectRandomFile(): Promise<string> {
-        let result = this._filesService.getAllFiles(this._config.images)
+    selectRandomFile(dir: string): Promise<string> {
+        let result = this._filesService.getAllFiles(this._config.images[dir])
             .then(lst => {
 
                 let randomFileIndex = Math.floor(Math.random() * lst.length);
                 let randomFileName = lst[randomFileIndex];
 
-                let randomFile = path.join(this._config.pathFromRoot(this._config.images), randomFileName);
+                let randomFile = this._config.pathFromRoot(this._config.images[dir], randomFileName);
 
                 return randomFile;
             });
