@@ -3,7 +3,7 @@ import { IContent } from './../contracts/IContent';
 import { FilesService } from './../services/files.service';
 import { Config } from './../services/config.service';
 import { IConfig } from './../contracts/IConfig';
-import { ThatFeel } from './../commands/tfw.command';
+import { RandomPic } from './../commands/random-pic.command';
 import { Disconnect } from './../commands/disconnect.command';
 import { PlayTrump } from './../commands/play-trump.command';
 import { AudioPlayerService } from './../services/audio-player.service';
@@ -34,7 +34,7 @@ container.bind<IConfig>(TYPES.IConfig).to(Config).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(PlayTrump);
 container.bind<ICommand>(TYPES.ICommand).to(Help);
 container.bind<ICommand>(TYPES.ICommand).to(Disconnect);
-container.bind<ICommand>(TYPES.ICommand).to(ThatFeel);
+container.bind<ICommand>(TYPES.ICommand).to(RandomPic);
 container.bind<ICommand>(TYPES.ICommand).to(Bog);
 
 export { container };

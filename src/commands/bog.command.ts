@@ -7,6 +7,8 @@ import { TYPES } from "../ioc/types";
 import { IClient } from "../contracts/IClient";
 import { IContent } from "../contracts/IContent";
 
+import * as path from 'path';
+
 @injectable()
 export class Bog implements ICommand {
 
@@ -42,7 +44,9 @@ export class Bog implements ICommand {
     }
 
     getRundownImage(): Promise<string> {
-        let result = this._filesService.getAllFilesWithName(this._config.images[this._command], new RegExp(this._commandRundown))
+        let fullPath = path.join(this._config.images["root"], this._config.images[this._command]);
+
+        let result = this._filesService.getAllFilesWithName(fullPath, new RegExp(this._commandRundown))
             .then(lst => {
 
                 if (lst.length < 0) {
@@ -50,7 +54,7 @@ export class Bog implements ICommand {
                     return
                 }
 
-                let result = this._config.pathFromRoot(this._config.images[this._command], lst[0]);
+                let result = this._config.pathFromRoot(fullPath, lst[0]);
                 return result;
             });
 

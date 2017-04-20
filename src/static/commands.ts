@@ -5,6 +5,7 @@ let commands = {
     tfw: 'tfw',
     bog: 'bog',
     tsu: 'tsu',
+    exposed: 'exposed',
     quickrundown: 'quickrundown',
     trump : "trump"
 };

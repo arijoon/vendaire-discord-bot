@@ -49,7 +49,7 @@ export class Client implements IClient {
 
             this._mappings.forEach((subject, command) => {
 
-                if(msg.content.startsWith(this.prefix + command)) {
+                if(msg.content.toLowerCase().startsWith(this.prefix + command)) {
 
                     console.log("[client.ts]: Received command:", command);
 
