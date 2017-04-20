@@ -2,10 +2,8 @@ let commands = {
     prefix: "!!",
     help : [ "help", " --help", " help" ],
     dc: 'dc',
-    tfw: 'tfw',
     bog: 'bog',
-    tsu: 'tsu',
-    exposed: 'exposed',
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu' ],
     quickrundown: 'quickrundown',
     trump : "trump"
 };

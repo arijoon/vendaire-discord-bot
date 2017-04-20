@@ -11,7 +11,7 @@ import * as path from 'path';
 @injectable()
 export class RandomPic implements ICommand {
 
-    _commands: string[] = [ commands.tfw, commands.bog, commands.tsu, commands.exposed];
+    _commands: string[] = commands.randomPics;
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,

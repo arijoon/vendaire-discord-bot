@@ -16,6 +16,7 @@ helpContent.usage += `${indent}trump       \tPlay glorious trump audio in your c
 helpContent.usage += `${indent}tfw         \tpost a feel pic\n`
 helpContent.usage += `${indent}bog         \tpost a bog pic\n`
 helpContent.usage += `${indent}tsu         \tpost a tsuuuu pic\n`
+helpContent.usage += `${indent}god         \tpost a god pic (usually trump) pic\n`
 helpContent.usage += `${indent}quickrundown\tpost quickrundown pic with description\n`
 
 export { helpContent }
