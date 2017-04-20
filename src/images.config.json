@@ -1,5 +1,6 @@
 { 
     "root": "assets\\images",
-    "tfw": "assets\\images\\tfw",
-    "bog": "assets\\images\\bog"
+    "tfw": "tfw",
+    "bog": "bog",
+    "tsu": "tsu"
 }

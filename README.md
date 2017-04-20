@@ -18,6 +18,7 @@ npm start
 ```
 bog - posts a random picture from bog folder in images
 tfw - posts a random picture from tfw folder in images
+tsu - posts a random picture from tsu folder in images
 trump - plays a random trump audio file in the current chat channel you are
 quickrundown - posts quickrundown.txt content prefixed with quickrundown.png in the bog folder
 help - shows help

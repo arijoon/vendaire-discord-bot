@@ -4,6 +4,7 @@ let commands = {
     dc: 'dc',
     tfw: 'tfw',
     bog: 'bog',
+    tsu: 'tsu',
     quickrundown: 'quickrundown',
     trump : "trump"
 };
