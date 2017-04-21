@@ -1,4 +1,4 @@
-# Lets make Vendaire great again [![Build Status](https://travis-ci.org/arijoon/vendaire-discord-bot.svg?branch=master)](https://travis-ci.org/arijoon/vendaire-discord-bot)
+# Lets make Vendaire great again [![Build Status](https://travis-ci.org/arijoon/vendaire-discord-bot.svg?branch=dev)](https://travis-ci.org/arijoon/vendaire-discord-bot)
 
 ## Install and run
 
