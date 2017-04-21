@@ -13,6 +13,7 @@ export class Config implements IConfig {
     private _images: Map<string, string> = new Map<string, string>();
 
     _config: any = require('../config.secret.json');
+    _apiConfig: any = require('../api.config.json');
     _imagesConfig: any = require('../images.config.json');
 
     constructor() {
@@ -26,6 +27,10 @@ export class Config implements IConfig {
 
     get images(): Map<string, string> {
         return this._images;
+    }
+
+    get api(): Map<string, string> {
+        return this._apiConfig;
     }
 
     pathFromRoot(...p: string[]) {

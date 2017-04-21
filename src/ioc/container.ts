@@ -1,3 +1,9 @@
+import { IsGayCommand } from './../commands/is-gay.command';
+import { QuestionCommand } from './../commands/question.command';
+import { HttpService } from './../services/http.service';
+import { IHttp } from './../contracts/IHttpService';
+import { QuestionService } from './../services/question.service';
+import { IQuestionService } from './../contracts/IQuestionService';
 import { Content } from './../services/content.service';
 import { IContent } from './../contracts/IContent';
 import { FilesService } from './../services/files.service';
@@ -28,7 +34,9 @@ container.bind<IClient>(TYPES.IClient).to(Client).inSingletonScope();
 container.bind<IAudioPlayer>(TYPES.IAudioPlayer).to(AudioPlayerService).inSingletonScope();
 container.bind<IFiles>(TYPES.IFiles).to(FilesService).inSingletonScope();
 container.bind<IContent>(TYPES.IContent).to(Content).inSingletonScope();
+container.bind<IQuestionService>(TYPES.IQuestion).to(QuestionService).inSingletonScope();
 container.bind<IConfig>(TYPES.IConfig).to(Config).inSingletonScope();
+container.bind<IHttp>(TYPES.IHttp).to(HttpService);
 
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(PlayTrump);
@@ -36,5 +44,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Help);
 container.bind<ICommand>(TYPES.ICommand).to(Disconnect);
 container.bind<ICommand>(TYPES.ICommand).to(RandomPic);
 container.bind<ICommand>(TYPES.ICommand).to(Bog);
+container.bind<ICommand>(TYPES.ICommand).to(QuestionCommand);
+container.bind<ICommand>(TYPES.ICommand).to(IsGayCommand);
 
 export { container };

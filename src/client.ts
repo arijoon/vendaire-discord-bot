@@ -47,15 +47,21 @@ export class Client implements IClient {
 
             if (msg.author.bot) return;
 
+            let foundCommand: boolean = false;
+
             this._mappings.forEach((subject, command) => {
 
+                if(foundCommand) return;
+
                 if(msg.content.toLowerCase().startsWith(this.prefix + command)) {
+
+                    foundCommand = true;
 
                     console.log("[client.ts]: Received command:", command);
 
                     subject.onNext(msg);
 
-                    return true; // Only handle one command
+                    return true;
                 }
             });
 
