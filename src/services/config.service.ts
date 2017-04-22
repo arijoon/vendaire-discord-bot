@@ -25,6 +25,10 @@ export class Config implements IConfig {
         return this._root;
     }
 
+    get config(): any {
+        return this._config;
+    }
+
     get images(): Map<string, string> {
         return this._images;
     }

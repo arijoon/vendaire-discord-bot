@@ -22,6 +22,9 @@ let commands = {
     // Is gay randomizer
     isGay: 'isgay',
 
+    // Youtube search
+    yt: 'yt',
+
     // Trump audio
     trump : "trump"
 };

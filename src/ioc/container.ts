@@ -1,3 +1,4 @@
+import { YoutubeSearch } from './../commands/youtube.command';
 import { IsGayCommand } from './../commands/is-gay.command';
 import { QuestionCommand } from './../commands/question.command';
 import { HttpService } from './../services/http.service';
@@ -46,5 +47,6 @@ container.bind<ICommand>(TYPES.ICommand).to(RandomPic);
 container.bind<ICommand>(TYPES.ICommand).to(Bog);
 container.bind<ICommand>(TYPES.ICommand).to(QuestionCommand);
 container.bind<ICommand>(TYPES.ICommand).to(IsGayCommand);
+container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch);
 
 export { container };
