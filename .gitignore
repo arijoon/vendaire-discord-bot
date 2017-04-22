@@ -14,5 +14,6 @@ bin
 *.secret
 secret
 
+
 # Ignored directories
 assets/images
