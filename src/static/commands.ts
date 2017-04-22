@@ -10,7 +10,7 @@ let commands = {
     dc: 'dc',
     
     // Post random Pics
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol' ],
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap' ],
 
     // Bog related
     quickrundown: 'quickrundown',

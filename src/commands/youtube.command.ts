@@ -50,7 +50,7 @@ export class YoutubeSearch implements ICommand {
 
                 let items = result.items;
 
-                if (items.length < 1) {
+                if (items.length < 1 || !items[0].id.videoId) {
                     resolve("Sorry boss, no videos found ...");
                     return;
                 }
