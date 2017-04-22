@@ -1,14 +1,15 @@
+import { IConfig } from './contracts/IConfig';
 import { Message } from 'discord.js';
 import { Observable, Subject, ISubject, IObservable } from "rx";
-import { injectable } from "inversify";
+import { injectable, inject } from "inversify";
 import { IClient } from './contracts/IClient';
 import { commands } from "./static/commands";
-import * as discord from 'discord.js';
 import { swearWords } from "./static/swear-words";
 
-declare let require: any;
+import * as discord from 'discord.js';
+import { TYPES } from "./ioc/types";
 
-let config = require('./config.secret.json');
+declare let require: any;
 
 @injectable()
 export class Client implements IClient {
@@ -19,10 +20,12 @@ export class Client implements IClient {
 
     _mappings: Map<string, ISubject<Message>>;
 
-    _requstlimit = 1000;
+    _requstlimit = 2000;
     _userRequests: Set<string> ;
 
-    constructor() {
+    constructor(
+        @inject(TYPES.IConfig) private _config: IConfig
+    ) {
        this._isAttached = false;
 
        this._client = new discord.Client();
@@ -31,7 +34,7 @@ export class Client implements IClient {
 
        this._userRequests = new Set<string>();
 
-       this._client.login(config.bot.token);
+       this._client.login(this._config.config.bot.token);
 
        this._client.on("ready", () => this.attachListener())
 
@@ -74,11 +77,15 @@ export class Client implements IClient {
 
                 if(foundCommand) return;
 
-                if(msg.content.toLowerCase().startsWith(this.prefix + command)) {
+                const fullCommand = this.prefix + command;
+
+                if(msg.content.toLowerCase().startsWith(fullCommand)) {
 
                     foundCommand = true;
 
                     console.log("[client.ts]: Received command:", command);
+
+                    msg.content = msg.content.substring(fullCommand.length);
 
                     subject.onNext(msg);
 
