@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import './extensions/index';
 import { ICommand } from './contracts/ICommand';
 import { container } from "./ioc/container";
 import { TYPES } from "./ioc/types";
