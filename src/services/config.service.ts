@@ -15,6 +15,7 @@ export class Config implements IConfig {
     _config: any = require('../config.secret.json');
     _apiConfig: any = require('../api.config.json');
     _imagesConfig: any = require('../images.config.json');
+    _audiosConfig = require('../audios.config.json');
 
     constructor() {
         this._root = this._config.root;
@@ -35,6 +36,10 @@ export class Config implements IConfig {
 
     get api(): Map<string, string> {
         return this._apiConfig;
+    }
+
+    get audios(): any {
+        return this._audiosConfig;
     }
 
     pathFromRoot(...p: string[]) {

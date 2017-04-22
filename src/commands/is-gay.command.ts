@@ -1,6 +1,6 @@
-import {IClient} from '../contracts/IClient';
+import { IClient } from '../contracts/IClient';
 import { inject } from 'inversify';
-import {ICommand} from '../contracts/ICommand';
+import { ICommand } from '../contracts/ICommand';
 import { injectable } from 'inversify';
 import { commands } from "../static/commands";
 import { TYPES } from "../ioc/types";
@@ -10,7 +10,9 @@ export class IsGayCommand implements ICommand {
 
     _command: string = commands.isGay;
 
-    _chances: string[] = [ 'is Not', 'is probably not', 'might not be', 'might be', 'is', 'is almost definitely 100%'];
+    _chances: string[] = ['is -- may Allah forgive you for asking this -- NOT', 'is definitly not', 'is not', 'is probably not',
+        'might be', 'is likley to be', 'is', 'is almost definitely 100%'
+    ];
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient
@@ -21,20 +23,9 @@ export class IsGayCommand implements ICommand {
         this._client
             .getCommandStream(this._command)
             .subscribe(msg => {
-                msg.channel.sendMessage(this.getComposedResult(msg.content));
+                const fullMassage = `${msg.content} ${this._chances.random()} gay`;
+
+                msg.channel.sendMessage(fullMassage);
             });
-    }
-
-    getComposedResult(message: string) {
-        let pos = message.indexOf(this._command) + this._command.length;
-        let name = message.substr(pos);
-
-        let r = Math.floor(Math.random()*this._chances.length);
-
-        let chanceResult = this._chances[r];
-
-        let fullResult = `${name} ${chanceResult} gay`;
-
-        return fullResult;
     }
 }

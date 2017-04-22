@@ -1,9 +1,11 @@
-import { injectable } from 'inversify';
+import {IConfig} from '../contracts/IConfig';
+import { injectable, inject } from 'inversify';
 import { IAudioPlayer } from './../contracts/IAudioPlayer';
 import { VoiceChannel, VoiceConnection } from 'discord.js';
 
 import * as path from 'path';
 import * as fs from "fs";
+import { TYPES } from "../ioc/types";
 
 // declare let require: any;
 
@@ -11,10 +13,17 @@ import * as fs from "fs";
 export class AudioPlayerService implements IAudioPlayer {
 
     _ytdl: any;
-    _audios = require('../audios.config.json');
-    _fileNames = Object.keys(this._audios.files);
+    _audios: any;
+    _fileNames: string[];
     _working: boolean = false;
     _voiceConnection: VoiceConnection;
+
+    constructor(
+        @inject(TYPES.IConfig) private _config: IConfig
+    ) {
+        this._audios = _config.audios;
+        this._fileNames = Object.keys(this._audios.files);
+    }
 
     playFromYoutube(channel: VoiceChannel, url: string) {
         if(!channel || !url) return;
@@ -38,7 +47,7 @@ export class AudioPlayerService implements IAudioPlayer {
     playRandomFile(channel: VoiceChannel): void {
         if(!channel) return;
 
-        let filename = this._fileNames[this.getRandomNumber(this._fileNames.length)];
+        let filename = this._fileNames.random();
 
         this.playFile(channel, filename);
     }
@@ -93,9 +102,5 @@ export class AudioPlayerService implements IAudioPlayer {
         }
 
         return fullPath;
-    }
-
-    private getRandomNumber(range: number) {
-        return Math.floor(Math.random() * range);
     }
 }
