@@ -40,13 +40,13 @@ container.bind<IConfig>(TYPES.IConfig).to(Config).inSingletonScope();
 container.bind<IHttp>(TYPES.IHttp).to(HttpService);
 
 // Commands
-container.bind<ICommand>(TYPES.ICommand).to(PlayTrump);
-container.bind<ICommand>(TYPES.ICommand).to(Help);
-container.bind<ICommand>(TYPES.ICommand).to(Disconnect);
-container.bind<ICommand>(TYPES.ICommand).to(RandomPic);
-container.bind<ICommand>(TYPES.ICommand).to(Bog);
-container.bind<ICommand>(TYPES.ICommand).to(QuestionCommand);
-container.bind<ICommand>(TYPES.ICommand).to(IsGayCommand);
-container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch);
+container.bind<ICommand>(TYPES.ICommand).to(PlayTrump).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Help).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Disconnect).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(RandomPic).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Bog).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(QuestionCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(IsGayCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch).inSingletonScope();
 
 export { container };
