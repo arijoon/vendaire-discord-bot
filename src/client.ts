@@ -1,3 +1,5 @@
+import { Timer } from './helpers/timer.helper';
+import { MessageWrapper } from './models/message-wrapper.model';
 import { IConfig } from './contracts/IConfig';
 import { Message } from 'discord.js';
 import { Observable, Subject, ISubject, IObservable } from "rx";
@@ -8,6 +10,7 @@ import { swearWords } from "./static/swear-words";
 
 import * as discord from 'discord.js';
 import { TYPES } from "./ioc/types";
+import { IMessage } from "./contracts/IMessage";
 
 declare let require: any;
 
@@ -18,7 +21,7 @@ export class Client implements IClient {
     _client: discord.Client;
     _isAttached: boolean;
 
-    _mappings: Map<string, ISubject<Message>>;
+    _mappings: Map<string, ISubject<IMessage>>;
 
     _requstlimit = 2000;
     _userRequests: Set<string> ;
@@ -30,7 +33,7 @@ export class Client implements IClient {
 
        this._client = new discord.Client();
 
-       this._mappings = new Map<string, ISubject<Message>>();
+       this._mappings = new Map<string, ISubject<IMessage>>();
 
        this._userRequests = new Set<string>();
 
@@ -41,10 +44,10 @@ export class Client implements IClient {
     //    setInterval(() => this._userRequests.clear(), 60000);
     }
 
-    public getCommandStream(command: string): IObservable<Message> {
+    public getCommandStream(command: string): IObservable<IMessage> {
 
         if(!this._mappings.has(command)) {
-            this._mappings.set(command, new Subject<Message>());
+            this._mappings.set(command, new Subject<IMessage>());
         }
 
         return this._mappings.get(command);
@@ -87,13 +90,28 @@ export class Client implements IClient {
 
                     msg.content = msg.content.substring(fullCommand.length);
 
-                    subject.onNext(msg);
+                    const message = this.buildMessageWrapper(msg, command);
+
+                    subject.onNext(message);
 
                     return true;
                 }
             });
 
         });
+    }
+
+    private buildMessageWrapper(msg: Message, command: string): IMessage {
+        const timer = new Timer().start();
+
+        const onDone = () => {
+            const elapsed = timer.stop();
+            console.log('[client.ts]: Processed command:', command, 'in ', elapsed/1000, 'seconds');
+        }
+
+        const wrapper = new MessageWrapper(onDone, msg);
+
+        return wrapper;
     }
 
     private isAtRequestLimit(username: string): boolean {

@@ -22,11 +22,14 @@ export class PlayTrump implements ICommand {
     public attach(): void {
         this._client
             .getCommandStream(this._command)
-            .subscribe(msg => {
+            .subscribe(imsg => {
+                const msg = imsg.Message;
                 if(!msg.member.voiceChannel)
                     msg.channel.sendMessage("You aren't in any voice channels asshole");
 
                 this._audioPlayer.playRandomFile(msg.member.voiceChannel);
+
+                imsg.done();
             });
     }
 

@@ -26,12 +26,15 @@ export class YoutubeSearch implements ICommand {
     attach(): void {
         this._client
             .getCommandStream(this._command)
-            .subscribe(msg => {
+            .subscribe(imsg => {
+                const msg = imsg.Message;
+
                 let q = this.getSearchQuery(msg.content);
 
                 this.search(q, msg)
                     .then(res => {
                         msg.channel.sendMessage(res);
+                        imsg.done();
                     }).catch(err => {
                         console.error('[youtube.command]:', err);
                     });

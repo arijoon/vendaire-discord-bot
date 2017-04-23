@@ -24,6 +24,7 @@ export class Disconnect implements ICommand {
             .subscribe(msg => {
                 let cons = this._client.getClient().voiceConnections;
                 cons.forEach((v, k) => v.disconnect());
+                msg.done();
             });
     }
 

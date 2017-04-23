@@ -25,9 +25,13 @@ export class RandomPic implements ICommand {
 
             this._client
                 .getCommandStream(command)
-                .subscribe(msg => {
+                .subscribe(imsg => {
+                    const msg = imsg.Message;
                     this.selectRandomFile(command)
-                        .then(filename => msg.channel.sendFile(filename));
+                        .then(filename => {
+                            msg.channel.sendFile(filename);
+                            imsg.done();
+                        });
                 });
         }
     }

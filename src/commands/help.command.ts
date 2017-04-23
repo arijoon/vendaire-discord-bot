@@ -7,6 +7,7 @@ import { helpContent } from "../static/help-content";
 import { inject, injectable } from "inversify";
 import { IDisposable } from "rx";
 import { VoiceChannel, Message } from "discord.js";
+import { IMessage } from "../contracts/IMessage";
 
 
 @injectable()
@@ -36,7 +37,9 @@ export class Help implements ICommand {
     }
 
 
-    handler(msg: Message): void {
+    handler(imsg: IMessage): void {
+        const msg = imsg.Message;
         msg.channel.sendCode('md', helpContent.usage)
+        imsg.done();
     }
 }

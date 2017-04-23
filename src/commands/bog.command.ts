@@ -26,7 +26,8 @@ export class Bog implements ICommand {
 
         this._client
             .getCommandStream(this._commandRundown)
-            .subscribe(msg => {
+            .subscribe(imsg => {
+                const msg = imsg.Message;
                 this.getRundownImage()
                     .then(imagePath => {
                         msg.channel.sendFile(imagePath)
@@ -36,7 +37,8 @@ export class Bog implements ICommand {
 
                                 this._contentService.getContent(this._commandRundown)
                                     .then(data => {
-                                        msg.channel.sendMessage(data)
+                                        msg.channel.sendMessage(data);
+                                        imsg.done();
                                     });
                             });
                     }).catch(err => console.error(err));
