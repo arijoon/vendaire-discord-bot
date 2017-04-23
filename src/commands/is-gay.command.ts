@@ -10,8 +10,8 @@ export class IsGayCommand implements ICommand {
 
     _command: string = commands.isGay;
 
-    _chances: string[] = ['is -- may Allah forgive you for asking this -- NOT', 'is definitly not', 'is not', 'is probably not',
-        'might be', 'is likley to be', 'is', 'is almost definitely 100%'
+    _chances: string[] = ['is - may Allah forgive you for asking this - NOT', 'is definitly not', 'is not', 'is probably not',
+        'might be', 'is likely to be', 'is', 'is almost definitely 100%'
     ];
 
     constructor(
