@@ -22,10 +22,12 @@ export class IsGayCommand implements ICommand {
     attach(): void {
         this._client
             .getCommandStream(this._command)
-            .subscribe(msg => {
+            .subscribe(imsg => {
+                const msg = imsg.Message;
                 const fullMassage = `${msg.content} ${this._chances.random()} gay`;
 
                 msg.channel.sendMessage(fullMassage);
+                imsg.done();
             });
     }
 }

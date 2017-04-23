@@ -1,3 +1,4 @@
+import { IMessage } from './../contracts/IMessage';
 import { IClient } from '../contracts/IClient';
 import { IConfig } from '../contracts/IConfig';
 import { IQuestionService } from './../contracts/IQuestionService';
@@ -25,12 +26,13 @@ export class QuestionCommand implements ICommand {
         attach(): void {
             this._client
                 .getCommandStream(this._command)
-                .subscribe(msg => {
-                    this.setupNewQuestion(msg.channel as TextChannel);
+                .subscribe(imsg => {
+                    const msg = imsg.Message;
+                    this.setupNewQuestion(msg.channel as TextChannel, imsg);
                 });
         }
 
-        setupNewQuestion(channel: TextChannel) {
+        setupNewQuestion(channel: TextChannel, msg: IMessage) {
 
             if(this._channels.has(channel.id)) {
                 channel.sendMessage('You must answer the question first or wait until timer runs out');
@@ -45,6 +47,8 @@ export class QuestionCommand implements ICommand {
                     let id = q.id;
 
                     channel.sendCode('md', `${q.question}\n Answer in ${this._answerTimeout/1000} seconds`);
+
+                    msg.done();
 
                     setTimeout(() => {
                         let response = '****************************************\n'
