@@ -26,6 +26,9 @@ let commands = {
     yt: 'yt',
 
     // Space out e.g HELL -> H E L L
+    spaceout: 'spaceout',
+
+    // Convert each character to big blocks
     regional: 'regional',
 
     // Trump audio
