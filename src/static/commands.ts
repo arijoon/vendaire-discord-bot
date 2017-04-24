@@ -19,8 +19,8 @@ let commands = {
     // Game questions
     qs: 'qs',
 
-    // Is gay randomizer
-    isGay: 'isgay',
+    // Is something randomizer
+    is: 'is',
 
     // Youtube search
     yt: 'yt',

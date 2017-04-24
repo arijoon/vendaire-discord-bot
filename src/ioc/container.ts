@@ -1,5 +1,5 @@
 import { YoutubeSearch } from './../commands/youtube.command';
-import { IsGayCommand } from './../commands/is-gay.command';
+import { IsCommand } from './../commands/is.command';
 import { QuestionCommand } from './../commands/question.command';
 import { HttpService } from './../services/http.service';
 import { IHttp } from './../contracts/IHttpService';
@@ -46,7 +46,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Disconnect).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(RandomPic).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Bog).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(QuestionCommand).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(IsGayCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(IsCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch).inSingletonScope();
 
 export { container };
