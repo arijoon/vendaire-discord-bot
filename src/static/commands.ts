@@ -34,6 +34,9 @@ let commands = {
     // Convert each character to big blocks
     regional: 'regional',
 
+    // Evaluate mathematical expression
+    math: 'math',
+
     // Trump audio
     trump : "trump"
 };

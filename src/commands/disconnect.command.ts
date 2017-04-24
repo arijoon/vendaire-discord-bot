@@ -19,7 +19,7 @@ export class Disconnect implements ICommand {
     ) { }
 
     public attach(): void {
-        this._client
+        this._subscription = this._client
             .getCommandStream(this._command)
             .subscribe(msg => {
                 let cons = this._client.getClient().voiceConnections;
