@@ -6,9 +6,11 @@ import { commands } from "../static/commands";
 import { TYPES } from "../ioc/types";
 
 @injectable()
-export class IsGayCommand implements ICommand {
+export class IsCommand implements ICommand {
 
-    _command: string = commands.isGay;
+    _command: string = commands.is;
+    _regex: RegExp = /(\w+) (.+)/
+    _capitals: RegExp = /(?=[A-Z])/
 
     _chances: string[] = ['is - may Allah forgive you for asking this - NOT', 'is definitly not', 'is not', 'is probably not',
         'might be', 'is likely to be', 'is', 'is almost definitely 100%'
@@ -24,7 +26,16 @@ export class IsGayCommand implements ICommand {
             .getCommandStream(this._command)
             .subscribe(imsg => {
                 const msg = imsg.Message;
-                const fullMassage = `${msg.content} ${this._chances.random()} gay`;
+
+                const match = this._regex.exec(msg.content);
+                if(!match) return;
+
+                const noun = match[1];
+                const target = match[2];
+
+                const ending = noun.split(this._capitals).map(e => e.toLowerCase()).join(" ");
+
+                const fullMassage = `${target} ${this._chances.random()} ${ending}`;
 
                 msg.channel.sendMessage(fullMassage);
                 imsg.done();
