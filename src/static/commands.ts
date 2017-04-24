@@ -20,7 +20,7 @@ let commands = {
     qs: 'qs',
 
     // Is something randomizer
-    is: 'is',
+    is: [ 'is', 'are', 'does'],
 
     // Youtube search
     yt: 'yt',
