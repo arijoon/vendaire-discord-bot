@@ -1,3 +1,5 @@
+import { ICache } from '../contracts/ICache';
+import { CacheString } from './../services/cache-string.service';
 import { SpaceOutCommand } from './../commands/space-out.command';
 import { RegionalCommand } from './../commands/regional.command';
 import { YoutubeSearch } from './../commands/youtube.command';
@@ -40,6 +42,7 @@ container.bind<IContent>(TYPES.IContent).to(Content).inSingletonScope();
 container.bind<IQuestionService>(TYPES.IQuestion).to(QuestionService).inSingletonScope();
 container.bind<IConfig>(TYPES.IConfig).to(Config).inSingletonScope();
 container.bind<IHttp>(TYPES.IHttp).to(HttpService);
+container.bind<ICache<string, any>>(TYPES.ICacheString).to(CacheString);
 
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(PlayTrump).inSingletonScope();

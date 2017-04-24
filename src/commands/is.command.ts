@@ -13,7 +13,7 @@ export class IsCommand implements ICommand {
     readonly _capitals: RegExp = /(?=[A-Z])/
 
     readonly _chances: string[] = ['- may Allah forgive you for asking this - $verb NOT', 'definitly $verb not', '$verb not', 'probably $verb not',
-        'might', '$verb likely to be', '$verb', 'almost definitely 100% $verb'
+        'might', '$verb likely to be', '$verb', '$verb almost definitely 100%'
     ];
 
     constructor(

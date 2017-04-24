@@ -1,3 +1,4 @@
+import {ICache} from '../contracts/ICache';
 import { inject, injectable } from 'inversify';
 import { IContent } from './../contracts/IContent';
 import { TYPES } from "../ioc/types";
@@ -5,25 +6,32 @@ import { IConfig } from "../contracts/IConfig";
 
 import * as fs from 'fs';
 
-declare let require: any;
-
 @injectable()
 export class Content implements IContent {
 
-    contentConfig: any = require('../content.config.json');
+    _contentConfig: any;
 
     constructor(
-        @inject(TYPES.IConfig) private _config: IConfig
-    ) { }
+        @inject(TYPES.IConfig) private _config: IConfig,
+        @inject(TYPES.ICacheString) private _cache: ICache<string, any>
+    ) { 
+        this._contentConfig = _config.content;
+    }
 
     getContent(name: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            if(!this.contentConfig[name]) {
+
+            if(this._cache.has(name)) {
+                resolve(this._cache.getType<string>(name));
+                return;
+            }
+
+            if(!this._contentConfig[name]) {
                 reject("File not found");
                 return;
             }
 
-            let filePath = this._config.pathFromRoot(this.contentConfig.root, this.contentConfig[name]);
+            let filePath = this._config.pathFromRoot(this._contentConfig.root, this._contentConfig[name]);
 
             fs.readFile(filePath, 'utf8', (err, data) => {
                 if(err) {
@@ -32,6 +40,8 @@ export class Content implements IContent {
                 }
 
                 resolve(data);
+
+                this._cache.set(name, data);
             })
         });
     }

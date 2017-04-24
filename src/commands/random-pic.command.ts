@@ -29,8 +29,8 @@ export class RandomPic implements ICommand {
                     const msg = imsg.Message;
                     this.selectRandomFile(command)
                         .then(filename => {
-                            msg.channel.sendFile(filename);
-                            imsg.done();
+                            msg.channel.sendFile(filename)
+                            .then(() => imsg.done());
                         });
                 });
         }

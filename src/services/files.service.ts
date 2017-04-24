@@ -1,3 +1,4 @@
+import {ICache} from '../contracts/ICache';
 import { inject, injectable } from 'inversify';
 import { IFiles } from './../contracts/IFiles';
 import { IConfig } from "../contracts/IConfig";
@@ -9,23 +10,32 @@ import * as fs from 'fs';
 export class FilesService implements IFiles {
 
     constructor(
-        @inject(TYPES.IConfig) private _config: IConfig
+        @inject(TYPES.IConfig) private _config: IConfig,
+        @inject(TYPES.ICacheString) private _cache: ICache<string, any>
     ) { }
 
-    /** TODO add caching */
     getAllFiles(dir: string): Promise<string[]> {
         let fullPath = this._config.pathFromRoot(dir);
 
         return new Promise<string[]>((resolve, reject) => {
 
+            if(this._cache.has(fullPath)) {
+                resolve(this._cache.getType<string[]>(fullPath));
+            }
+
             fs.readdir(fullPath, (err, items) => {
-                if(err) reject(err);
-                else resolve(items);
+                if(err) {
+                     reject(err);
+                } else {
+                     resolve(items);
+                     this._cache.set(fullPath, items);
+                }
             })
         });
     }
     
     getAllFilesWithName(dir: string, pattern: RegExp): Promise<string[]> {
+
         return this.getAllFiles(dir)
             .then(lst => {
                 let result = [];
