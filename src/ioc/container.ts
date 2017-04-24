@@ -1,3 +1,4 @@
+import { MathCommand } from './../commands/math.command';
 import { RateCommand } from './../commands/rate.command';
 import { ICache } from '../contracts/ICache';
 import { CacheString } from './../services/cache-string.service';
@@ -57,5 +58,6 @@ container.bind<ICommand>(TYPES.ICommand).to(RegionalCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(SpaceOutCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(RateCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(MathCommand).inSingletonScope();
 
 export { container };
