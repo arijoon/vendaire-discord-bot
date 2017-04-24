@@ -1,3 +1,4 @@
+import { RegionalCommand } from './../commands/regional.command';
 import { YoutubeSearch } from './../commands/youtube.command';
 import { IsCommand } from './../commands/is.command';
 import { QuestionCommand } from './../commands/question.command';
@@ -47,6 +48,7 @@ container.bind<ICommand>(TYPES.ICommand).to(RandomPic).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Bog).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(QuestionCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(IsCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(RegionalCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch).inSingletonScope();
 
 export { container };

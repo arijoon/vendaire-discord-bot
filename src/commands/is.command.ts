@@ -8,11 +8,11 @@ import { TYPES } from "../ioc/types";
 @injectable()
 export class IsCommand implements ICommand {
 
-    _commands: string[] = commands.is;
-    _regex: RegExp = /(\w+) (.+)/
-    _capitals: RegExp = /(?=[A-Z])/
+    readonly _commands: string[] = commands.is;
+    readonly _regex: RegExp = /(\w+) (.+)/
+    readonly _capitals: RegExp = /(?=[A-Z])/
 
-    _chances: string[] = ['- may Allah forgive you for asking this - $verb NOT', 'definitly $verb not', '$verb not', 'probably $verb not',
+    readonly _chances: string[] = ['- may Allah forgive you for asking this - $verb NOT', 'definitly $verb not', '$verb not', 'probably $verb not',
         'might', '$verb likely to be', '$verb', 'almost definitely 100% $verb'
     ];
 
