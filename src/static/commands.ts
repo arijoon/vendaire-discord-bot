@@ -22,6 +22,9 @@ let commands = {
     // Is something randomizer
     is: [ 'is', 'are', 'does'],
 
+    // Rate something out of 10
+    rate: 'rate',
+
     // Youtube search
     yt: 'yt',
 
