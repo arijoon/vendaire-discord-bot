@@ -5,6 +5,7 @@ export interface IConfig {
     api: Map<string, string>;
     audios: any;
     config: any;
+    content: any;
 
     pathFromRoot(...path: string[]): string;
 }

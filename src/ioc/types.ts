@@ -1,3 +1,4 @@
+import { ICache } from './../contracts/ICache';
 let TYPES = {
     IClient: Symbol("IClient"),
     IAudioPlayer: Symbol("IAudioPlayer"),
@@ -6,6 +7,7 @@ let TYPES = {
     IHttp: Symbol("IHttp"),
     IQuestion: Symbol("IQuestion"),
     IContent: Symbol("IContent"),
+    ICacheString: Symbol("ICache<string, any>"),
     ICommand: Symbol("ICommand")
 };
 

@@ -13,6 +13,7 @@ export class Config implements IConfig {
     private _images: Map<string, string> = new Map<string, string>();
 
     _config: any = require('../config.secret.json');
+    _contentConfig: any = require('../content.config.json');
     _apiConfig: any = require('../api.config.json');
     _imagesConfig: any = require('../images.config.json');
     _audiosConfig = require('../audios.config.json');
@@ -40,6 +41,10 @@ export class Config implements IConfig {
 
     get audios(): any {
         return this._audiosConfig;
+    }
+
+    get content(): any {
+        return this._contentConfig;
     }
 
     pathFromRoot(...p: string[]) {
