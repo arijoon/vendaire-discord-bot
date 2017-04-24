@@ -25,6 +25,9 @@ let commands = {
     // Youtube search
     yt: 'yt',
 
+    // Space out e.g HELL -> H E L L
+    regional: 'regional',
+
     // Trump audio
     trump : "trump"
 };
