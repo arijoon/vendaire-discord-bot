@@ -1,3 +1,4 @@
+import { IFiles } from '../contracts/IFiles';
 import { IClient } from '../contracts/IClient';
 import { inject } from 'inversify';
 import { ICommand } from '../contracts/ICommand';
@@ -5,6 +6,9 @@ import { injectable } from 'inversify';
 import { commands } from "../static/commands";
 import { TYPES } from "../ioc/types";
 import { commonRegex } from "../helpers/common-regex";
+import { IConfig } from "../contracts/IConfig";
+
+import * as path from 'path';
 
 @injectable()
 export class RateCommand implements ICommand {
@@ -19,7 +23,9 @@ export class RateCommand implements ICommand {
     };
     
     constructor(
-        @inject(TYPES.IClient) private _client: IClient
+        @inject(TYPES.IClient) private _client: IClient,
+        @inject(TYPES.IConfig) private _config: IConfig,
+        @inject(TYPES.IFiles) private _filesService: IFiles
     ) { }
 
     attach(): void {
@@ -38,11 +44,22 @@ export class RateCommand implements ICommand {
                     result = `${msg.content} is ${roll}/10 `
                 }
 
-                if(this._chances[roll])
+                if (this._chances[roll])
                     result += this._chances[roll]
 
                 msg.channel.sendMessage(result)
-                .then(() => imsg.done());
+                    .then(() => imsg.done());
+
+                if (roll > 8) {
+                    const dirPath = path.join(this._config.images["root"], this._config.images['fap']);
+
+                    this._filesService.getRandomFile(dirPath)
+                        .then(file => {
+
+                            const filePath = this._config.pathFromRoot(dirPath, file);
+                            msg.channel.sendFile(filePath)
+                        });
+                }
             });
     }
 

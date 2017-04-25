@@ -33,7 +33,11 @@ export class FilesService implements IFiles {
             })
         });
     }
-    
+
+    getRandomFile(dir: string): Promise<string> {
+        return this.getAllFiles(dir).then(f => f.random());
+    }
+
     getAllFilesWithName(dir: string, pattern: RegExp): Promise<string[]> {
 
         return this.getAllFiles(dir)
