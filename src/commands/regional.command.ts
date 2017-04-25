@@ -27,7 +27,7 @@ export class RegionalCommand implements ICommand {
                     .toLowerCase()
                     .split('')
                     .map(a => {
-                        if (a == ' ') return a;
+                        if (!a || a == ' ' || a == '\n' || a == '\r') return a;
                         return `:regional_indicator_${a}:`
                     });
 
@@ -36,12 +36,6 @@ export class RegionalCommand implements ICommand {
                 for(let c of spacedOut) {
                     result += `${c}`;
                 }
-
-                // Add horizontal column
-                // for(let c of spacedOut) {
-                //     if(!c || c == spacedOut[0] || c == ' ' || c == '\n') continue
-                //     result += `\n${c}`
-                // }
 
                 msg.channel.sendMessage(result)
                 .then(() => imsg.done());

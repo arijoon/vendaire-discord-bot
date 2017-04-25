@@ -57,6 +57,4 @@ export class RandomPic implements ICommand {
 
         return result;
     }
-
-
 }
