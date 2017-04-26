@@ -36,6 +36,9 @@ let commands = {
 
     // Evaluate mathematical expression
     math: 'math',
+    
+    // My anime list by popular demand 
+    myanimelist: 'myanimelist',
 
     // Trump audio
     trump : "trump"

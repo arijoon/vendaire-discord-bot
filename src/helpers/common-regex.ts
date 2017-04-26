@@ -1,5 +1,5 @@
 let commonRegex = {
-    link: /(http:\/\/\S+)/
+    link: /(https:\/\/\S+)/
 }
 
 export { commonRegex }

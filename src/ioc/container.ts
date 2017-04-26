@@ -1,3 +1,4 @@
+import { MyAnimeListCommand } from './../commands/my-anime-list.command';
 import { MathCommand } from './../commands/math.command';
 import { RateCommand } from './../commands/rate.command';
 import { ICache } from '../contracts/ICache';
@@ -59,5 +60,6 @@ container.bind<ICommand>(TYPES.ICommand).to(SpaceOutCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(RateCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(MathCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(MyAnimeListCommand).inSingletonScope();
 
 export { container };
