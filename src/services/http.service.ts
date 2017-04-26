@@ -13,4 +13,13 @@ export class HttpService implements IHttp {
 
         return rp(options);
     }
+
+    get(url: string): Promise<any> {
+        let options = {
+            url: url,
+            json: false
+        }
+
+        return rp(options);
+    }
 }
