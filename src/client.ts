@@ -40,8 +40,6 @@ export class Client implements IClient {
        this._client.login(this._config.config.bot.token);
 
        this._client.on("ready", () => this.attachListener())
-
-    //    setInterval(() => this._userRequests.clear(), 60000);
     }
 
     public getCommandStream(command: string): IObservable<IMessage> {
@@ -104,6 +102,10 @@ export class Client implements IClient {
     private buildMessageWrapper(msg: Message, command: string): IMessage {
         const timer = new Timer().start();
         msg.channel.startTyping();
+
+        setTimeout(() => { // Force terminate typing after 30 secs
+            if(msg.channel.typing) msg.channel.stopTyping();
+        }, 30000);
 
         const onDone = () => {
             const elapsed = timer.stop();
