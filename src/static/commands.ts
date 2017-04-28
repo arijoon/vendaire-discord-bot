@@ -47,6 +47,9 @@ let commands = {
     banphrase: 'banphrase',
     unbanphrase: 'unbanphrase',
 
+    // Count phrase usage
+    countusage: 'countusage',
+
     // Trump audio
     trump : "trump"
 };
