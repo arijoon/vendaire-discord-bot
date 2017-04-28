@@ -1,3 +1,4 @@
+import { BanPhrase } from './../commands/ban-phrase';
 import { WhosOnline } from './../commands/whos-online.command.';
 import { MyAnimeListCommand } from './../commands/my-anime-list.command';
 import { MathCommand } from './../commands/math.command';
@@ -63,5 +64,6 @@ container.bind<ICommand>(TYPES.ICommand).to(RateCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(MathCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(MyAnimeListCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(WhosOnline).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(BanPhrase).inSingletonScope();
 
 export { container };

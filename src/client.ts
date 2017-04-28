@@ -103,10 +103,14 @@ export class Client implements IClient {
 
     private buildMessageWrapper(msg: Message, command: string): IMessage {
         const timer = new Timer().start();
+        msg.channel.startTyping();
 
         const onDone = () => {
             const elapsed = timer.stop();
+
             console.log('[client.ts]: Processed command:', command, 'in ', elapsed/1000, 'seconds');
+
+            setTimeout(() => msg.channel.stopTyping(), 100)
         }
 
         const wrapper = new MessageWrapper(onDone, msg);
