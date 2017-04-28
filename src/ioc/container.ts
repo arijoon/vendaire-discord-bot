@@ -1,3 +1,4 @@
+import { WhosOnline } from './../commands/whos-online.command.';
 import { MyAnimeListCommand } from './../commands/my-anime-list.command';
 import { MathCommand } from './../commands/math.command';
 import { RateCommand } from './../commands/rate.command';
@@ -61,5 +62,6 @@ container.bind<ICommand>(TYPES.ICommand).to(YoutubeSearch).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(RateCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(MathCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(MyAnimeListCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(WhosOnline).inSingletonScope();
 
 export { container };

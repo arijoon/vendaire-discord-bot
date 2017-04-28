@@ -40,6 +40,9 @@ let commands = {
     // My anime list by popular demand 
     myanimelist: 'myanimelist',
 
+    // Show online users
+    whosonline: 'whosonline',
+
     // Trump audio
     trump : "trump"
 };

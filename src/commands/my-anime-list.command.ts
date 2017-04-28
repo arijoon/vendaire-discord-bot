@@ -55,7 +55,7 @@ export class MyAnimeListCommand implements ICommand {
                 }).catch(err => {
                     console.error(err);
                     imsg.done();
-                })
+                });
             });
     }
 
