@@ -10,7 +10,7 @@ let commands = {
     dc: 'dc',
     
     // Post random Pics
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call' ],
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit' ],
 
     // Bog related
     quickrundown: 'quickrundown',
@@ -42,6 +42,10 @@ let commands = {
 
     // Show online users
     whosonline: 'whosonline',
+
+    // Ban phrase
+    banphrase: 'banphrase',
+    unbanphrase: 'unbanphrase',
 
     // Trump audio
     trump : "trump"

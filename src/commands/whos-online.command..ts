@@ -1,11 +1,9 @@
 import { IDisposable } from 'rx';
-import { IConfig } from './../contracts/IConfig';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
 import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
-import { IFiles } from "../contracts/IFiles";
 
 import * as path from 'path';
 
@@ -21,8 +19,6 @@ export class WhosOnline implements ICommand {
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
-        @inject(TYPES.IConfig) private _config: IConfig,
-        @inject(TYPES.IFiles) private _filesService: IFiles,
     ) { }
 
     attach(): void {
