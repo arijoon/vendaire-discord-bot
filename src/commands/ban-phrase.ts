@@ -8,7 +8,6 @@ import { MessageCollector } from "discord.js";
 import { swearWords } from "../static/swear-words";
 
 import * as path from 'path';
-import * as _ from "lodash";
 
 @injectable()
 export class BanPhrase implements ICommand {
@@ -41,7 +40,7 @@ export class BanPhrase implements ICommand {
                 this._collectors.push(collector);
 
                 collector.on('message', m => {
-                    m.channel.sendMessage(`yo ${m.author.username}, top saying ${content} you ${swearWords.random()}`);
+                    m.channel.sendMessage(`yo ${m.author.username}, stop saying ${content} you ${swearWords.random()}`);
                 });
 
                 collector.on('end', collected => {
