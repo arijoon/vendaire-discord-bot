@@ -36,7 +36,7 @@ export class FourChan implements ICommand {
 
                 let board = chan.board(ops.b);
 
-                if(!board) {
+                if(!ops.b || !board) {
                     imsg.done()
                     return;
                 }
@@ -60,6 +60,11 @@ export class FourChan implements ICommand {
 
     postRandomThread(imsg: IMessage, ops: any, board: any): void {
         board.catalog((err, lst) => {
+
+            if(!lst || lst.length < 1) {
+                imsg.done()
+                return;
+            }
 
             let post = lst.random().threads.random();
             let url = `http://boards.4chan.org/${ops.b}/thread/${post.no}`;

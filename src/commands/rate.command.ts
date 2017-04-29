@@ -37,9 +37,11 @@ export class RateCommand implements ICommand {
                 let roll = this.getRoll(3);
 
                 let result: string;
+                let options: any = {};
 
                 if(commonRegex.link.test(msg.content.trim())) {
-                    result = `${msg.content}\nThis is ${roll}/10 `
+                    options.file = commonRegex.link.exec(msg.content)[0];
+                    result = `This is ${roll}/10 `
                 } else {
                     result = `${msg.content} is ${roll}/10 `
                 }
@@ -47,8 +49,9 @@ export class RateCommand implements ICommand {
                 if (this._chances[roll])
                     result += this._chances[roll]
 
-                msg.channel.sendMessage(result)
-                    .then(() => imsg.done());
+                msg.channel.sendMessage(result, options)
+                    .then(() => imsg.done())
+                    .catch(err => imsg.done());
 
                 if (roll > 8) {
                     const dirPath = path.join(this._config.images["root"], this._config.images['fap']);
