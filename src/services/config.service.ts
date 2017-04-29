@@ -47,6 +47,10 @@ export class Config implements IConfig {
         return this._contentConfig;
     }
 
+    get admin(): string {
+        return this._config['admin'];
+    }
+
     pathFromRoot(...p: string[]) {
         return path.join(this.root, ...p);
     }

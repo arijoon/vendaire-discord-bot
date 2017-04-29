@@ -1,3 +1,4 @@
+import { IPermission } from './../contracts/IPermission';
 import { FourChan } from './../commands/4chan';
 import { CountUsage } from './../commands/count-usage.';
 import { BanPhrase } from './../commands/ban-phrase';
@@ -34,6 +35,7 @@ import { IClient } from "../contracts/IClient";
 import { ICommand } from "../contracts/ICommand";
 import { IFiles } from "../contracts/IFiles";
 import { Bog } from "../commands/bog.command";
+import { PermissionService } from "../services/permission.service";
 
 console.log("[container.ts] Building container");
 
@@ -49,6 +51,7 @@ container.bind<IContent>(TYPES.IContent).to(Content).inSingletonScope();
 container.bind<IQuestionService>(TYPES.IQuestion).to(QuestionService).inSingletonScope();
 container.bind<IConfig>(TYPES.IConfig).to(Config).inSingletonScope();
 container.bind<IHttp>(TYPES.IHttp).to(HttpService);
+container.bind<IPermission>(TYPES.IPermission).to(PermissionService);
 container.bind<ICache<string, any>>(TYPES.ICacheString).to(CacheString);
 
 // Commands

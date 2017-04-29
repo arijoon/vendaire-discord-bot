@@ -10,7 +10,7 @@ let commands = {
     dc: 'dc',
     
     // Post random Pics
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit' ],
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri' ],
 
     // Bog related
     quickrundown: 'quickrundown',
@@ -52,6 +52,9 @@ let commands = {
 
     // 4Chan
     fourchan: '4chan',
+
+    // Clean bot messages
+    clean: 'clean',
 
     // Trump audio
     trump : "trump"

@@ -105,14 +105,14 @@ export class Client implements IClient {
 
         setTimeout(() => { // Force terminate typing after 30 secs
             if(msg.channel.typing) msg.channel.stopTyping();
-        }, 30000);
+        }, 10000);
 
         const onDone = () => {
             const elapsed = timer.stop();
 
             console.log('[client.ts]: Processed command:', command, 'in ', elapsed/1000, 'seconds');
 
-            setTimeout(() => msg.channel.stopTyping(), 100)
+            msg.channel.stopTyping(true);
         }
 
         const wrapper = new MessageWrapper(onDone, msg);

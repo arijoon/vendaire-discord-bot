@@ -8,12 +8,14 @@ import { MessageCollector, Message } from "discord.js";
 import { swearWords } from "../static/swear-words";
 
 import * as path from 'path';
+import { IPermission } from "../contracts/IPermission";
 
 @injectable()
 export class CountUsage implements ICommand {
 
     MAX_NUM = 5000;
     _command: string = commands.countusage;
+    _cleanCommand: string = commands.clean;
     _collectors: MessageCollector[] = [];
     _subscriptions: IDisposable[] = [];
     _numReg = /\d+/;
@@ -22,6 +24,7 @@ export class CountUsage implements ICommand {
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
+        @inject(TYPES.IPermission) private _permission: IPermission
     ) { }
 
     attach(): void {
@@ -79,6 +82,41 @@ export class CountUsage implements ICommand {
                         })
 
                         msg.channel.sendCode('md', result).then(() => imsg.done());
+                    }).catch(err => {
+                        console.error(err);
+                        imsg.done();
+                    });
+            }));
+
+        this._subscriptions.push(this._client
+            .getCommandStream(this._cleanCommand)
+            .subscribe(imsg => {
+                let msg = imsg.Message;
+                const content = msg.content;
+
+                if(!this._permission.isAdmin(msg.author.username)) {
+                    msg.channel.sendMessage('You cannot bulk delete');
+                    imsg.done();
+                    return;
+                }
+
+                let numR = this._numReg.exec(content);
+
+                let num;
+                if (numR)
+                    num = Number(numR[0]);
+                else
+                    num = 100;
+
+                if (num > this.MAX_NUM) num = this.MAX_NUM;
+
+                this.fetchMessages(msg, num)
+                    .then(msges => {
+                        msges = msges.filter(m => m.author.bot && m.deletable);
+
+                        msges.forEach(m => m.delete())
+
+                        imsg.done();
                     }).catch(err => {
                         console.error(err);
                         imsg.done();

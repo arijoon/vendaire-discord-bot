@@ -1,3 +1,4 @@
+import { IPermission } from './../contracts/IPermission';
 import { ICache } from './../contracts/ICache';
 let TYPES = {
     IClient: Symbol("IClient"),
@@ -8,6 +9,7 @@ let TYPES = {
     IQuestion: Symbol("IQuestion"),
     IContent: Symbol("IContent"),
     ICacheString: Symbol("ICache<string, any>"),
+    IPermission: Symbol("IPermission"),
     ICommand: Symbol("ICommand")
 };
 
