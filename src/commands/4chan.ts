@@ -1,26 +1,28 @@
-import { IMessage } from './../contracts/IMessage';
+import { IPermission } from '../contracts/IPermission';
+import { IMessage } from '../contracts/IMessage';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
+import { ICommand } from '../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
-import { MessageCollector, Message } from "discord.js";
-import { swearWords } from "../static/swear-words";
 
-import * as path from 'path';
 import * as chan from '4chanjs';
 import * as opt from 'optimist';
+import { Message } from "discord.js";
 
 @injectable()
 export class FourChan implements ICommand {
 
     _command: string = commands.fourchan;
-    _collectors: MessageCollector[] = [];
+    _postedMessages: Message[] = [];
     _subscriptions: IDisposable[] = [];
+
+    _bannedBoards: any = { 'hc': true, 'gif': true, 'd': true, 'h': true }
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
+        @inject(TYPES.IPermission) private _permission: IPermission,
     ) { }
 
     attach(): void {
@@ -34,20 +36,36 @@ export class FourChan implements ICommand {
                 let argv = this.setupOptions(content.split(' '));
                 let ops = argv.argv
 
-                let board = chan.board(ops.b);
-
-                if(!ops.b || !board) {
-                    imsg.done()
+                if(this._bannedBoards[ops.b]) {
+                    let res = msg.channel.sendMessage(`board ${ops.b} is not allowed`);
+                    this.onEnd(res, imsg);
                     return;
                 }
 
-                if(ops.h) {
-                    this.showHelp(imsg, argv);
-                }
-                else if(ops.i) { 
-                    this.postRandomImage(imsg, ops, board);
-                } else {
-                    this.postRandomThread(imsg, ops, board);
+                try { // unstable 4chan module
+                    let board = chan.board(ops.b);
+
+                    if (!ops.b || !board) {
+                        imsg.done()
+                        return;
+                    }
+
+                    if (ops.h) {
+                        this.showHelp(imsg, argv);
+                    }
+                    else if (ops.d) {
+                        let item = this._postedMessages.pop();
+                        if (item) item.delete();
+                        imsg.done();
+
+                    } else if (ops.i) {
+                        this.postRandomImage(imsg, ops, board);
+
+                    } else {
+                        this.postRandomThread(imsg, ops, board);
+                    }
+                } catch (e) {
+                    imsg.done();
                 }
 
             }));
@@ -92,6 +110,8 @@ export class FourChan implements ICommand {
                 let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
                 let res = imsg.Message.channel.sendMessage("", { file: file })
+                    .then((msg: Message) => this._postedMessages.push(msg))
+
                 this.onEnd(res, imsg);
             });
 
@@ -118,6 +138,10 @@ export class FourChan implements ICommand {
         }).options('i', {
             alias: 'image',
             describe: 'choose a random image from board',
+            default: false
+        }).options('d', {
+            alias: 'delete',
+            describe: 'delete last posted image',
             default: false
         });
 
