@@ -19,7 +19,7 @@ export class CountUsage implements ICommand {
     _collectors: MessageCollector[] = [];
     _subscriptions: IDisposable[] = [];
     _numReg = /\d+/;
-    _phraseReg = /[A-Za-z ]+/;
+    _phraseReg = /[A-Za-z\-\! ]+/;
 
 
     constructor(
@@ -36,7 +36,7 @@ export class CountUsage implements ICommand {
                 const content = msg.content;
 
                 let numR = this._numReg.exec(content);
-                let phraseR = this._phraseReg.exec(content);
+               let phraseR = this._phraseReg.exec(content);
 
                 if(!phraseR) {
                     imsg.done();
@@ -46,7 +46,7 @@ export class CountUsage implements ICommand {
                 let phrase = phraseR[0].trim();
 
                 let num;
-                if(numR)
+               if(numR)
                     num = Number(numR[0]);
                 else
                     num = 100;
@@ -62,7 +62,6 @@ export class CountUsage implements ICommand {
                         let counter = 0;
                         msges.forEach((m: Message, index) => {
                             if (m.author.bot
-                                || m.content.startsWith(commands.prefix)
                                 || !phraseMatcher.test(m.content)) 
                                 return;
 
