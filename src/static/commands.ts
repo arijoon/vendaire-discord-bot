@@ -20,7 +20,7 @@ let commands = {
     qs: 'qs',
 
     // Is something randomizer
-    is: [ 'is', 'are', 'does'],
+    is: [ 'is', 'are', 'does', 'will', 'would', 'has', 'have'],
 
     // Rate something out of 10
     rate: 'rate',

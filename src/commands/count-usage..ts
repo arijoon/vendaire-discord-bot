@@ -6,9 +6,9 @@ import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 import { MessageCollector, Message } from "discord.js";
 import { swearWords } from "../static/swear-words";
+import { IPermission } from "../contracts/IPermission";
 
 import * as path from 'path';
-import { IPermission } from "../contracts/IPermission";
 
 @injectable()
 export class CountUsage implements ICommand {
