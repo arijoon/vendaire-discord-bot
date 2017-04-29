@@ -50,6 +50,9 @@ let commands = {
     // Count phrase usage
     countusage: 'countusage',
 
+    // 4Chan
+    fourchan: '4chan',
+
     // Trump audio
     trump : "trump"
 };

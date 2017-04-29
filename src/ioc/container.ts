@@ -1,3 +1,4 @@
+import { FourChan } from './../commands/4chan';
 import { CountUsage } from './../commands/count-usage.';
 import { BanPhrase } from './../commands/ban-phrase';
 import { WhosOnline } from './../commands/whos-online.command.';
@@ -67,5 +68,6 @@ container.bind<ICommand>(TYPES.ICommand).to(MyAnimeListCommand).inSingletonScope
 container.bind<ICommand>(TYPES.ICommand).to(WhosOnline).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(BanPhrase).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 
 export { container };

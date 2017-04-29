@@ -16,6 +16,7 @@
   "author": "Arman Yaraee",
   "license": "MIT",
   "dependencies": {
+    "4chanjs": "^0.1.0",
     "@types/inversify": "^2.0.33",
     "@types/lodash": "^4.14.63",
     "@types/rx": "^4.1.1",
@@ -27,6 +28,7 @@
     "lodash": "^4.17.4",
     "mathjs": "^3.12.1",
     "node-opus": "^0.2.6",
+    "optimist": "^0.6.1",
     "opusscript": "0.0.3",
     "path": "^0.12.7",
     "reflect-metadata": "^0.1.10",
