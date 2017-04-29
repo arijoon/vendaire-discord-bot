@@ -6,10 +6,11 @@ import { injectable, inject } from 'inversify';
 import { ICommand } from '../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
+import { Message } from "discord.js";
 
 import * as chan from '4chanjs';
 import * as opt from 'optimist';
-import { Message } from "discord.js";
+import * as _ from 'lodash';
 
 @injectable()
 export class FourChan implements ICommand {
@@ -18,7 +19,7 @@ export class FourChan implements ICommand {
     _postedMessages: Message[] = [];
     _subscriptions: IDisposable[] = [];
 
-    _bannedBoards: any = { 'hc': true, 'gif': true, 'd': true, 'h': true }
+    _bannedBoards: any = { 'hc': true, 'd': true, 'h': true }
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
@@ -95,8 +96,32 @@ export class FourChan implements ICommand {
     }
 
     postRandomImage(imsg: IMessage, ops: any, board: any): void {
-        board.threads((err, lst) => {
-            let thread = lst.random().threads.random().no;
+        board.catalog((err, lst: any[]) => {
+            if(!lst || lst.length < 1) {
+                imsg.done();
+                return;
+             }
+
+            let thread;
+            if(ops.q) {
+                let threads = lst.map(i => i.threads);
+                threads = _.flatten(threads);
+
+                let reg = new RegExp(ops.q);
+                threads = threads.filter(t => reg.test(t.sub) || reg.test(t.com));
+                
+                if(threads.length < 1) {
+                    imsg.Message.channel.sendMessage("Nothing matched your search term");
+                    imsg.done();
+                    return;
+                }
+
+                thread = threads.random().no;
+
+            } else {
+                thread = lst.random().threads.random().no;
+            }
+            
 
             board.thread(thread, (err, posts: any[]) => {
                 let fposts = posts.filter((v, i) => v.tim);
@@ -121,7 +146,8 @@ export class FourChan implements ICommand {
     onEnd(res: Promise<any>, imsg: IMessage): void {
         res.then(() => imsg.done())
         .catch(err => {
-            console.error(err);
+            // console.error(err);
+            console.error(`[4cha.ts] Failed to process request ${imsg.Message.content}`);
             imsg.done();
         })
     }
@@ -139,6 +165,10 @@ export class FourChan implements ICommand {
             alias: 'image',
             describe: 'choose a random image from board',
             default: false
+        }).options('q', {
+            alias: 'query',
+            describe: 'pass a query to search',
+            default: null
         }).options('d', {
             alias: 'delete',
             describe: 'delete last posted image',
