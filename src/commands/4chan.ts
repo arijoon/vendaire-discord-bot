@@ -54,12 +54,8 @@ export class FourChan implements ICommand {
     }
 
     showHelp(imsg: IMessage, argv: any): void {
-        imsg.Message.channel.sendCode('', argv.help())
-            .then(() => imsg.done())
-            .catch(err => {
-                console.error(err);
-                imsg.done();
-            });
+        let res = imsg.Message.channel.sendCode('', argv.help())
+        this.onEnd(res, imsg);
     }
 
     postRandomThread(imsg: IMessage, ops: any, board: any): void {
@@ -69,12 +65,8 @@ export class FourChan implements ICommand {
             let url = `http://boards.4chan.org/${ops.b}/thread/${post.no}`;
             let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
-            imsg.Message.channel.sendMessage(url, { file: file })
-                .then(() => imsg.done())
-                .catch(err => {
-                    console.error(err);
-                    imsg.done();
-                });
+            let res = imsg.Message.channel.sendMessage(url, { file: file })
+            this.onEnd(res, imsg);
 
         });
     }
@@ -94,15 +86,19 @@ export class FourChan implements ICommand {
                 let post = fposts.random(); 
                 let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
-                imsg.Message.channel.sendMessage("", { file: file })
-                    .then(() => imsg.done())
-                    .catch(err => {
-                        console.error(err);
-                        imsg.done();
-                    });
+                let res = imsg.Message.channel.sendMessage("", { file: file })
+                this.onEnd(res, imsg);
             });
 
         });
+    }
+
+    onEnd(res: Promise<any>, imsg: IMessage): void {
+        res.then(() => imsg.done())
+        .catch(err => {
+            console.error(err);
+            imsg.done();
+        })
     }
 
     setupOptions(args: string[]): any {
