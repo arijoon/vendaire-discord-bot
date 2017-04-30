@@ -1,0 +1,10 @@
+{
+    "env": {
+        "development": {
+            "prefix": "~!!"
+        },
+        "production": {
+            "prefix": "!!"
+        }
+    }
+}

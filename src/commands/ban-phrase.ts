@@ -1,3 +1,4 @@
+import { IConfig } from '../contracts/IConfig';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
@@ -19,6 +20,7 @@ export class BanPhrase implements ICommand {
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
+        @inject(TYPES.IConfig) private _config: IConfig
     ) { }
 
     attach(): void {
@@ -35,7 +37,7 @@ export class BanPhrase implements ICommand {
 
                 const collector = msg.channel.createCollector(m => !m.author.bot
                     && m.content.includes(content)
-                    && !m.content.startsWith(commands.prefix));
+                    && !m.content.startsWith(this._config.app.prefix));
 
                 this._collectors.push(collector);
 
