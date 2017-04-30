@@ -49,7 +49,7 @@ export class ProcessManager implements IProcessManager {
                    }
                }
 
-            //    this.startWorker();
+               this.startWorker();
            });
     }
 
