@@ -2,6 +2,7 @@ let commands = {
 
     // Glboal Prefix 
     prefix: "!!",
+    // prefix: "~!!",
     
     // Show help
     help : [ "help", " --help", " help" ],
@@ -10,7 +11,7 @@ let commands = {
     dc: 'dc',
     
     // Post random Pics
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri' ],
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart' ],
 
     // Bog related
     quickrundown: 'quickrundown',

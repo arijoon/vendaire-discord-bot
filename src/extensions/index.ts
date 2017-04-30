@@ -3,3 +3,4 @@
  */
 
 import './array.extension';
+import './number.extension';
