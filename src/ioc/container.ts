@@ -1,3 +1,4 @@
+import getDecorators from "inversify-inject-decorators";
 import { IPermission } from './../contracts/IPermission';
 import { FourChan } from './../commands/4chan';
 import { CountUsage } from './../commands/count-usage.';
@@ -37,11 +38,14 @@ import { IFiles } from "../contracts/IFiles";
 import { Bog } from "../commands/bog.command";
 import { PermissionService } from "../services/permission.service";
 
-console.log("[container.ts] Building container");
+console.log(`[container.ts:${process.pid}] Building container`);
 
 let container = new Container();
 
+let { lazyMultiInject } = getDecorators(container);
+
 // Core components
+container.bind<Container>(TYPES.Container).toConstantValue(container);
 container.bind<IClient>(TYPES.IClient).to(Client).inSingletonScope();
 
 // Services

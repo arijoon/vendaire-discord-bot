@@ -14,7 +14,7 @@ export class CacheString implements ICache<string, any> {
         @inject(TYPES.IConfig) private _config: IConfig
     ) {
         this.Cache = new Map<string, any>();
-        this._enabled = _config.config.cache;
+        this._enabled = _config.secret.cache;
     }
 
     has(key: string): boolean {

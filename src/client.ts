@@ -1,9 +1,12 @@
+import * as util from 'util';
+import { TextChannel } from 'discord.js';
+import { IProcess } from './contracts/IProcess.';
 import { Timer } from './helpers/timer.helper';
 import { MessageWrapper } from './models/message-wrapper.model';
 import { IConfig } from './contracts/IConfig';
 import { Message } from 'discord.js';
 import { Observable, Subject, ISubject, IObservable } from "rx";
-import { injectable, inject } from "inversify";
+import { injectable, inject, optional } from "inversify";
 import { IClient } from './contracts/IClient';
 import { commands } from "./static/commands";
 import { swearWords } from "./static/swear-words";
@@ -17,7 +20,7 @@ declare let require: any;
 @injectable()
 export class Client implements IClient {
 
-    prefix: string = commands.prefix;
+    prefix: string; 
     _client: discord.Client;
     _isAttached: boolean;
 
@@ -27,9 +30,12 @@ export class Client implements IClient {
     _userRequests: Set<string> ;
 
     constructor(
-        @inject(TYPES.IConfig) private _config: IConfig
+        @inject(TYPES.IConfig) private _config: IConfig,
+        @inject(TYPES.IProcess) @optional() private _process: IProcess
     ) {
        this._isAttached = false;
+
+       this.prefix = _config.app.prefix;
 
        this._client = new discord.Client();
 
@@ -37,7 +43,7 @@ export class Client implements IClient {
 
        this._userRequests = new Set<string>();
 
-       this._client.login(this._config.config.bot.token);
+       this._client.login(this._config.secret.bot.token);
 
        this._client.on("ready", () => this.attachListener())
     }
@@ -57,10 +63,37 @@ export class Client implements IClient {
 
     private attachListener() {
 
-        if(this._isAttached) return;
+        if (this._isAttached) return;
 
         this._isAttached = true;
 
+        if(this._process && this._process.IsActive) {
+            this.listenToProcessManager();
+        } else {
+            this.listenToDiscord();
+        }
+    }
+
+    private listenToProcessManager() {
+        this._process.MessagesStream.subscribe(dmsg => {
+            let channel = this._client.guilds
+                .get(dmsg.GuildId).channels
+                .get(dmsg.ChannelId) as TextChannel;
+
+            if(channel)
+                channel.fetchMessage(dmsg.MessageId)
+                    .then((msg) => this.processMessage(msg))
+                    .catch(err => {
+                        console.error(`[!client.ts:${process.pid}] Could not find message by id ${dmsg.MessageId}`, err);
+                    });
+            else 
+                console.error(`[!client.ts:${process.pid}] Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
+        });
+
+        this._process.ready();
+    }
+
+    private listenToDiscord() {
         this._client.on("message", (msg) => {
 
             if (!msg.content.startsWith(this.prefix)) return;
@@ -72,31 +105,37 @@ export class Client implements IClient {
                 return;
             }
 
-            let foundCommand: boolean = false;
-
-            this._mappings.forEach((subject, command) => {
-
-                if(foundCommand) return;
-
-                const fullCommand = this.prefix + command;
-
-                if(msg.content.toLowerCase().startsWith(fullCommand)) {
-
-                    foundCommand = true;
-
-                    console.log("[client.ts]: Received command:", command);
-
-                    msg.content = msg.content.substring(fullCommand.length);
-
-                    const message = this.buildMessageWrapper(msg, command);
-
-                    subject.onNext(message);
-
-                    return true;
-                }
-            });
-
+            this.processMessage(msg);
         });
+
+    }
+
+    private processMessage(msg: Message) {
+        let foundCommand: boolean = false;
+
+        this._mappings.forEach((subject, command) => {
+
+            if (foundCommand) return;
+
+            const fullCommand = this.prefix + command;
+
+            if (msg.content.toLowerCase().startsWith(fullCommand)) {
+
+                foundCommand = true;
+
+                console.log(`[client.ts:${process.pid}]: Received command: ${command}`);
+
+                msg.content = msg.content.substring(fullCommand.length);
+
+                const message = this.buildMessageWrapper(msg, command);
+
+                subject.onNext(message);
+
+                return true;
+            }
+        });
+
+        if(!foundCommand) this.sendReadySignal();
     }
 
     private buildMessageWrapper(msg: Message, command: string): IMessage {
@@ -110,9 +149,11 @@ export class Client implements IClient {
         const onDone = () => {
             const elapsed = timer.stop();
 
-            console.log('[client.ts]: Processed command:', command, 'in ', elapsed/1000, 'seconds');
+            console.log(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed/1000} seconds`);
 
             msg.channel.stopTyping(true);
+
+            this.sendReadySignal();
         }
 
         const wrapper = new MessageWrapper(onDone, msg);
@@ -129,6 +170,11 @@ export class Client implements IClient {
         setTimeout(() => this._userRequests.delete(username), this._requstlimit);
 
         return false;
+    }
+
+    private sendReadySignal() {
+        if(this._process && this._process.IsActive)
+            this._process.ready();
     }
 
 }

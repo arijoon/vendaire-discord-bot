@@ -5,8 +5,9 @@ export interface IConfig {
     images: Map<string, string>;
     api: Map<string, string>;
     audios: any;
-    config: any;
+    secret: any;
     content: any;
+    app: any;
 
     pathFromRoot(...path: string[]): string;
 }
