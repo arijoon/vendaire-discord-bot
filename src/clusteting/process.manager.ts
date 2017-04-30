@@ -37,6 +37,8 @@ export class ProcessManager implements IProcessManager {
            this._cluster.on('exit', (worker, code, signal) => {
                console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`);
 
+               this.startWorker();
+
                let w = this._workers[worker.process.pid];
 
                if (this._availableSet.has(w)) {
@@ -49,7 +51,6 @@ export class ProcessManager implements IProcessManager {
                    }
                }
 
-               this.startWorker();
            });
     }
 
