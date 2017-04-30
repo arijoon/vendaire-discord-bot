@@ -11,7 +11,7 @@
             "cwd": "${workspaceRoot}",
             "program": "${workspaceRoot}\\src\\bootstrap.ts",
             "env": {
-                "NODE_EVN": "development"
+                "NODE_ENV": "development"
             },
             "sourceMaps": true,
             "outFiles": [
