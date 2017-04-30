@@ -5,7 +5,7 @@
   "main": "build/bootstrap.js",
   "scripts": {
     "start": "npm run compile && SET NODE_ENV=production && nodemon --exec node build/cluster.js",
-    "forrver": "forver start build/cluster.js",
+    "forever": "forver start build/cluster.js",
     "unix:prod:run": "npm run compile && export NODE_ENV=production && npm run forever",
     "dev:multi": "npm run compile & nodemon --watch build/**.js build/cluster.js",
     "prod:single": "npm run compile & SET NODE_ENV=production && nodemon --exec node build/bootstrap.js",
