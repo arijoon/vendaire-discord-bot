@@ -95,7 +95,7 @@ export class AudioPlayerService implements IAudioPlayer {
             console.error("[!] Filename not found in audios.config.json file", filename);
         }
 
-        const fullPath = path.join(this._audios.root, this._audios.files[filename]);
+        const fullPath = this._config.pathFromRoot(this._audios.root, this._audios.files[filename]);
 
         if (!fs.existsSync(fullPath)) {
             console.error("[!] File not found,", filename);
