@@ -12,6 +12,7 @@ let commands = {
     
     // Post random Pics
     randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart' ],
+    randomPic: 'randomPic',
 
     // Bog related
     quickrundown: 'quickrundown',

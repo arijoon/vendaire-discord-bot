@@ -12,6 +12,7 @@ import * as path from 'path';
 export class RandomPic implements ICommand {
 
     _commands: string[] = commands.randomPics;
+    _command: string = commands.randomPic;
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
@@ -20,6 +21,7 @@ export class RandomPic implements ICommand {
     ) { }
 
     attach(): void {
+        // Chosen folder
         for (let i = 0; i < this._commands.length; i++) {
             let command = this._commands[i];
 
@@ -34,6 +36,18 @@ export class RandomPic implements ICommand {
                         });
                 });
         }
+
+        // Random folder
+        this._client
+            .getCommandStream(this._command)
+            .subscribe(imsg => {
+                const msg = imsg.Message;
+                this.selectRandomFile(this._commands.random())
+                    .then(filename => {
+                        msg.channel.sendFile(filename)
+                            .then(() => imsg.done());
+                    });
+            });
     }
 
     selectRandomFile(dir: string): Promise<string> {
