@@ -23,7 +23,7 @@ export class Config implements IConfig {
         this._images = this._imagesConfig;
 
 
-        let env = process.env.NODE_ENV || 'development';
+        let env = process.env.NODE_ENV || 'production';
         env = env.trim();
 
         for (let key in this._appConfig['env'][env]) {
