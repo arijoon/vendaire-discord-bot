@@ -1,3 +1,4 @@
+import { FourChanApi } from './../services/4chan.api.service';
 import { IPermission } from '../contracts/IPermission';
 import { IMessage } from '../contracts/IMessage';
 import { IDisposable } from 'rx';
@@ -24,6 +25,7 @@ export class FourChan implements ICommand {
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
         @inject(TYPES.IPermission) private _permission: IPermission,
+        private _chanApi: FourChanApi,
     ) { }
 
     attach(): void {
@@ -44,7 +46,7 @@ export class FourChan implements ICommand {
                 }
 
                 try { // unstable 4chan module
-                    let board = chan.board(ops.b);
+                    let board = this._chanApi.board(ops.b);
 
                     if (!ops.b || !board) {
                         imsg.done()
@@ -77,8 +79,8 @@ export class FourChan implements ICommand {
         this.onEnd(res, imsg);
     }
 
-    postRandomThread(imsg: IMessage, ops: any, board: any): void {
-        board.catalog((err, lst) => {
+    postRandomThread(imsg: IMessage, ops: any, board: FourChanApi): void {
+        board.catalog().then((lst: any[]) => {
 
             if(!lst || lst.length < 1) {
                 imsg.done()
@@ -95,8 +97,8 @@ export class FourChan implements ICommand {
         });
     }
 
-    postRandomImage(imsg: IMessage, ops: any, board: any): void {
-        board.catalog((err, lst: any[]) => {
+    postRandomImage(imsg: IMessage, ops: any, board: FourChanApi): void {
+        board.catalog().then((lst: any[]) => {
             if(!lst || lst.length < 1) {
                 imsg.done();
                 return;
@@ -123,7 +125,7 @@ export class FourChan implements ICommand {
             }
             
 
-            board.thread(thread, (err, posts: any[]) => {
+            board.thread(thread).then((posts: any[]) => {
                 let fposts = posts.filter((v, i) => v.tim);
 
                 if(fposts.length < 1) {
@@ -138,18 +140,19 @@ export class FourChan implements ICommand {
                     .then((msg: Message) => this._postedMessages.push(msg))
 
                 this.onEnd(res, imsg);
-            });
+            }).catch(err => this.onError(err, imsg));
 
         });
     }
 
     onEnd(res: Promise<any>, imsg: IMessage): void {
         res.then(() => imsg.done())
-        .catch(err => {
-            // console.error(err);
-            console.error(`[4cha.ts] Failed to process request ${imsg.Message.content}`);
-            imsg.done();
-        })
+        .catch(err => this.onError(err, imsg))
+    }
+
+    onError(err, imsg) {
+        console.error(`[4cha.ts:${process.pid}] Failed to process request ${imsg.Message.content} ${err}`);
+        imsg.done();
     }
 
     setupOptions(args: string[]): any {
