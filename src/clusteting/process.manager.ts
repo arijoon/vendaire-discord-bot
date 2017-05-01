@@ -2,10 +2,12 @@ import { injectable } from 'inversify';
 import { DiscordMessage } from '../models/discord-message';
 import { IProcessManager } from '../contracts/IProcessManager';
 
+import * as os from 'os';
+
 @injectable()
 export class ProcessManager implements IProcessManager {
 
-    numCpus = 4;
+    numCpus: number;
 
     _cluster: any;
     _workers: Map<number, any>;
@@ -19,6 +21,8 @@ export class ProcessManager implements IProcessManager {
         this._availableSet = new Set<any>();
         this._messageQueu = [];
         this._available = [];
+
+        this.numCpus = os.cpus().length;
     }
 
     process(msg: DiscordMessage) {
@@ -29,6 +33,8 @@ export class ProcessManager implements IProcessManager {
 
     start(cluster: any) {
            this._cluster = cluster;
+
+           console.log(`[process-manager.ts:${process.pid}] Starting master with ${this.numCpus} cores`);
 
            for (let i = 0; i < this.numCpus; i++) {
                 this.startWorker();
