@@ -8,7 +8,7 @@
     "tasks": [
 		{
 			"taskName": "compile",
-			"args": ["run", "compile"],
+			"args": ["run", "tsc"],
 			"suppressTaskName": true,
 			"isShellCommand": true,
 			"command": "npm",

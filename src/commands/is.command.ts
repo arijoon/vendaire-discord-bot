@@ -39,8 +39,8 @@ export class IsCommand implements ICommand {
                     let chance = this._chances.random().replace("$verb", command);
                     const fullMassage = `${target} ${chance} ${ending}`;
 
-                    msg.channel.sendMessage(fullMassage);
                     imsg.done();
+                    msg.channel.sendMessage(fullMassage);
                 });
         }
     }
