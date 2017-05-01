@@ -180,7 +180,7 @@ export class FourChan implements ICommand {
         }).options('i', {
             alias: 'image',
             describe: 'choose a random image from board',
-            default: false
+            default: true
         }).options('q', {
             alias: 'query',
             describe: 'pass a query to search',
