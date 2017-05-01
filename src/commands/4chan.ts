@@ -9,7 +9,6 @@ import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 import { Message } from "discord.js";
 
-import * as chan from '4chanjs';
 import * as opt from 'optimist';
 import * as _ from 'lodash';
 
@@ -105,12 +104,26 @@ export class FourChan implements ICommand {
              }
 
             let thread;
-            if(ops.q) {
+            if(ops.q || ops.s) {
                 let threads = lst.map(i => i.threads);
                 threads = _.flatten(threads);
 
                 let reg = new RegExp(ops.q);
-                threads = threads.filter(t => reg.test(t.sub) || reg.test(t.com));
+
+                let tests = []
+
+                if(ops.q)
+                    tests.push((t) => reg.test(t.sub) || reg.test(t.com));
+                if(ops.s)
+                    tests.push((t) => new RegExp(ops.s).test(t.sub));
+
+                threads = threads.filter(t => {
+                    for(let test of tests) {
+                        if(!test(t)) return false;
+                    }
+
+                    return true;
+                });
                 
                 if(threads.length < 1) {
                     imsg.Message.channel.sendMessage("Nothing matched your search term");
@@ -171,6 +184,10 @@ export class FourChan implements ICommand {
         }).options('q', {
             alias: 'query',
             describe: 'pass a query to search',
+            default: null
+        }).options('s', {
+            alias: 'subject',
+            describe: 'pass a subject query to search in subject only',
             default: null
         }).options('d', {
             alias: 'delete',
