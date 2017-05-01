@@ -1,8 +1,11 @@
 import { IPermission } from './../contracts/IPermission';
 import { ICache } from './../contracts/ICache';
 let TYPES = {
+    // Core
     Container: Symbol("Container"),
     IClient: Symbol("IClient"),
+
+    // Services
     IAudioPlayer: Symbol("IAudioPlayer"),
     IConfig: Symbol("IConfig"),
     IFiles: Symbol("IFiles"),
@@ -11,8 +14,13 @@ let TYPES = {
     IContent: Symbol("IContent"),
     ICacheString: Symbol("ICache<string, any>"),
     IPermission: Symbol("IPermission"),
+
+    // Multithreading
     IProcess: Symbol("IProcess"),
     IProcessManager: Symbol("IProcessManager"),
+
+    // Apis
+    FourChanApi: Symbol("FourChanApi"),
     ICommand: Symbol("ICommand")
 };
 

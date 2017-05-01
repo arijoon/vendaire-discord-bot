@@ -1,3 +1,4 @@
+import { FourChanApi } from './../services/4chan.api.service';
 import getDecorators from "inversify-inject-decorators";
 import { IPermission } from './../contracts/IPermission';
 import { FourChan } from './../commands/4chan';
@@ -47,6 +48,9 @@ let { lazyMultiInject } = getDecorators(container);
 // Core components
 container.bind<Container>(TYPES.Container).toConstantValue(container);
 container.bind<IClient>(TYPES.IClient).to(Client).inSingletonScope();
+
+// Apis
+container.bind(FourChanApi).toSelf();
 
 // Services
 container.bind<IAudioPlayer>(TYPES.IAudioPlayer).to(AudioPlayerService).inSingletonScope();
