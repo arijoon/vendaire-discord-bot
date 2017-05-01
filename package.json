@@ -10,7 +10,7 @@
     "dev:multi": "npm run compile & nodemon --watch build/**.js build/cluster.js",
     "prod:single": "npm run compile & SET NODE_ENV=production && nodemon --exec node build/bootstrap.js",
     "dev:run": "npm run compile & nodemon --exec node build/bootstrap.js",
-    "compile": "npm run clean & tsc & npm run copyFiles",
+    "compile": "npm run clean && tsc && npm run copyFiles",
     "copyFiles": "copyfiles -u 1 src/**/*.json build/",
     "watch": "SET NODE_ENV=development && nodemon --watch *.ts --ignore '*.spec.ts' --ext ts --exec ts-node src/bootstrap",
     "test": "nyc -r=text -i ts-node/register -e .ts mocha -t 5000 --require ts-node/register  --require reflect-metadata/Reflect",
