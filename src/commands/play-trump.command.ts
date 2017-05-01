@@ -27,9 +27,9 @@ export class PlayTrump implements ICommand {
                 if(!msg.member.voiceChannel)
                     msg.channel.sendMessage("You aren't in any voice channels asshole");
 
+                imsg.done();
                 this._audioPlayer.playRandomFile(msg.member.voiceChannel);
 
-                imsg.done();
             });
     }
 

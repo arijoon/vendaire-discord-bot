@@ -41,8 +41,8 @@ export class BanPhrase implements ICommand {
 
                 this._collectors.push(collector);
 
-                collector.on('message', m => {
-                    m.channel.sendMessage(`yo ${m.author.username}, stop saying ${content} you ${swearWords.random()}`);
+                collector.on('collect', m => {
+                    m.channel.send(`yo, stop saying ${content} you ${swearWords.random()}`, { reply: m });
                 });
 
                 collector.on('end', collected => {
@@ -63,7 +63,7 @@ export class BanPhrase implements ICommand {
                         result += `\t${username}: said it ${count} times\n`
                     });
 
-                    msg.channel.sendCode('md', result);
+                    msg.channel.send(result, { code: '' });
                 });
 
                 imsg.done();

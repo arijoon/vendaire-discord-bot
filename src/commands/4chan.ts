@@ -39,7 +39,7 @@ export class FourChan implements ICommand {
                 let ops = argv.argv
 
                 if(this._bannedBoards[ops.b]) {
-                    let res = msg.channel.sendMessage(`board ${ops.b} is not allowed`);
+                    let res = msg.channel.send(`board ${ops.b} is not allowed`, { reply: msg });
                     this.onEnd(res, imsg);
                     return;
                 }
@@ -90,7 +90,7 @@ export class FourChan implements ICommand {
             let url = `http://boards.4chan.org/${ops.b}/thread/${post.no}`;
             let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
-            let res = imsg.Message.channel.sendMessage(url, { file: file })
+            let res = imsg.Message.channel.send(url, { file: file })
             this.onEnd(res, imsg);
 
         });
@@ -126,7 +126,7 @@ export class FourChan implements ICommand {
                 });
                 
                 if(threads.length < 1) {
-                    imsg.Message.channel.sendMessage("Nothing matched your search term");
+                    imsg.Message.channel.send("Nothing matched your search term", { reply: imsg.Message });
                     imsg.done();
                     return;
                 }
@@ -149,13 +149,13 @@ export class FourChan implements ICommand {
                 let post = fposts.random(); 
                 let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
-                let res = imsg.Message.channel.sendMessage("", { file: file })
+                let res = imsg.Message.channel.send("", { file: file })
                     .then((msg: Message) => this._postedMessages.push(msg))
 
                 this.onEnd(res, imsg);
             }).catch(err => this.onError(err, imsg));
 
-        });
+        }).catch(err => this.onError(err, imsg));
     }
 
     onEnd(res: Promise<any>, imsg: IMessage): void {
@@ -163,7 +163,7 @@ export class FourChan implements ICommand {
         .catch(err => this.onError(err, imsg))
     }
 
-    onError(err, imsg) {
+    onError(err, imsg: IMessage) {
         console.error(`[4cha.ts:${process.pid}] Failed to process request ${imsg.Message.content} ${err}`);
         imsg.done();
     }

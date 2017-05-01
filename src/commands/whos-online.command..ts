@@ -49,7 +49,7 @@ export class WhosOnline implements ICommand {
                     result += `\t${member.user.username}: ${statuses.popRandom()}\n`
                 });
 
-                msg.channel.sendCode('md', result)
+                msg.channel.send(result, { code: '' })
                     .then(() => imsg.done())
                     .catch(err => {
                         console.error(err);
