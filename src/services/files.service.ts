@@ -35,7 +35,7 @@ export class FilesService implements IFiles {
     }
 
     getRandomFile(dir: string): Promise<string> {
-        return this.getAllFiles(dir).then(f => f.random());
+        return this.getAllFiles(dir).then(f => f.crandom());
     }
 
     getAllFilesWithName(dir: string, pattern: RegExp): Promise<string[]> {

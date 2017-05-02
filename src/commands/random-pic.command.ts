@@ -28,12 +28,15 @@ export class RandomPic implements ICommand {
             this._client
                 .getCommandStream(command)
                 .subscribe(imsg => {
+
                     const msg = imsg.Message;
                     this.selectRandomFile(command)
                         .then(filename => {
-                            msg.channel.sendFile(filename)
-                            .then(() => imsg.done());
-                        });
+                            msg.channel.send('', { file: filename })
+                                .then(() => imsg.done())
+                                .catch(err => imsg.done(err, true));
+                        })
+                        .catch(err => imsg.done(err, true));
                 });
         }
 
@@ -42,10 +45,11 @@ export class RandomPic implements ICommand {
             .getCommandStream(this._command)
             .subscribe(imsg => {
                 const msg = imsg.Message;
-                this.selectRandomFile(this._commands.random())
-                    .then(filename => {
-                        msg.channel.sendFile(filename)
-                            .then(() => imsg.done());
+                this.selectRandomFile(this._commands.crandom())
+                    .then((filename: string) => {
+                        msg.channel.send('', { file: filename})
+                            .then(() => imsg.done())
+                            .catch(err => imsg.done(err, true));
                     });
             });
     }
@@ -53,22 +57,11 @@ export class RandomPic implements ICommand {
     selectRandomFile(dir: string): Promise<string> {
         let fullPath = path.join(this._config.images["root"], this._config.images[dir]);
 
-        let result = this._filesService
+        return this._filesService
             .getAllFiles(fullPath)
             .then(lst => {
-
-                let randomFileIndex = Math.floor(Math.random() * lst.length);
-                let randomFileName = lst[randomFileIndex];
-
-                let randomFile = this._config.pathFromRoot(fullPath, randomFileName);
-
-                return randomFile;
+                let filename = lst[0];
+                return this._config.pathFromRoot(fullPath, filename);
             });
-
-        result.catch(err => {
-            console.error(err);
-        });
-
-        return result;
     }
 }

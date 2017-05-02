@@ -42,7 +42,7 @@ export class BanPhrase implements ICommand {
                 this._collectors.push(collector);
 
                 collector.on('collect', m => {
-                    m.channel.send(`yo, stop saying ${content} you ${swearWords.random()}`, { reply: m });
+                    m.channel.send(`yo, stop saying ${content} you ${swearWords.crandom()}`, { reply: m });
                 });
 
                 collector.on('end', collected => {

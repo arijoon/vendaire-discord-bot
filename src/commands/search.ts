@@ -27,7 +27,7 @@ export class Search implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const content = msg.content.remove(commonRegex.usermention).trim();
+                const content = msg.content.replace(commonRegex.usermention, '').trim();
                 if (!content) {
                     imsg.done();
                     return;
