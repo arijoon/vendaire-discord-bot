@@ -4,5 +4,5 @@ export interface IMessage {
 
     Message: Message;
 
-    done(): void;
+    done(msg?: string, err?: any): void;
 }

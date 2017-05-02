@@ -146,10 +146,13 @@ export class Client implements IClient {
             if(msg.channel.typing) msg.channel.stopTyping();
         }, 10000);
 
-        const onDone = () => {
+        const onDone = (cmsg?: string, err?: any) => {
             const elapsed = timer.stop();
 
-            console.log(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed/1000} seconds`);
+            if(err)
+                console.error(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed/1000} seconds ${cmsg}`);
+            else
+                console.log(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed/1000} seconds ${cmsg}`);
 
             msg.channel.stopTyping(true);
 

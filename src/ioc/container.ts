@@ -38,6 +38,7 @@ import { ICommand } from "../contracts/ICommand";
 import { IFiles } from "../contracts/IFiles";
 import { Bog } from "../commands/bog.command";
 import { PermissionService } from "../services/permission.service";
+import { Search } from "../commands/search";
 
 console.log(`[container.ts:${process.pid}] Building container`);
 
@@ -80,5 +81,6 @@ container.bind<ICommand>(TYPES.ICommand).to(WhosOnline).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(BanPhrase).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
 
 export { container };

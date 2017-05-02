@@ -67,7 +67,7 @@ export class FourChan implements ICommand {
                         this.postRandomThread(imsg, ops, board);
                     }
                 } catch (e) {
-                    imsg.done();
+                    imsg.done('', true);
                 }
 
             }));
@@ -164,8 +164,8 @@ export class FourChan implements ICommand {
     }
 
     onError(err, imsg: IMessage) {
-        console.error(`[4cha.ts:${process.pid}] Failed to process request ${imsg.Message.content} ${err}`);
-        imsg.done();
+        // console.error(`[4cha.ts:${process.pid}] Failed to process request ${imsg.Message.content} ${err}`);
+        imsg.done(imsg.Message.content, true);
     }
 
     setupOptions(args: string[]): any {
