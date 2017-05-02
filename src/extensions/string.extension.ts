@@ -3,6 +3,7 @@ interface String {
 }
 
 /** Retrieve a random element from the list */
-String.prototype.remove = function(pattern: any) {
+Object.defineProperty(Array.prototype, 'remove', { value: function(pattern: any) {
     return this.replace(pattern, '');
 }
+});

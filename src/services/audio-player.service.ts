@@ -47,7 +47,7 @@ export class AudioPlayerService implements IAudioPlayer {
     playRandomFile(channel: VoiceChannel): void {
         if(!channel) return;
 
-        let filename = this._fileNames.random();
+        let filename = this._fileNames.crandom();
 
         this.playFile(channel, filename);
     }

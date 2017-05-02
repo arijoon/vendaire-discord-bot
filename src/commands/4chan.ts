@@ -86,7 +86,7 @@ export class FourChan implements ICommand {
                 return;
             }
 
-            let post = lst.random().threads.random();
+            let post = lst.crandom().threads.crandom();
             let url = `http://boards.4chan.org/${ops.b}/thread/${post.no}`;
             let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
@@ -131,10 +131,10 @@ export class FourChan implements ICommand {
                     return;
                 }
 
-                thread = threads.random().no;
+                thread = threads.crandom().no;
 
             } else {
-                thread = lst.random().threads.random().no;
+                thread = lst.crandom().threads.crandom().no;
             }
             
 
@@ -146,7 +146,7 @@ export class FourChan implements ICommand {
                     return;
                 }
 
-                let post = fposts.random(); 
+                let post = fposts.crandom(); 
                 let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
                 let res = imsg.Message.channel.send("", { file: file })

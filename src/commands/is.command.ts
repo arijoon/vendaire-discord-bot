@@ -36,7 +36,7 @@ export class IsCommand implements ICommand {
 
                     const ending = noun.split(this._capitals).map(e => e.toLowerCase()).join(" ");
 
-                    let chance = this._chances.random().replace("$verb", command);
+                    let chance = this._chances.crandom().replace("$verb", command);
                     const fullMassage = `${target} ${chance} ${ending}`;
 
                     imsg.done();

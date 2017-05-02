@@ -51,7 +51,7 @@ export class Master {
             if (msg.author.bot) return;
 
             if (this.isAtRequestLimit(msg.author.id)) {
-                msg.channel.send(`Calm down you ${swearWords.random()}`, { reply: '' });
+                msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: '' });
                 return;
             }
 
