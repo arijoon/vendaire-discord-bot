@@ -60,8 +60,7 @@ export class RandomPic implements ICommand {
         return this._filesService
             .getAllFiles(fullPath)
             .then(lst => {
-                let filename = lst[0];
-                return this._config.pathFromRoot(fullPath, filename);
+                return this._config.pathFromRoot(fullPath, lst.crandom());
             });
     }
 }
