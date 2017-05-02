@@ -30,6 +30,9 @@ let commands = {
     // Youtube search
     yt: 'yt',
 
+    // Show you how to search
+    search: 'search ',
+
     // Space out e.g HELL -> H E L L
     spaceout: 'spaceout',
 
@@ -59,7 +62,12 @@ let commands = {
     clean: 'clean',
 
     // Trump audio
-    trump : "trump"
+    trump : "trump",
+
+    // Image processing
+    image: {
+        gray: 'imgray'
+    }
 };
 
 export { commands };

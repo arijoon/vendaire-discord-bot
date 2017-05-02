@@ -5,13 +5,13 @@ export class MessageWrapper implements IMessage {
     Message: Message;
 
     constructor(
-        private _onDone: () => void,
+        private _onDone: (msg?: string, err?: any) => void,
         msg: Message
     ) {
         this.Message = msg;
      }
 
-    done(): void {
-        this._onDone();
+    done(msg?: string, err?: any): void {
+        this._onDone(msg, err);
     }
 }
