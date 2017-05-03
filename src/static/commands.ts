@@ -66,7 +66,8 @@ let commands = {
 
     // Image processing
     image: {
-        gray: 'imgray'
+        gray: 'imgray',
+        meme: 'immeme'
     }
 };
 
