@@ -35,7 +35,7 @@ export class QuestionCommand implements ICommand {
         setupNewQuestion(channel: TextChannel, msg: IMessage) {
 
             if(this._channels.has(channel.id)) {
-                channel.sendMessage('You must answer the question first or wait until timer runs out');
+                channel.send('You must answer the question first or wait until timer runs out');
                 return;
             }
 
@@ -46,7 +46,7 @@ export class QuestionCommand implements ICommand {
 
                     let id = q.id;
 
-                    channel.sendCode('md', `${q.question}\n Answer in ${this._answerTimeout/1000} seconds`);
+                    channel.send(`${q.question}\n Answer in ${this._answerTimeout/1000} seconds`, { code: 'md' });
 
                     msg.done();
 
@@ -56,7 +56,7 @@ export class QuestionCommand implements ICommand {
                            response += '****************************************\n'
                            response += `Answer to, ${q.question} is ... \n\n\t--> ${q.answer}`;
 
-                        channel.sendCode('md', response);
+                        channel.send(response, { code: 'md' });
 
                         this._channels.delete(channel.id);
                     }, this._answerTimeout);

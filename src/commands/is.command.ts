@@ -40,7 +40,7 @@ export class IsCommand implements ICommand {
                     const fullMassage = `${target} ${chance} ${ending}`;
 
                     imsg.done();
-                    msg.channel.sendMessage(fullMassage);
+                    msg.channel.send(fullMassage);
                 });
         }
     }

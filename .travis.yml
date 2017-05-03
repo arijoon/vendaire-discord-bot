@@ -26,3 +26,7 @@ after_success:
   - git config --global user.name "Travis CI"
   - git push origin master
 
+branches:
+  except:
+    - master
+

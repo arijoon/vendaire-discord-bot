@@ -34,7 +34,7 @@ export class SpaceOutCommand implements ICommand {
                     result += `\n${c}`;
                 }
 
-                msg.channel.sendMessage(result)
+                msg.channel.send(result)
                 .then(() => imsg.done());
             });
     }

@@ -49,12 +49,10 @@ export class MyAnimeListCommand implements ICommand {
                         result += `\n${title}`
                     });
 
-                    msg.channel.sendMessage(result, { split: true })
-                        .then(_ => imsg.done())
-                        .catch(_ => imsg.done());
-                }).catch(err => {
-                    console.error(err);
-                    imsg.done();
+                    return msg.channel.send(result, { split: true })
+                }).then(_ => imsg.done())
+                .catch(err => {
+                    imsg.done(err, true);
                 });
             });
     }
