@@ -1,6 +1,6 @@
+import { ImMeme } from './../commands/image/meme.im';
 import { ImGray } from './../commands/image/gray.im';
 import { FourChanApi } from './../services/4chan.api.service';
-import getDecorators from "inversify-inject-decorators";
 import { IPermission } from './../contracts/IPermission';
 import { FourChan } from './../commands/4chan';
 import { CountUsage } from './../commands/count-usage.';
@@ -45,8 +45,6 @@ console.log(`[container.ts:${process.pid}] Building container`);
 
 let container = new Container();
 
-let { lazyMultiInject } = getDecorators(container);
-
 // Core components
 container.bind<Container>(TYPES.Container).toConstantValue(container);
 container.bind<IClient>(TYPES.IClient).to(Client).inSingletonScope();
@@ -84,5 +82,6 @@ container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
 export { container };

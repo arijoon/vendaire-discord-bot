@@ -10,9 +10,10 @@ import { commands } from "../../static/commands";
 const jimp = require('jimp');
 
 @injectable()
-export class ImGray implements ICommand {
+export class ImMeme implements ICommand {
 
-    _command: string = commands.image.gray;
+    _command: string = commands.image.meme;
+    _argsReg: RegExp = /(.*)\|?(.*)/
     _subscriptions: IDisposable[] = [];
 
     constructor(
@@ -32,15 +33,20 @@ export class ImGray implements ICommand {
 
         CommonImage.fetchLastImage(imsg).then(image => {
             return new Promise<any>((resolve, reject) => {
-                image.greyscale().getBuffer(jimp.MIME_JPEG, (err, res) => {
-                    if (err) { reject(err); return; }
 
-                    msg.channel.send('', { file: { attachment: res, name: `result.jpg` } })
-                        .then(_ => resolve())
-                        .catch(err => reject(err));
-                })
+                jimp.loadFont(jimp.FONT_SANS_32_WHITE).then(function (font) {
+
+                    image.print(font, 10, 10, msg.content);
+
+                    image.getBuffer(jimp.MIME_JPEG, (err, res) => {
+                        if (err) { reject(err); return; }
+
+                        msg.channel.send('', { file: { attachment: res, name: `result.jpg` } })
+                            .then(_ => resolve())
+                            .catch(err => reject(err));
+                    });
+                });
             });
-
         }).then(res => {
             imsg.done();
         }).catch(err => {
