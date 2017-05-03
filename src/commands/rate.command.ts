@@ -49,7 +49,7 @@ export class RateCommand implements ICommand {
                 if (this._chances[roll])
                     result += this._chances[roll]
 
-                msg.channel.sendMessage(result, options)
+                msg.channel.send(result, options)
                     .then(() => imsg.done())
                     .catch(err => imsg.done());
 
@@ -60,7 +60,7 @@ export class RateCommand implements ICommand {
                         .then(file => {
 
                             const filePath = this._config.pathFromRoot(dirPath, file);
-                            msg.channel.sendFile(filePath)
+                            msg.channel.send('', { file: filePath })
                         });
                 }
             });

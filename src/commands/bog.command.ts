@@ -37,7 +37,7 @@ export class Bog implements ICommand {
 
                                 this._contentService.getContent(this._commandRundown)
                                     .then(data => {
-                                        msg.channel.sendMessage(data);
+                                        msg.channel.send(data);
                                         imsg.done();
                                     });
                             });

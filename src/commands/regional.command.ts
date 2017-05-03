@@ -33,12 +33,12 @@ export class RegionalCommand implements ICommand {
 
                 let result = "";
 
-                for(let c of spacedOut) {
+                for (let c of spacedOut) {
                     result += `${c}`;
                 }
 
-                msg.channel.sendMessage(result)
-                .then(() => imsg.done());
+                msg.channel.send(result)
+                    .then(() => imsg.done());
             });
     }
 

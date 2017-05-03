@@ -28,15 +28,14 @@ export class YoutubeSearch implements ICommand {
             .getCommandStream(this._command)
             .subscribe(imsg => {
                 const msg = imsg.Message;
-
-                let q = this.getSearchQuery(msg.content);
+                const q = msg.content;
 
                 this.search(q, msg)
                     .then(res => {
-                        msg.channel.sendMessage(res);
+                        msg.channel.send(res);
                         imsg.done();
                     }).catch(err => {
-                        console.error('[youtube.command]:', err);
+                        imsg.done(err, true);
                     });
             });
 
@@ -64,13 +63,5 @@ export class YoutubeSearch implements ICommand {
                 resolve(vid);
             });
         });
-    }
-
-    private getSearchQuery(content: string): string {
-
-        let pos = content.indexOf(this._command) + this._command.length;
-        let name = content.substr(pos);
-
-        return name;
     }
 }

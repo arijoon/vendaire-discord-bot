@@ -30,7 +30,7 @@ export class MathCommand implements ICommand {
                     result = `${msg.content} is not a valid mathematical expression`;
                 }
 
-                msg.channel.sendMessage(result)
+                msg.channel.send(result)
                 .then(() => imsg.done());
             });
     }

@@ -1,3 +1,4 @@
+import { ImGray } from './../commands/image/gray.im';
 import { FourChanApi } from './../services/4chan.api.service';
 import getDecorators from "inversify-inject-decorators";
 import { IPermission } from './../contracts/IPermission';
@@ -82,5 +83,6 @@ container.bind<ICommand>(TYPES.ICommand).to(BanPhrase).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 
 export { container };
