@@ -40,8 +40,10 @@ export class ImdbCommand implements ICommand {
 
                     res = imdb.get(content)
                         .then(res => {
-                            let url = res.imdburl;
-                            return msg.channel.send(url);
+                            let response = `Rated **${res.rating}** from *${res.votes}* votes\n${res.imdburl}`;
+                            this._cache.set(content, response);
+
+                            return msg.channel.send(response);
                         });
                 }
 
