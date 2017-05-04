@@ -67,6 +67,10 @@ let commands = {
     // Movie search
     imdb: 'imdb',
 
+    // Google API
+    // Translation
+    translate: 'translate',
+
     // Image processing
     image: {
         gray: 'imgray',

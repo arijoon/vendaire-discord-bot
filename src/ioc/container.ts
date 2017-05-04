@@ -1,3 +1,4 @@
+import { TranslateCommand } from './../commands/translate';
 import { ImdbCommand } from './../commands/imdb';
 import { ImMeme } from './../commands/image/meme.im';
 import { ImGray } from './../commands/image/gray.im';
@@ -83,6 +84,7 @@ container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(ImdbCommand).inSingletonScope();
+// container.bind<ICommand>(TYPES.ICommand).to(TranslateCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
