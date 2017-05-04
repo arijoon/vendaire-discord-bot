@@ -6,8 +6,8 @@ import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 
-import * as path from 'path';
 import * as imdb from 'imdb-api';
+import * as opt from 'optimist';
 
 @injectable()
 export class ImdbCommand implements ICommand {
@@ -26,22 +26,32 @@ export class ImdbCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const content = msg.content.trim();
+                const fullContent = msg.content.trim();
+
+                let options = this.setupOptions(fullContent.split(' ')).argv
+                let content = options._;
+                let year = options.y;
+
                 if (!content) {
                     imsg.done();
                     return;
                 }
 
+                content = content.join(' ');
+
                 let res;
-                if (this._cache.has(content)) {
+                if (this._cache.has(fullContent)) {
                     res = msg.channel.send(this._cache.getType<string>(content));
 
                 } else {
 
-                    res = imdb.get(content)
+                    let req: any = { name: content };
+                    if(year) req.year = year;
+
+                    res = imdb.getReq(req)
                         .then(res => {
                             let response = `Rated **${res.rating}** from *${res.votes}* votes\n${res.imdburl}`;
-                            this._cache.set(content, response);
+                            this._cache.set(fullContent, response);
 
                             return msg.channel.send(response);
                         });
@@ -55,4 +65,15 @@ export class ImdbCommand implements ICommand {
                 });
             }));
     }
+
+    setupOptions(args: string[]): any {
+        var argv = opt(args).options('y', {
+            alias: 'year',
+            describe: 'specify the movie year',
+            default: null
+        });
+
+        return argv;
+    }
+
 }
