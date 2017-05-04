@@ -2,10 +2,13 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
-  - "6"
+- '6'
 env:
+  matrix:
   - CXX=g++-4.8
   - NODE_ENV=development
+  global:
+    secure: qfUKCyKtfGtTSO5mNiVZQm1kCejLc7g55j24psAqi8JA2ITH4SAbMltpefIu57V80t1SLxXKdvD72NBTyUfXqyXYWod3J4GO9ce1K99pfQxaqBduPht4+TllIPj0x/LPfZROq+oj6Fej4j7aoMltX9ERhof4GNV8XdnFZfNgYYcy/+a82IdHAUFYhBlcZr6LleOWT1uwrhW0KpN6GTtCRoC33CQxgUGbY0XVOvQhUudn2slg1jxLhZoOxQxIHmnfXH3/1IHANuQkTSoqzHfn9r03iBNhnRsxNFE+cO0YrWXFk1PBHVCH7aRKHHu5DewQG9uYUiQUvhdKOPQRhToD4dtZxgglO+UyoJ4lXV9+sh1T9w7KPB/b/n37BjCUY/w/arTNonERpdcUMxi2vaeWLowRBXJmLZXLiqtnBtz2o1egnC/VkOZYKOOGUUEQI8b5O25S9JFPt5ZoIsbEpIW8WQc7VLcQNh48XI9zwwHr4OM1Tb7I3KxJJCq7bQANM5e1kCTrbmEIzf9+Tq9Cdf/1Eh5D6k5QgrtFBAi49SyBN43GG9/mrvgadxsyMSRnHf9PZTvQWOm4fQcE1Dn8OWZrohOrNmnlQYB5LSBtI5zvwLU+w9PaIQAlBom6UEi68tFE5MuTAwBTyIpIvnrqE2dNBAcU5ZUmeiNmpNRFIfUTmmQ=
 addons:
   apt:
     sources:
@@ -13,20 +16,16 @@ addons:
     packages:
     - g++-4.8
     - gcc-4.8
-
 before_install:
-  - sudo apt-get -y install python3-pip python-dev
-  - npm install -g typescript
-
+- sudo apt-get -y install python3-pip python-dev
+- npm install -g typescript
 script:
-  - npm run compile
-
+- npm run compile
 after_success:
-  - git config --global user.email "builds@travis-ci.com"
-  - git config --global user.name "Travis CI"
-  - git push origin master
-
+- git config --global user.email "builds@travis-ci.com"
+- git config --global user.name "Travis CI"
+- git remote add origin-pages https://${GH_TOKEN}@github.com/arijoon/vendaire-discord-bot.git> /dev/null 2>&1
+- git push origin-pages master
 branches:
   except:
-    - master
-
+  - master
