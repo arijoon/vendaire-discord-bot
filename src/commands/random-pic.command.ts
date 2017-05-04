@@ -32,10 +32,8 @@ export class RandomPic implements ICommand {
                     const msg = imsg.Message;
                     this.selectRandomFile(command)
                         .then(filename => {
-                            msg.channel.send('', { file: filename })
-                                .then(() => imsg.done())
-                                .catch(err => imsg.done(err, true));
-                        })
+                            return msg.channel.send('', { file: filename })
+                        }).then(() => imsg.done())
                         .catch(err => imsg.done(err, true));
                 });
         }
@@ -47,10 +45,10 @@ export class RandomPic implements ICommand {
                 const msg = imsg.Message;
                 this.selectRandomFile(this._commands.crandom())
                     .then((filename: string) => {
-                        msg.channel.send('', { file: filename})
-                            .then(() => imsg.done())
-                            .catch(err => imsg.done(err, true));
-                    });
+                        return msg.channel.send('', { file: filename })
+                    })
+                    .then(() => imsg.done())
+                    .catch(err => imsg.done(err, true));
             });
     }
 
