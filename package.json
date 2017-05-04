@@ -31,6 +31,7 @@
     "erlpack": "^0.1.2",
     "fs": "0.0.1-security",
     "googleapis": "^19.0.0",
+    "imdb-api": "^2.2.2",
     "inversify": "^3.3.0",
     "inversify-inject-decorators": "^3.0.1",
     "jimp": "^0.2.27",
