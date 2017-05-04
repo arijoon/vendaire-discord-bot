@@ -1,3 +1,4 @@
+import { ImdbCommand } from './../commands/imdb';
 import { ImMeme } from './../commands/image/meme.im';
 import { ImGray } from './../commands/image/gray.im';
 import { FourChanApi } from './../services/4chan.api.service';
@@ -81,7 +82,8 @@ container.bind<ICommand>(TYPES.ICommand).to(BanPhrase).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(ImdbCommand).inSingletonScope();
+// container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
+// container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
 export { container };

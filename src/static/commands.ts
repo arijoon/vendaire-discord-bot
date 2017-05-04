@@ -64,6 +64,9 @@ let commands = {
     // Trump audio
     trump : "trump",
 
+    // Movie search
+    imdb: 'imdb',
+
     // Image processing
     image: {
         gray: 'imgray',
