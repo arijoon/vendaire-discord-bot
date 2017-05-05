@@ -7,9 +7,10 @@ import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 
-import * as Translate from '@google-cloud/translate';
-import * as imdb from 'imdb-api';
+import * as rp from 'request-promise';
 import * as opt from 'optimist';
+import * as querystring from 'querystring';
+import * as token from 'google-translate-token';
 
 @injectable()
 export class TranslateCommand implements ICommand {
@@ -34,9 +35,10 @@ export class TranslateCommand implements ICommand {
                 let options = this.setupOptions(fullContent.split(' ')).argv
                 let content = options._;
                 let target = options.l;
+                let from = options.f;
 
                 if (!content) {
-                    imsg.done();
+                    imsg.done('', true);
                     return;
                 }
 
@@ -48,18 +50,13 @@ export class TranslateCommand implements ICommand {
 
                 } else {
 
-                    const key = this._config.secret['google-translate'].key;
-                    const translate = new Translate({ key: key });
-
-                    res = translate.translate(content, target)
+                    res = this.translateApi(content, { to: target, from: from} )
                         .then((results) => {
-                            let translations = results[0];
-                            translations = Array.isArray(translations) ? translations : [translations];
+                            let result = `{"data":${results}}`;
+                            let fullResult = JSON.parse(result);
+                            let translation= fullResult.data[0][0][0];
 
-                            let res = '** Translations**:\n';
-                            translations.forEach((translation, i) => {
-                                res += `${translation}\n`;
-                            });
+                            let res = `** Translations**: ${translation}`;
 
                             return msg.channel.send(res);
                         });
@@ -77,11 +74,44 @@ export class TranslateCommand implements ICommand {
     setupOptions(args: string[]): any {
         var argv = opt(args).options('l', {
             alias: 'lang',
-            describe: 'Set the language',
+            describe: 'Set the target language',
             default: 'ru'
+        }).options('f', {
+            alias: 'from',
+            describe: 'Set the from language',
+            default: 'auto'
         });
 
         return argv;
+    }
+
+    private translateApi(text, opts): Promise<any> {
+        opts = opts || {};
+
+        opts.from = opts.from || 'auto';
+        opts.to = opts.to || 'en';
+
+        return token.get(text).then(function (token) {
+            var url = 'https://translate.google.com/translate_a/single';
+            var data = {
+                client: 't',
+                sl: opts.from,
+                tl: opts.to,
+                hl: opts.to,
+                dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
+                ie: 'UTF-8',
+                oe: 'UTF-8',
+                otf: 1,
+                ssel: 0,
+                tsel: 0,
+                kc: 7,
+                q: text
+            };
+
+            data[token.name] = token.value;
+
+            return url + '?' + querystring.stringify(data);
+        }).then(url => rp(url));
     }
 
 }
