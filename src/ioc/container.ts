@@ -84,7 +84,7 @@ container.bind<ICommand>(TYPES.ICommand).to(CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(ImdbCommand).inSingletonScope();
-// container.bind<ICommand>(TYPES.ICommand).to(TranslateCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(TranslateCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
