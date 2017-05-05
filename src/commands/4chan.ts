@@ -24,7 +24,7 @@ export class FourChan implements ICommand {
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
         @inject(TYPES.IPermission) private _permission: IPermission,
-        private _chanApi: FourChanApi,
+        @inject(FourChanApi) private _chanApi: FourChanApi,
     ) { }
 
     attach(): void {
@@ -138,7 +138,7 @@ export class FourChan implements ICommand {
             }
             
 
-            board.thread(thread).then((posts: any[]) => {
+            return board.thread(thread).then((posts: any[]) => {
                 let fposts = posts.filter((v, i) => v.tim);
 
                 if(fposts.length < 1) {
@@ -149,13 +149,11 @@ export class FourChan implements ICommand {
                 let post = fposts.crandom(); 
                 let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
-                let res = imsg.Message.channel.send("", { file: file })
-                    .then((msg: Message) => this._postedMessages.push(msg))
-
-                this.onEnd(res, imsg);
-            }).catch(err => this.onError(err, imsg));
-
-        }).catch(err => this.onError(err, imsg));
+                return imsg.Message.channel.send("", { file: file })
+                    .then((msg: Message) => this._postedMessages.push(msg));
+            });
+        }).then(_ => imsg.done())
+        .catch(err => this.onError(err, imsg));
     }
 
     onEnd(res: Promise<any>, imsg: IMessage): void {
