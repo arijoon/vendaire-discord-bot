@@ -71,6 +71,11 @@ let commands = {
     // Translation
     translate: 'translate',
 
+    // Games
+    games: {
+        rps: 'grps'
+    },
+
     // Image processing
     image: {
         gray: 'imgray',

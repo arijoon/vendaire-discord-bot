@@ -142,7 +142,7 @@ export class Client implements IClient {
         const timer = new Timer().start();
         msg.channel.startTyping();
 
-        setTimeout(() => { // Force terminate typing after 30 secs
+        setTimeout(() => { // Force terminate typing after 10 secs
             if(msg.channel.typing) msg.channel.stopTyping();
         }, 10000);
 

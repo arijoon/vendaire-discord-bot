@@ -3,7 +3,7 @@ interface Number {
 }
 
 /** Clamp a number in range */
-Object.defineProperty(Array.prototype, 'clamp', { value: function(min, max) {
+Object.defineProperty(Number.prototype, 'clamp', { value: function(min, max) {
   return Math.min(Math.max(this, min), max);
 }
 });
