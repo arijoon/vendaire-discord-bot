@@ -39,8 +39,9 @@ export class IsCommand implements ICommand {
                     let chance = this._chances.crandom().replace("$verb", command);
                     const fullMassage = `${target} ${chance} ${ending}`;
 
-                    imsg.done();
-                    msg.channel.send(fullMassage);
+                    msg.channel.send(fullMassage)
+                        .then(_ => imsg.done())
+                        .catch(err => imsg.done(err, true));
                 });
         }
     }
