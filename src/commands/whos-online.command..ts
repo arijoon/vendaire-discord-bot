@@ -6,6 +6,7 @@ import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 
 import * as path from 'path';
+import * as Table from 'cli-table';
 
 @injectable()
 export class WhosOnline implements ICommand {
@@ -38,6 +39,9 @@ export class WhosOnline implements ICommand {
                 let result = "These people are here now with their status: \n\n"
 
                 let statuses = this._statuses;
+                let table = new Table({
+                    head: [ '* Username *' , '* Status *']
+                });
 
                 presences.forEach((val, key) => {
                     let member = members.get(key);
@@ -46,14 +50,18 @@ export class WhosOnline implements ICommand {
 
                     if(statuses.length < 1) statuses = this._statuses;
 
-                    result += `\t${member.user.username}: ${statuses.popRandom()}\n`
+                    table.push([member.user.username, statuses.popRandom()])
+
+                    // result += `\t${member.user.username}: ${statuses.popRandom()}\n`
                 });
+
+                result = table.toString();
 
                 msg.channel.send(result, { code: '' })
                     .then(() => imsg.done())
                     .catch(err => {
                         console.error(err);
-                        imsg.done();
+                        imsg.done(err, true);
                     });
             });
     }

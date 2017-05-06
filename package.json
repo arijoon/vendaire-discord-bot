@@ -27,6 +27,7 @@
     "@types/lodash": "^4.14.63",
     "@types/rx": "^4.1.1",
     "cheerio": "^0.22.0",
+    "cli-table": "^0.3.1",
     "cluster": "^0.7.7",
     "discord.js": "^11.1.0",
     "erlpack": "^0.1.2",
