@@ -67,7 +67,7 @@ export class RockPaperSiccors implements ICommand {
                     });
                 } else {
 
-                    let isBotWinner = (bindex + 1).clamp(0, this._ranking.length - 1) == pindex;
+                    let isBotWinner = (bindex + 1) % this._ranking.length == pindex;
 
                     let embed = (new RichEmbed())
                         .setDescription(isBotWinner ? this._winner.crandom() : this._loser.crandom())
