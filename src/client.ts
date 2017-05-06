@@ -1,3 +1,4 @@
+import { IPermission } from './contracts/IPermission';
 import * as util from 'util';
 import { TextChannel } from 'discord.js';
 import { IProcess } from './contracts/IProcess.';
@@ -31,6 +32,7 @@ export class Client implements IClient {
 
     constructor(
         @inject(TYPES.IConfig) private _config: IConfig,
+        @inject(TYPES.IPermission) private _permission: IPermission,
         @inject(TYPES.IProcess) @optional() private _process: IProcess
     ) {
        this._isAttached = false;
@@ -100,7 +102,7 @@ export class Client implements IClient {
 
             if (msg.author.bot) return;
 
-            if(this.isAtRequestLimit(msg.author.id)) {
+            if(!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
                 msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
                 return;
             }
@@ -160,7 +162,7 @@ export class Client implements IClient {
             this.sendReadySignal();
         }
 
-        const wrapper = new MessageWrapper(onDone, msg);
+        const wrapper = new MessageWrapper(onDone, msg, timer);
 
         return wrapper;
     }

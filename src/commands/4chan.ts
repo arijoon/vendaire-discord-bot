@@ -137,7 +137,6 @@ export class FourChan implements ICommand {
                 thread = lst.crandom().threads.crandom().no;
             }
             
-
             return board.thread(thread).then((posts: any[]) => {
                 let fposts = posts.filter((v, i) => v.tim);
 
@@ -162,7 +161,6 @@ export class FourChan implements ICommand {
     }
 
     onError(err, imsg: IMessage) {
-        // console.error(`[4cha.ts:${process.pid}] Failed to process request ${imsg.Message.content} ${err}`);
         imsg.done(imsg.Message.content, true);
     }
 

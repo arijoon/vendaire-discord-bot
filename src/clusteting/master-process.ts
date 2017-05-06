@@ -1,3 +1,4 @@
+import {IPermission} from '../contracts/IPermission';
 import { inject, injectable } from 'inversify';
 import { DiscordMessage } from './../models/discord-message';
 import { IProcessManager } from './../contracts/IProcessManager';
@@ -21,6 +22,7 @@ export class Master {
 
     constructor(
         @inject(TYPES.IProcessManager) private _processManager: IProcessManager,
+        @inject(TYPES.IPermission) private _permission: IPermission,
         @inject(TYPES.IConfig) private _config: IConfig
     ) {
         this.prefix = _config.app.prefix;
@@ -50,7 +52,7 @@ export class Master {
 
             if (msg.author.bot) return;
 
-            if (this.isAtRequestLimit(msg.author.id)) {
+            if(!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
                 msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: '' });
                 return;
             }
