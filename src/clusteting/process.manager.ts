@@ -13,20 +13,20 @@ export class ProcessManager implements IProcessManager {
     _workers: Map<number, any>;
 
     _availableSet: Set<number>;
-    _messageQueu: DiscordMessage[];
+    _messageQueue: DiscordMessage[];
     _available: any[];
 
     constructor() {
         this._workers = new Map<number, any>();
         this._availableSet = new Set<any>();
-        this._messageQueu = [];
+        this._messageQueue = [];
         this._available = [];
 
         this.numCpus = os.cpus().length;
     }
 
     process(msg: DiscordMessage) {
-        this._messageQueu.unshift(msg);
+        this._messageQueue.unshift(msg);
 
         this.update();
     }
@@ -53,7 +53,7 @@ export class ProcessManager implements IProcessManager {
                    let index = this._available.indexOf(w);
 
                    if (index >= 0) {
-                       this._available = this._available.splice(index, 1);
+                       this._available.splice(index, 1);
                    }
                }
 
@@ -90,9 +90,9 @@ export class ProcessManager implements IProcessManager {
     }
 
     private update() {
-        if(this._available.length > 0 && this._messageQueu.length > 0) {
+        if(this._available.length > 0 && this._messageQueue.length > 0) {
             this.nextAvailable.send({
-                discordMessage: this._messageQueu.pop()
+                discordMessage: this._messageQueue.pop()
             });
 
             return;
