@@ -30,7 +30,7 @@ export class ImdbCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const fullContent = msg.content.trim().toLowerCase();
+                const fullContent = msg.content.trim();
 
                 let argv = this.setupOptions(fullContent.split(' '));
                 let options = argv.argv;
@@ -80,7 +80,8 @@ export class ImdbCommand implements ICommand {
             }));
     }
 
-    fullSearch(query, msg: Message): Promise<any> {
+    fullSearch(query: string, msg: Message): Promise<any> {
+        query = query.toLowerCase();
         let url = `https://v2.sg.media-imdb.com/suggests/${query[0]}/${query.replace(" ", "_")}.json`;
 
         return this._http.getJson(url)
@@ -103,7 +104,7 @@ export class ImdbCommand implements ICommand {
                     .setTitle(`Search: ${query}`)
                     .setColor(colors.DARK_GOLD);
 
-                if(images.length > 0) 
+                if (images.length > 0)
                     embed.setThumbnail(images[0].i[0])
 
 
