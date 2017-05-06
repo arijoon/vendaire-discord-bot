@@ -51,11 +51,9 @@ export class WhosOnline implements ICommand {
                     if(statuses.length < 1) statuses = this._statuses;
 
                     table.push([member.user.username, statuses.popRandom()])
-
-                    // result += `\t${member.user.username}: ${statuses.popRandom()}\n`
                 });
 
-                result = table.toString();
+                result += table.toString();
 
                 msg.channel.send(result, { code: '' })
                     .then(() => imsg.done())
