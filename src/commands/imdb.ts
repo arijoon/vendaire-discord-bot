@@ -1,4 +1,5 @@
-import {ICache} from '../contracts/ICache';
+import { IHttp } from '../contracts/IHttpService';
+import { ICache } from '../contracts/ICache';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
@@ -8,6 +9,8 @@ import { commands } from "../static/commands";
 
 import * as imdb from 'imdb-api';
 import * as opt from 'optimist';
+import { RichEmbed, Message } from "discord.js";
+import { colors } from "../static/colors";
 
 @injectable()
 export class ImdbCommand implements ICommand {
@@ -17,6 +20,7 @@ export class ImdbCommand implements ICommand {
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
+        @inject(TYPES.IHttp) private _http: IHttp,
         @inject(TYPES.ICacheString) private _cache: ICache<string, any>
     ) { }
 
@@ -28,11 +32,18 @@ export class ImdbCommand implements ICommand {
 
                 const fullContent = msg.content.trim();
 
-                let options = this.setupOptions(fullContent.split(' ')).argv
+                let argv = this.setupOptions(fullContent.split(' '));
+                let options = argv.argv;
                 let content = options._;
                 let year = options.y;
 
                 if (!content) {
+                    imsg.done();
+                    return;
+                }
+
+                if (options.h) {
+                    msg.channel.send(argv.help(), { code: 'md' })
                     imsg.done();
                     return;
                 }
@@ -43,10 +54,13 @@ export class ImdbCommand implements ICommand {
                 if (this._cache.has(fullContent)) {
                     res = msg.channel.send(this._cache.getType<string>(content));
 
+                } else if (options.s) {
+                    res = this.fullSearch(content, msg);
+
                 } else {
 
                     let req: any = { name: content };
-                    if(year) req.year = year;
+                    if (year) req.year = year;
 
                     res = imdb.getReq(req)
                         .then(res => {
@@ -60,10 +74,45 @@ export class ImdbCommand implements ICommand {
                 res.then(_ => {
                     imsg.done();
                 }).catch(err => {
-                    msg.channel.send(`, ${content} not found mofo`, { reply: msg });
+                    msg.channel.send(` ${content} not found mofo`, { reply: msg });
                     imsg.done(err, true);
                 });
             }));
+    }
+
+    fullSearch(query, msg: Message): Promise<any> {
+        let url = `https://v2.sg.media-imdb.com/suggests/${query[0]}/${query.replace(" ", "_")}.json`;
+
+        return this._http.getJson(url)
+            .then(res => {
+                // Do some funky stuff to get real json from imdb result
+                let buff = res.split('(');
+                buff.shift();
+                let result: string = buff.join('(');
+                result = result.slice(0, -1);
+
+                let json = JSON.parse(result);
+
+                return json.d;
+            }).then((res: any[]) => { // array of result
+                if (!res || res.length < 1) throw new Error("No results found");
+
+                let images = res.filter(movie => movie.i);
+
+                let embed = (new RichEmbed())
+                    .setTitle(`Search: ${query}`)
+                    .setColor(colors.DARK_GOLD);
+
+                if(images.length > 0) 
+                    embed.setThumbnail(images[0].i[0])
+
+
+                for (let movie of res) {
+                    embed.addField(`${movie.l} ${movie.y}`, `${movie.s ? `by ${movie.s}` : ''} http://www.imdb.com/title/${movie.id}/`, false)
+                }
+
+                return msg.channel.send('', { embed: embed });
+            });
     }
 
     setupOptions(args: string[]): any {
@@ -71,9 +120,20 @@ export class ImdbCommand implements ICommand {
             alias: 'year',
             describe: 'specify the movie year',
             default: null
+        }).options('s', {
+            alias: 'search',
+            describe: 'Do a search for multiple matches',
+            default: false
+        }).options('i', {
+            alias: 'image',
+            describe: 'Add images to the ',
+            default: false
+        }).options('h', {
+            alias: 'help',
+            describe: 'Show this message',
+            default: false
         });
 
         return argv;
     }
-
 }
