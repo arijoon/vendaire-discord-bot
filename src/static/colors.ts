@@ -1,0 +1,26 @@
+let colors = {
+  'DEFAULT': 'DEFAULT',
+  'AQUA': 'AQUA',
+  'GREEN': 'GREEN',
+  'BLUE': 'BLUE',
+  'PURPLE': 'PURPLE',
+  'GOLD': 'GOLD',
+  'ORANGE': 'ORANGE',
+  'RED': 'RED',
+  'GREY': 'GREY',
+  'DARKER_GREY': 'DARKER_GREY',
+  'NAVY': 'NAVY',
+  'DARK_AQUA': 'DARK_AQUA',
+  'DARK_GREEN': 'DARK_GREEN',
+  'DARK_BLUE': 'DARK_BLUE',
+  'DARK_PURPLE': 'DARK_PURPLE',
+  'DARK_GOLD': 'DARK_GOLD',
+  'DARK_ORANGE': 'DARK_ORANGE',
+  'DARK_RED': 'DARK_RED',
+  'DARK_GREY': 'DARK_GREY',
+  'LIGHT_GREY': 'LIGHT_GREY',
+  'DARK_NAVY': 'DARK_NAVY',
+  'RANDOM': 'RANDOM',
+};
+
+export { colors };
