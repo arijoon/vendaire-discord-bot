@@ -18,6 +18,12 @@ export class RockPaperSiccors implements ICommand {
     _reverse: any = { 'r': 'rock', 'p': 'paper', 's': 'sissor' };
     _ranking: string[] = [ 'r', 's', 'p' ];
 
+    _winner: string[] = [ 'winner winner chicken dinner', 'I\'m the best mofo', 'what made you think you can beat me', 'keep coming, I keep winning', 
+        'you were born to lose mofo', 'really? You thought you had a chance', 'I know I aint real but damn you suck son'];
+
+    _loser: string[] = [ 'I\'ll get you next time', 'this isn\'n the end', "I'm just getting started", "you think you're a winner fagman?",
+        "I don't like losing, don't make me take it out on your mama", "I'm gonna dox your ass with my superior AI capabilities if you keep fucking me up"];
+
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
         @inject(TYPES.IConfig) private _config: IConfig
@@ -64,6 +70,7 @@ export class RockPaperSiccors implements ICommand {
                     let isBotWinner = (bindex + 1).clamp(0, this._ranking.length) == pindex;
 
                     let embed = (new RichEmbed())
+                        .setDescription(isBotWinner ? this._winner.crandom() : this._loser.crandom())
                         .setTitle(`You ${isBotWinner ? 'Lost' : 'Won'}`)
                         .setColor(isBotWinner ? colors.RED : colors.GREEN)
                         .addField(`Bot Played ${this._reverse[botAction]}`, `You played ${this._reverse[action]}`)
