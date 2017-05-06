@@ -1,3 +1,4 @@
+import { RockPaperSiccors } from './../commands/games/rps';
 import { TranslateCommand } from './../commands/translate';
 import { ImdbCommand } from './../commands/imdb';
 import { ImMeme } from './../commands/image/meme.im';
@@ -85,6 +86,7 @@ container.bind<ICommand>(TYPES.ICommand).to(FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Search).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(ImdbCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(TranslateCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(RockPaperSiccors).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
