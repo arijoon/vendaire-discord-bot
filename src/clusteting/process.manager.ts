@@ -70,7 +70,7 @@ export class ProcessManager implements IProcessManager {
         w.on('message', (msg) => {
             if(msg.ready) {
                 if (!this._availableSet.has(w)) {
-                    this._available.unshift(w);
+                    this._available.push(w);
                     this._availableSet.add(w);
                 }
 
