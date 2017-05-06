@@ -1,14 +1,18 @@
+import {ITimer} from '../contracts/ITimer';
 import { IMessage } from './../contracts/IMessage';
 import { Message } from 'discord.js';
 
 export class MessageWrapper implements IMessage {
     Message: Message;
+    Timer: ITimer;
 
     constructor(
         private _onDone: (msg?: string, err?: any) => void,
-        msg: Message
+        msg: Message,
+        timer: ITimer,
     ) {
         this.Message = msg;
+        this.Timer = timer;
      }
 
     done(msg?: string, err?: any): void {
