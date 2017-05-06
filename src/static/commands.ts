@@ -70,6 +70,7 @@ let commands = {
     // Google API
     // Translation
     translate: 'translate',
+    suggest: 'suggest',
 
     // Games
     games: {

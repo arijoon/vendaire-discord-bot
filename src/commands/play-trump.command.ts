@@ -25,7 +25,7 @@ export class PlayTrump implements ICommand {
             .getCommandStream(this._command)
             .subscribe(imsg => {
                 const msg = imsg.Message;
-                if(!msg.member.voiceChannel)
+                if (!msg.member.voiceChannel)
                     msg.channel.send("You aren't in any voice channels asshole");
 
                 let ops = this.setupOptions(msg.content.split(' ')).argv;
@@ -35,8 +35,7 @@ export class PlayTrump implements ICommand {
                     .catch(err => {
                         msg.channel.send('Bad query');
                         imsg.done(err, true);
-                });;
-
+                    });
             });
     }
 

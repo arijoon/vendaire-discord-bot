@@ -39,7 +39,7 @@ export class Help implements ICommand {
 
     handler(imsg: IMessage): void {
         const msg = imsg.Message;
-        msg.channel.sendCode('md', helpContent.usage)
+        msg.channel.send(helpContent.usage, { code: 'md' })
         imsg.done();
     }
 }

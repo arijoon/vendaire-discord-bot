@@ -74,7 +74,7 @@ export class FourChan implements ICommand {
     }
 
     showHelp(imsg: IMessage, argv: any): void {
-        let res = imsg.Message.channel.sendCode('', argv.help())
+        let res = imsg.Message.channel.send(argv.help(), { code: 'md' })
         this.onEnd(res, imsg);
     }
 
