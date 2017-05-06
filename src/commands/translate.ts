@@ -1,3 +1,4 @@
+import { RichEmbed } from 'discord.js';
 import { IConfig } from './../contracts/IConfig';
 import { ICache } from '../contracts/ICache';
 import { IDisposable } from 'rx';
@@ -11,6 +12,8 @@ import * as rp from 'request-promise';
 import * as opt from 'optimist';
 import * as querystring from 'querystring';
 import * as token from 'google-translate-token';
+import { colors } from "../static/colors";
+import { langs } from "../static/languages";
 
 @injectable()
 export class TranslateCommand implements ICommand {
@@ -46,7 +49,7 @@ export class TranslateCommand implements ICommand {
 
                 let res;
                 if (this._cache.has(fullContent)) {
-                    res = msg.channel.send(this._cache.getType<string>(content));
+                    res = msg.channel.send('', this._cache.getType<string>(content));
 
                 } else {
 
@@ -56,9 +59,18 @@ export class TranslateCommand implements ICommand {
                             let fullResult = JSON.parse(result);
                             let translation= fullResult.data[0][0][0];
 
-                            let res = `** Translations**: ${translation}`;
 
-                            return msg.channel.send(res);
+                            let embed = (new RichEmbed())
+                                .setTitle(translation)
+                                .setColor(colors.RANDOM)
+                                .addField('Original', `*${content}*`)
+                                .addField(`In ${langs[target]}`, `*${translation}*`)
+
+                            let res = `** Translation**: ${translation}`;
+
+                            this._cache.set(fullContent, { embed: embed});
+
+                            return msg.channel.send('', { embed: embed });
                         });
                 }
 

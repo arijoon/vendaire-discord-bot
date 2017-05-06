@@ -9,6 +9,7 @@ import { commands } from "../static/commands";
 import * as path from 'path';
 import { RichEmbed } from "discord.js";
 import { commonRegex } from "../helpers/common-regex";
+import { colors } from "../static/colors";
 
 @injectable()
 export class Search implements ICommand {
@@ -37,7 +38,7 @@ export class Search implements ICommand {
 
                 let embed = (new RichEmbed())
                     .setTitle('Search')
-                    .setColor('AQUA')
+                    .setColor(colors.AQUA)
                     .setURL(url)
                     .setDescription(`For ${msg.mentions.users.map(u => `<@${u.id}>`).join(', ')}`)
                     .addField('**Asked**', content)
