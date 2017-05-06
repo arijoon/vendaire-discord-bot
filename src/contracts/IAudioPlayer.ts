@@ -2,7 +2,7 @@ import { VoiceChannel } from 'discord.js';
 
 export interface IAudioPlayer {
     /** Play a random file */
-    playRandomFile(channel: VoiceChannel);
+    playRandomFile(channel: VoiceChannel, query?: string): Promise<void>;
 
     /** Play the filename */
     playFile(channel: VoiceChannel, filename: string);

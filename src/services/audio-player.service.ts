@@ -44,12 +44,30 @@ export class AudioPlayerService implements IAudioPlayer {
         })
     }
 
-    playRandomFile(channel: VoiceChannel): void {
-        if(!channel) return;
+    playRandomFile(channel: VoiceChannel, query?: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (!channel) return;
 
-        let filename = this._fileNames.crandom();
+            let filename;
 
-        this.playFile(channel, filename);
+            if (!query) {
+                filename = this._fileNames.crandom();
+            } else {
+                let qReg = new RegExp(query);
+                let matches = this._fileNames.filter(val => qReg.test(val));
+
+                if(matches.length < 1) {
+                     reject("no files matched");
+                     return;
+                }
+
+                filename = matches.crandom();
+            }
+
+            this.playFile(channel, filename);
+
+            resolve();
+        });
     }
 
     playFile(channel: VoiceChannel, filename: string): void {

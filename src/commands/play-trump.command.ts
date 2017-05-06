@@ -7,6 +7,7 @@ import { inject, injectable } from "inversify";
 import { IDisposable } from "rx";
 import { VoiceChannel, Message } from "discord.js";
 
+import * as opt from 'optimist';
 
 @injectable()
 export class PlayTrump implements ICommand {
@@ -27,11 +28,28 @@ export class PlayTrump implements ICommand {
                 if(!msg.member.voiceChannel)
                     msg.channel.send("You aren't in any voice channels asshole");
 
-                imsg.done();
-                this._audioPlayer.playRandomFile(msg.member.voiceChannel);
+                let ops = this.setupOptions(msg.content.split(' ')).argv;
+
+                this._audioPlayer.playRandomFile(msg.member.voiceChannel, ops.q)
+                    .then(_ => imsg.done())
+                    .catch(err => {
+                        msg.channel.send('Bad query');
+                        imsg.done(err, true);
+                });;
 
             });
     }
+
+    setupOptions(args: string[]): any {
+        var argv = opt(args).options('q', {
+            alias: 'query',
+            describe: 'Search for a query in filename',
+            default: null
+        });
+
+        return argv;
+    }
+
 
     public detach(): void {
         this._subscription.dispose();
