@@ -53,8 +53,8 @@ export class RockPaperSiccors implements ICommand {
 
                 let botAction = this._ranking.crandom();
 
-                let bindex = this._ranking.indexOf(botAction);
-                let pindex = this._ranking.indexOf(action);
+                let bindex = this._ranking.indexOf(botAction);// 2
+                let pindex = this._ranking.indexOf(action);//0
 
                 let res;
                 if (pindex == bindex) { // draw 
@@ -67,7 +67,7 @@ export class RockPaperSiccors implements ICommand {
                     });
                 } else {
 
-                    let isBotWinner = (bindex + 1).clamp(0, this._ranking.length) == pindex;
+                    let isBotWinner = (bindex + 1).clamp(0, this._ranking.length - 1) == pindex;
 
                     let embed = (new RichEmbed())
                         .setDescription(isBotWinner ? this._winner.crandom() : this._loser.crandom())
