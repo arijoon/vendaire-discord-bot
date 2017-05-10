@@ -8,6 +8,7 @@ import { swearWords } from "../static/swear-words";
 import * as util from 'util';
 import * as discord from 'discord.js';
 import * as os from 'os';
+import { TimerQueue } from "../components/timer-queue.com";
 
 @injectable()
 export class Master {
@@ -37,8 +38,24 @@ export class Master {
         this._client.login(this._config.secret.bot.token);
 
         this._client.on("ready", () => this.ready());
+        
+       let queue = new TimerQueue();
+
+       this._client.on("disconnect",
+           () => {
+               console.log(`[master:${process.pid}] Disconnected, trying to login ...`)
+               queue.doTask(
+                   () => this._client.login(this._config.secret.bot.token)
+                       .then(() => console.log(`[master:${process.pid}] Successfully logged in again`))
+                       .catch(err => console.error(`[master:${process.pid}] Failed to login again`, err))
+               )
+           });
 
         this._processManager.start(cluster);
+    }
+
+    private onDisconnect() {
+
     }
 
     private ready() {

@@ -165,7 +165,8 @@ export class FourChan implements ICommand {
     }
 
     setupOptions(args: string[]): any {
-        var argv = opt(args).options('b', {
+        var argv = opt(args)
+        .options('b', {
             alias: 'board',
             describe: 'specify the board',
             default: 'b'

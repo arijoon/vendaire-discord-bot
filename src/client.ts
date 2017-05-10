@@ -15,6 +15,7 @@ import { swearWords } from "./static/swear-words";
 import * as discord from 'discord.js';
 import { TYPES } from "./ioc/types";
 import { IMessage } from "./contracts/IMessage";
+import { TimerQueue } from "./components/timer-queue.com";
 
 declare let require: any;
 
@@ -48,6 +49,18 @@ export class Client implements IClient {
        this._client.login(this._config.secret.bot.token);
 
        this._client.on("ready", () => this.attachListener())
+
+       let queue = new TimerQueue();
+
+       this._client.on("disconnect",
+           () => {
+               console.log(`[master:${process.pid}] Disconnected, trying to login ...`)
+               queue.doTask(
+                   () => this._client.login(this._config.secret.bot.token)
+                       .then(() => console.log(`[client:${process.pid}] Successfully logged in again`))
+                       .catch(err => console.error(`[client:${process.pid}] Failed to login again`, err))
+               )
+           });
     }
 
     public getCommandStream(command: string): IObservable<IMessage> {
