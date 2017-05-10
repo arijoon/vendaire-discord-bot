@@ -72,6 +72,9 @@ let commands = {
     translate: 'translate',
     suggest: 'suggest',
 
+    // Get image from instagram
+    igimage: 'igimage',
+
     // Games
     games: {
         rps: 'grps'
