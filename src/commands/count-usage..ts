@@ -109,9 +109,14 @@ export class CountUsage implements ICommand {
 
                 if (num > this.MAX_NUM) num = this.MAX_NUM;
 
-                this.fetchMessages(msg, num)
+                this.fetchMessages(msg, num < 10 ? 10 : num)
                     .then(msges => {
-                        msges = msges.filter(m => m.author.bot && m.deletable);
+
+                        if(msges.length > num) {
+                            msges = msges.slice(0, num);
+                        }
+
+                        msges = msges.filter(m => (m.author.bot || msg.mentions.users.get(m.author.id)) && m.deletable);
 
                         msges.forEach(m => m.delete())
 
