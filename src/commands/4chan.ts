@@ -113,9 +113,11 @@ export class FourChan implements ICommand {
                 let tests = []
 
                 if(ops.q)
-                    tests.push((t) => reg.test(t.sub) || reg.test(t.com));
-                if(ops.s)
-                    tests.push((t) => new RegExp(ops.s).test(t.sub));
+                    tests.push((t) => reg.test(t.sub.toLowerCase()) || reg.test(t.com.toLowerCase()));
+                if(ops.s) {
+                    let subjectReg = new RegExp(ops.s);
+                    tests.push((t) => subjectReg.test(t.sub.toLowerCase()));
+                }
 
                 threads = threads.filter(t => {
                     for(let test of tests) {
