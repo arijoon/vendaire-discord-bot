@@ -112,11 +112,19 @@ export class FourChan implements ICommand {
 
                 let tests = []
 
-                if(ops.q)
-                    tests.push((t) => reg.test(t.sub.toLowerCase()) || reg.test(t.com.toLowerCase()));
-                if(ops.s) {
+                if (ops.q)
+                    tests.push((t) => {
+                        if(t.sub && t.com)
+                            return reg.test(t.sub.toLowerCase()) || reg.test(t.com.toLowerCase())
+                        return false;
+                    });
+                if (ops.s) {
                     let subjectReg = new RegExp(ops.s);
-                    tests.push((t) => subjectReg.test(t.sub.toLowerCase()));
+                    tests.push((t) => {
+                        if (t.sub)
+                            return subjectReg.test(t.sub.toLowerCase())
+                        return false;
+                    });
                 }
 
                 threads = threads.filter(t => {
@@ -163,7 +171,7 @@ export class FourChan implements ICommand {
     }
 
     onError(err, imsg: IMessage) {
-        imsg.done(imsg.Message.content, true);
+        imsg.done(err, true);
     }
 
     setupOptions(args: string[]): any {
