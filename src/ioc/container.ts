@@ -1,3 +1,4 @@
+import { UrbanDicCommand } from './../commands/urban.command';
 import { IgImageCommand } from './../commands/igimage';
 import { SuggestCommand } from './../commands/suggest';
 import { RockPaperSiccors } from './../commands/games/rps';
@@ -91,6 +92,7 @@ container.bind<ICommand>(TYPES.ICommand).to(TranslateCommand).inSingletonScope()
 container.bind<ICommand>(TYPES.ICommand).to(RockPaperSiccors).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(SuggestCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(IgImageCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(UrbanDicCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
