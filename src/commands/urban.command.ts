@@ -42,7 +42,7 @@ export class UrbanDicCommand implements ICommand {
 
                 this._httpClient.getJson(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(content)}`)
                     .then(res => {
-                        if (!res.list || res.list.lenght < 1) {
+                        if (!res.list || res.list.length < 1) {
                             return msg.channel.send(`No result found for ${content}, search again dumbass`, { reply: msg });
                         }
 
