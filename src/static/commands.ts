@@ -74,6 +74,9 @@ let commands = {
 
     // Get image from instagram
     igimage: 'igimage',
+    
+    // Search Urban Dictionary
+    urban: 'urban',
 
     // Games
     games: {
