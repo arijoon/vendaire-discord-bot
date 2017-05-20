@@ -75,6 +75,9 @@ let commands = {
     // Get image from instagram
     igimage: 'igimage',
     
+    // Download user images
+    igdownload: 'igdownload',
+    
     // Search Urban Dictionary
     urban: 'urban',
 
