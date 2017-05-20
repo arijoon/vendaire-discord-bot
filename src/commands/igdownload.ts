@@ -1,6 +1,4 @@
-import { Help } from './help.command';
-import {IHttp} from '../contracts/IHttpService';
-import { IPermission } from '../contracts/IPermission';
+import { IHttp } from '../contracts/IHttpService';
 import { IMessage } from '../contracts/IMessage';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
@@ -8,10 +6,8 @@ import { injectable, inject } from 'inversify';
 import { ICommand } from '../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
-import { Message } from "discord.js";
 
 import * as opt from 'optimist';
-import * as _ from 'lodash';
 
 @injectable()
 export class IgDownload implements ICommand {
@@ -24,7 +20,6 @@ export class IgDownload implements ICommand {
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
-        @inject(TYPES.IPermission) private _permission: IPermission,
         @inject(TYPES.IHttp) private _httpClient: IHttp,
     ) { }
 
