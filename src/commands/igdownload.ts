@@ -41,13 +41,23 @@ export class IgDownload implements ICommand {
                 }
 
                 let url = ops._[0];
+                let id: string;
+
                 this._httpClient.get(url)
                     .then(res => {
 
                         let match = this._userId.exec(res);
-                        let id = match[1]
+                        id = match[1]
 
-                        return this._httpClient.getJson(`${this._api}?query_id=${this._queryId}&id=${id}&first=${ops.n}`);
+                        return this._httpClient.getJson(`${this._api}?query_id=${this._queryId}&id=${id}&first=${ops.s || ops.n}`);
+
+                    }).then(res => {
+                        if(ops.s) {
+                            let end = res.data.user.edge_owner_to_timeline_media.page_info.end_cursor;
+                            return this._httpClient.getJson(`${this._api}?query_id=${this._queryId}&id=${id}&first=${ops.n}&after=${end}`);
+                        }
+
+                        return res;
 
                     }).then(res => {
                         let nodes = res.data.user.edge_owner_to_timeline_media.edges;
@@ -74,6 +84,10 @@ export class IgDownload implements ICommand {
             alias: 'number',
             describe: 'specify the number of images to get',
             default: 10
+        }).options('s', {
+            alias: 'skip',
+            describe: 'specify the number of images to skip',
+            default: null
         }).options('h', {
             alias: 'help',
             describe: 'show this message',
