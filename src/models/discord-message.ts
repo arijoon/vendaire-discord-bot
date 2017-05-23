@@ -12,4 +12,8 @@ export class DiscordMessage {
 
         this.Timestamp = Date.now();
     }
+
+    public New() {
+        return new DiscordMessage(this.GuildId, this.MessageId, this.ChannelId);
+    }
 }
