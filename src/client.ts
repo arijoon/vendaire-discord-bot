@@ -29,7 +29,10 @@ export class Client implements IClient {
     _mappings: Map<string, ISubject<IMessage>>;
 
     _requstlimit = 2000;
-    _userRequests: Set<string> ;
+    _userRequests: Set<string>;
+
+    lastContent: string;
+    lastMsg: Message;
 
     constructor(
         @inject(TYPES.IConfig) private _config: IConfig,
@@ -120,7 +123,14 @@ export class Client implements IClient {
                 return;
             }
 
-            this.processMessage(msg);
+            if(msg.content !== this.prefix) {
+                this.lastMsg = msg;
+                this.lastContent = msg.content;
+            } else {
+                this.lastMsg.content = this.lastContent;
+            }
+
+            this.processMessage(this.lastMsg || msg);
         });
 
     }
@@ -140,7 +150,7 @@ export class Client implements IClient {
 
                 console.log(`[client.ts:${process.pid}]: Received command: ${command}`);
 
-                msg.content = msg.content.substring(fullCommand.length);
+                msg.content = msg.content.substring(fullCommand.length).trim();
 
                 const message = this.buildMessageWrapper(msg, command);
 

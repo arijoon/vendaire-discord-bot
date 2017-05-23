@@ -17,6 +17,7 @@ export class Master {
     _isAttached: boolean;
 
     prefix: string;
+    lastId: string;
 
     _requstlimit = 2000;
     _userRequests: Set<string> = new Set<string>();
@@ -74,7 +75,11 @@ export class Master {
                 return;
             }
 
-            this._processManager.process(new DiscordMessage(msg.guild.id, msg.id, msg.channel.id));
+            if(msg.content !== this.prefix) {
+                this.lastId = msg.id;
+            }
+
+            this._processManager.process(new DiscordMessage(msg.guild.id, this.lastId || msg.id, msg.channel.id));
 
         });
     }
