@@ -1,14 +1,15 @@
-import {IPermission} from '../contracts/IPermission';
+import { IPermission } from '../contracts/IPermission';
 import { inject, injectable } from 'inversify';
 import { DiscordMessage } from './../models/discord-message';
 import { IProcessManager } from './../contracts/IProcessManager';
 import { IConfig } from '../contracts/IConfig';
 import { TYPES } from "../ioc/types";
 import { swearWords } from "../static/swear-words";
+import { TimerQueue } from "../components/timer-queue.com";
+
 import * as util from 'util';
 import * as discord from 'discord.js';
 import * as os from 'os';
-import { TimerQueue } from "../components/timer-queue.com";
 
 @injectable()
 export class Master {
@@ -17,7 +18,7 @@ export class Master {
     _isAttached: boolean;
 
     prefix: string;
-    lastId: string;
+    lastMsg: DiscordMessage;
 
     _requstlimit = 2000;
     _userRequests: Set<string> = new Set<string>();
@@ -75,12 +76,11 @@ export class Master {
                 return;
             }
 
-            if(msg.content !== this.prefix) {
-                this.lastId = msg.id;
+            if(msg.content !== this.prefix || !this.lastMsg) {
+                this.lastMsg = new DiscordMessage(msg.guild.id, msg.id, msg.channel.id);
             }
 
-            this._processManager.process(new DiscordMessage(msg.guild.id, this.lastId || msg.id, msg.channel.id));
-
+            this._processManager.process(this.lastMsg);
         });
     }
 
