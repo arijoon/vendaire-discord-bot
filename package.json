@@ -7,7 +7,7 @@
     "start": "npm run compile && SET NODE_ENV=production && nodemon --exec node build/cluster.js",
     "forever": "forever start build/cluster.js",
     "unix:prod:run": "npm run compile && export NODE_ENV=production && npm run forever",
-    "dev:multi": "npm run compile & nodemon --watch build/**.js build/cluster.js",
+    "dev:multi": "SET NODE_ENV=development && tsc && nodemon --watch build/**.js build/cluster.js",
     "prod:single": "npm run compile & SET NODE_ENV=production && nodemon --exec node build/bootstrap.js",
     "dev:run": "npm run compile & nodemon --exec node build/bootstrap.js",
     "compile": "npm run clean && tsc && npm run copyFiles",
@@ -22,7 +22,6 @@
   "author": "Arman Yaraee",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/translate": "^0.8.1",
     "@types/jimp": "^0.2.1",
     "@types/lodash": "^4.14.63",
     "@types/rx": "^4.1.1",

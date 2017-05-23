@@ -31,7 +31,6 @@ export class Client implements IClient {
     _requstlimit = 2000;
     _userRequests: Set<string>;
 
-    lastContent: string;
     lastMsg: Message;
 
     constructor(
@@ -125,9 +124,6 @@ export class Client implements IClient {
 
             if(msg.content !== this.prefix) {
                 this.lastMsg = msg;
-                this.lastContent = msg.content;
-            } else {
-                this.lastMsg.content = this.lastContent;
             }
 
             this.processMessage(this.lastMsg || msg);
@@ -137,6 +133,7 @@ export class Client implements IClient {
 
     private processMessage(msg: Message) {
         let foundCommand: boolean = false;
+        console.log("processing, ", msg.content);
 
         this._mappings.forEach((subject, command) => {
 
@@ -150,9 +147,11 @@ export class Client implements IClient {
 
                 console.log(`[client.ts:${process.pid}]: Received command: ${command}`);
 
+                let orig = msg.content;
+
                 msg.content = msg.content.substring(fullCommand.length).trim();
 
-                const message = this.buildMessageWrapper(msg, command);
+                const message = this.buildMessageWrapper(msg, command, orig);
 
                 subject.onNext(message);
 
@@ -163,7 +162,7 @@ export class Client implements IClient {
         if(!foundCommand) this.sendReadySignal();
     }
 
-    private buildMessageWrapper(msg: Message, command: string): IMessage {
+    private buildMessageWrapper(msg: Message, command: string, originalContent: string): IMessage {
         const timer = new Timer().start();
         msg.channel.startTyping();
 
@@ -172,6 +171,9 @@ export class Client implements IClient {
         }, 10000);
 
         const onDone = (cmsg?: string, err?: any) => {
+
+            msg.content = originalContent;
+
             const elapsed = timer.stop();
             const response = cmsg || "";
 
