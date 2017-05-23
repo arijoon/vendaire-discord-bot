@@ -133,7 +133,6 @@ export class Client implements IClient {
 
     private processMessage(msg: Message) {
         let foundCommand: boolean = false;
-        console.log("processing, ", msg.content);
 
         this._mappings.forEach((subject, command) => {
 
