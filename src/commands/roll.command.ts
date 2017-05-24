@@ -47,7 +47,7 @@ export class RollCommand implements ICommand {
 
                     while(match != null) {
 
-                        let num = parseInt(match[1]);
+                        let num = parseInt(match[1]) || 1;
                         let die = parseInt(match[2]);
 
                         let res = `Rolling ${num} x d${die}:`
