@@ -81,6 +81,9 @@ let commands = {
     // Search Urban Dictionary
     urban: 'urban',
 
+    // Roll dice i.e. 1d20
+    roll: 'roll',
+
     // Games
     games: {
         rps: 'grps'

@@ -1,3 +1,4 @@
+import { RollCommand } from './../commands/roll.command';
 import { IgDownload } from './../commands/igdownload';
 import { UrbanDicCommand } from './../commands/urban.command';
 import { IgImageCommand } from './../commands/igimage';
@@ -95,6 +96,7 @@ container.bind<ICommand>(TYPES.ICommand).to(SuggestCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(IgImageCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(IgDownload).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(UrbanDicCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(RollCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
