@@ -43,7 +43,12 @@ export class IgImageCommand implements ICommand {
                     .then((res) => {
                         let a = res;
                         let $ = cheerio.load(res);
-                        let img = $('meta[property="og:image"]').attr('content');
+                        let vid = $('meta[property="og:video"]')
+                        
+                        let img = vid && vid.length > 0
+                            ? vid.attr('content')
+                            : $('meta[property="og:image"]').attr('content');
+
                         let desc = $('meta[property="og:description"]').attr('content');
 
                         return msg.channel.send(desc, { file: img })
