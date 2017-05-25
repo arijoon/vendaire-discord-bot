@@ -1,3 +1,5 @@
+import { MessageUtilsHelper } from './../helpers/message-utils.helper';
+import { IMessageUtils } from './../contracts/IMessageUtils';
 import { RollCommand } from './../commands/roll.command';
 import { IgDownload } from './../commands/igdownload';
 import { UrbanDicCommand } from './../commands/urban.command';
@@ -68,6 +70,7 @@ container.bind<IQuestionService>(TYPES.IQuestion).to(QuestionService).inSingleto
 container.bind<IConfig>(TYPES.IConfig).to(Config).inSingletonScope();
 container.bind<IHttp>(TYPES.IHttp).to(HttpService);
 container.bind<IPermission>(TYPES.IPermission).to(PermissionService);
+container.bind<IMessageUtils>(TYPES.IMessageUtils).to(MessageUtilsHelper);
 container.bind<ICache<string, any>>(TYPES.ICacheString).to(CacheString);
 
 // Commands

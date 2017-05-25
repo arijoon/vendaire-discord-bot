@@ -1,3 +1,4 @@
+import {IMessageUtils} from '../contracts/IMessageUtils';
 import { IPermission } from '../contracts/IPermission';
 import { inject, injectable } from 'inversify';
 import { DiscordMessage } from './../models/discord-message';
@@ -26,6 +27,7 @@ export class Master {
     constructor(
         @inject(TYPES.IProcessManager) private _processManager: IProcessManager,
         @inject(TYPES.IPermission) private _permission: IPermission,
+        @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils,
         @inject(TYPES.IConfig) private _config: IConfig
     ) {
         this.prefix = _config.app.prefix;
@@ -78,6 +80,8 @@ export class Master {
 
             if(msg.content !== this.prefix || !this.lastMsg) {
                 this.lastMsg = new DiscordMessage(msg.guild.id, msg.id, msg.channel.id);
+            } else {
+                this._msgUtils.Delete(msg);
             }
 
             this._processManager.process(this.lastMsg);

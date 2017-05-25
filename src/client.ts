@@ -1,3 +1,4 @@
+import { IMessageUtils } from './contracts/IMessageUtils';
 import { IPermission } from './contracts/IPermission';
 import * as util from 'util';
 import { TextChannel } from 'discord.js';
@@ -36,7 +37,8 @@ export class Client implements IClient {
     constructor(
         @inject(TYPES.IConfig) private _config: IConfig,
         @inject(TYPES.IPermission) private _permission: IPermission,
-        @inject(TYPES.IProcess) @optional() private _process: IProcess
+        @inject(TYPES.IProcess) @optional() private _process: IProcess,
+        @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils
     ) {
        this._isAttached = false;
 
@@ -124,6 +126,8 @@ export class Client implements IClient {
 
             if(msg.content !== this.prefix) {
                 this.lastMsg = msg;
+            } else {
+                this._msgUtils.Delete(msg);
             }
 
             this.processMessage(this.lastMsg || msg);
@@ -169,7 +173,7 @@ export class Client implements IClient {
             if(msg.channel.typing) msg.channel.stopTyping();
         }, 10000);
 
-        const onDone = (cmsg?: string, err?: any) => {
+        const onDone = (cmsg?: string, err?: any, del?: boolean) => {
 
             msg.content = originalContent;
 

@@ -14,6 +14,7 @@ let TYPES = {
     IContent: Symbol("IContent"),
     ICacheString: Symbol("ICache<string, any>"),
     IPermission: Symbol("IPermission"),
+    IMessageUtils: Symbol("IMessageUtils"),
 
     // Multithreading
     IProcess: Symbol("IProcess"),
