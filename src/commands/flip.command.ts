@@ -34,7 +34,8 @@ export class FlipCommand implements ICommand {
                         result = "TAILS"
                     }
                     
-                    return msg.channel.send(`**${result}**`);
+                    msg.channel.send(`**${result}**`);
+                    resolve();
 
                 }).then(() => {
                     imsg.done();

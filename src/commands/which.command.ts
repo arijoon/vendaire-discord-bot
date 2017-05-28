@@ -34,6 +34,9 @@ export class WhichCommand implements ICommand {
                     }
 
                     let options = content.split(' ');
+                    resolve(options);
+
+                }).then((options : string[]) => {
 
                     if(options.length < 2) {
                         return msg.channel.send("Not enough Options");
