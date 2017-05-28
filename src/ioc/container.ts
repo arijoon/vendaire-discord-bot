@@ -1,3 +1,5 @@
+import { WhichCommand } from './../commands/which.command';
+import { FlipCommand } from "../commands/flip.command";
 import { MessageUtilsHelper } from './../helpers/message-utils.helper';
 import { IMessageUtils } from './../contracts/IMessageUtils';
 import { RollCommand } from './../commands/roll.command';
@@ -100,6 +102,8 @@ container.bind<ICommand>(TYPES.ICommand).to(IgImageCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(IgDownload).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(UrbanDicCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(RollCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(FlipCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(WhichCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 
