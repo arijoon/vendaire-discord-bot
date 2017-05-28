@@ -84,6 +84,12 @@ let commands = {
     // Roll dice i.e. 1d20
     roll: 'roll',
 
+    // Choose an option at random
+    which: 'which',
+
+    // Flip a coin
+    flip: 'flip',
+
     // Games
     games: {
         rps: 'grps'
