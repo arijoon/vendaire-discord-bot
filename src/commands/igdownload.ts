@@ -8,6 +8,7 @@ import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 
 import * as opt from 'optimist';
+import { commonRegex } from "../helpers/common-regex";
 
 @injectable()
 export class IgDownload implements ICommand {
@@ -17,6 +18,7 @@ export class IgDownload implements ICommand {
     _userId = /{"id": "(\d+)"}/;
     _queryId = "17880160963012870";
     _api = "https://www.instagram.com/graphql/query/"; // GET with query_id, id, first
+    _base = "https://www.instagram.com";
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
@@ -39,8 +41,11 @@ export class IgDownload implements ICommand {
                     imsg.done();
                     return;
                 }
+                
+                let url = commonRegex.link.test(ops._[0])
+                    ? commonRegex.link.exec(ops._[0])[0]
+                    : `${this._base}/${ops._[0]}`
 
-                let url = ops._[0];
                 let id: string;
 
                 this._httpClient.get(url)
@@ -83,7 +88,7 @@ export class IgDownload implements ICommand {
         .options('n', {
             alias: 'number',
             describe: 'specify the number of images to get',
-            default: 10
+            default: 1
         }).options('s', {
             alias: 'skip',
             describe: 'specify the number of images to skip',
