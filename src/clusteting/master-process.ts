@@ -45,7 +45,7 @@ export class Master {
         
        let queue = new TimerQueue();
 
-       this._client.on("disconnect",
+       this._client.on("error",
            () => {
                console.log(`[master:${process.pid}] Disconnected, trying to login ...`)
                queue.doTask(
