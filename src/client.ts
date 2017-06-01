@@ -56,9 +56,9 @@ export class Client implements IClient {
 
        let queue = new TimerQueue();
 
-       this._client.on("disconnect",
-           () => {
-               console.log(`[master:${process.pid}] Disconnected, trying to login ...`)
+       this._client.on("error",
+           (err) => {
+               console.log(`[master:${process.pid}] Errored, trying to login ...`, err)
                queue.doTask(
                    () => this._client.login(this._config.secret.bot.token)
                        .then(() => console.log(`[client:${process.pid}] Successfully logged in again`))
