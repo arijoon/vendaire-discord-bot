@@ -11,7 +11,7 @@ let commands = {
     dc: 'dc',
     
     // Post random Pics
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart' ],
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga' ],
     randomPic: 'randompic',
 
     // Bog related
