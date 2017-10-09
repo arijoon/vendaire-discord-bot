@@ -49,7 +49,7 @@ export class TranslateCommand implements ICommand {
 
                 let res;
                 if (this._cache.has(fullContent)) {
-                    res = msg.channel.send('', this._cache.getType<string>(content));
+                    res = msg.channel.send('', this._cache.get(content));
 
                 } else {
 
