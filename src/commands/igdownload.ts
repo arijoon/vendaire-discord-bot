@@ -74,7 +74,15 @@ export class IgDownload implements ICommand {
 
                         return results;
                     }).then((res: string[]) => {
-                        return msg.channel.send('', { files: res });
+                        if(res.length > 10) {
+                            for(let i = 0; i < res.length/10; i++) {
+                                msg.channel.send('', { files: res.slice(i*10, Math.min(i*10 + 10, res.length)), split: true });
+                            }
+
+                            return msg.channel.send("Sending all");
+                        } else {
+                            return msg.channel.send('', { files: res, split: true });
+                        }
                     }).then(res => {
                         imsg.done();
                     }).catch(err => {
