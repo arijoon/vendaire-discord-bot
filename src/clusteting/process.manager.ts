@@ -32,32 +32,30 @@ export class ProcessManager implements IProcessManager {
     }
 
     start(cluster: any) {
-           this._cluster = cluster;
+        this._cluster = cluster;
 
-           console.log(`[process-manager.ts:${process.pid}] Starting master with ${this.numCpus} cores`);
+        console.log(`[process-manager.ts:${process.pid}] Starting master with ${this.numCpus} cores`);
 
-           for (let i = 0; i < this.numCpus; i++) {
-                this.startWorker();
-           }
+        this.startWorker();
 
-           this._cluster.on('exit', (worker, code, signal) => {
-               console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`);
+        this._cluster.on('exit', (worker, code, signal) => {
+            console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`);
 
-               this.startWorker();
+            this.startWorker();
 
-               let w = this._workers[worker.process.pid];
+            let w = this._workers[worker.process.pid];
 
-               if (this._availableSet.has(w)) {
-                   this._availableSet.delete(w);
+            if (this._availableSet.has(w)) {
+                this._availableSet.delete(w);
 
-                   let index = this._available.indexOf(w);
+                let index = this._available.indexOf(w);
 
-                   if (index >= 0) {
-                       this._available.splice(index, 1);
-                   }
-               }
+                if (index >= 0) {
+                    this._available.splice(index, 1);
+                }
+            }
 
-           });
+        });
     }
 
     private startWorker(): any {
@@ -68,7 +66,7 @@ export class ProcessManager implements IProcessManager {
         console.log(`[+] Added Worker ${w.process.pid}`);
 
         w.on('message', (msg) => {
-            if(msg.ready) {
+            if (msg.ready) {
                 if (!this._availableSet.has(w)) {
                     this._available.push(w);
                     this._availableSet.add(w);
@@ -90,7 +88,7 @@ export class ProcessManager implements IProcessManager {
     }
 
     private update() {
-        if(this._available.length > 0 && this._messageQueue.length > 0) {
+        if (this._available.length > 0 && this._messageQueue.length > 0) {
             this.nextAvailable.send({
                 discordMessage: this._messageQueue.pop()
             });
