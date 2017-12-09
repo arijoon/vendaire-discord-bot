@@ -1,2 +1,3 @@
 * DONE Add coin 
 * DONE Add which 
+* TODO RandomPic, find a way to not send the full link and embed the image
