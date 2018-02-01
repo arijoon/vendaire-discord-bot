@@ -15,7 +15,7 @@ export class IgDownload implements ICommand {
 
     _command: string = commands.igdownload;
     _subscriptions: IDisposable[] = [];
-    _userId = /{"id": "(\d+)"}/;
+    _userId = /{"id":.?"(\d+)"}/;
     _queryId = "17880160963012870";
     _api = "https://www.instagram.com/graphql/query/"; // GET with query_id, id, first
     _base = "https://www.instagram.com";
