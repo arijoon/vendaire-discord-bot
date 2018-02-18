@@ -50,7 +50,10 @@ export class Client implements IClient {
 
        this._userRequests = new Set<string>();
 
-       this._client.login(this._config.secret.bot.token);
+        this._client.login(this._config.secret.bot.token)
+            .catch(err => {
+                console.error(`Login failed`, err)
+            });;
 
        this._client.on("ready", () => this.attachListener())
 
