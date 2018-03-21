@@ -39,7 +39,7 @@
     "inversify-inject-decorators": "^3.0.1",
     "jimp": "^0.2.27",
     "lodash": "^4.17.4",
-    "mathjs": "^3.12.1",
+    "mathjs": "^3.20.2",
     "node-opus": "^0.2.6",
     "optimist": "^0.6.1",
     "opusscript": "0.0.3",
