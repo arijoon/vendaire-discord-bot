@@ -8,6 +8,7 @@ import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 
 import * as opt from 'optimist';
+import * as crypto from 'crypto';
 import { commonRegex } from "../helpers/common-regex";
 
 @injectable()
@@ -16,7 +17,9 @@ export class IgDownload implements ICommand {
     _command: string = commands.igdownload;
     _subscriptions: IDisposable[] = [];
     _userId = /{"id":.?"(\d+)"}/;
-    _queryId = "17880160963012870";
+    _rhx = /"rhx_gis":.?"(\w+)"/;
+    _csrf = /"csrf_token":.?"(\w+)"/;
+    _queryId = "9ca88e465c3f866a76f7adee3871bdd8";
     _api = "https://www.instagram.com/graphql/query/"; // GET with query_id, id, first
     _base = "https://www.instagram.com";
 
@@ -47,26 +50,39 @@ export class IgDownload implements ICommand {
                     : `${this._base}/${ops._[0]}`
 
                 let id: string;
+                let rhx: string;
+                let gis: string;
+                let csrf: string;
 
                 this._httpClient.get(url)
                     .then(res => {
 
-                        let match = this._userId.exec(res);
-                        id = match[1]
+                        const match = this._userId.exec(res);
+                        const rhx_match = this._rhx.exec(res);
+                        const csrf_match = this._csrf.exec(res);
+                        id = match[1];
+                        rhx = rhx_match[1];
+                        csrf = csrf_match[1];
 
-                        return this._httpClient.getJson(`${this._api}?query_id=${this._queryId}&id=${id}&first=${ops.s || ops.n}`);
+                      const variables = JSON.stringify({ user_id: id, first: ops.s || ops.n });
+
+                      return this._httpClient.getJson(`${this._api}?query_hash=${this._queryId}&variables=${encodeURIComponent(variables)}`,
+                       this.makeHeaders(rhx, variables), this.makeCookie(csrf));
 
                     }).then(res => {
-                        if(ops.s) {
-                            let end = res.data.user.edge_owner_to_timeline_media.page_info.end_cursor;
-                            return this._httpClient.getJson(`${this._api}?query_id=${this._queryId}&id=${id}&first=${ops.n}&after=${end}`);
+                      if (ops.s) {
+                          const end = res.data.user.edge_owner_to_timeline_media.page_info.end_cursor;
+                          const variables = JSON.stringify({ user_id: id, first: ops.n, after: end });
+
+                          return this._httpClient.getJson(`${this._api}?query_hash=${this._queryId}&variables=${encodeURIComponent(variables)}`,
+                            this.makeHeaders(rhx, variables), this.makeCookie(csrf));
                         }
 
                         return res;
 
                     }).then(res => {
-                        let nodes = res.data.user.edge_owner_to_timeline_media.edges;
-                        let results = []
+                        const nodes = res.data.user.edge_owner_to_timeline_media.edges;
+                        const results = []
 
                         for(let node of nodes) {
                             results.unshift(node.node.display_url);
@@ -89,6 +105,38 @@ export class IgDownload implements ICommand {
                         imsg.done(err, true);
                     });
             }));
+    }
+
+    makeVariables(userId: string, first: number, after?: number): string {
+      const variables: any = { user_id: userId, first: first};
+
+      if(after) {
+        variables.after = after
+      }
+
+      const jsonVars = JSON.stringify(variables);
+
+      const result = encodeURIComponent(jsonVars);
+
+      return result;
+    }
+
+    makeCookie(csrf: string) {
+      return {
+        ig_pr: "2",
+        csrftoken: csrf
+      };
+    }
+
+    makeHeaders(rhx: string, variables: string) {
+      const str = `${rhx}:${variables}`
+
+      const hash = crypto.createHash('md5').update(str).digest('hex');
+
+      return {
+        ['x-instagram-gis']: hash,
+        ['x-requested-with']: 'XMLHttpRequest'
+      };
     }
     
     setupOptions(args: string[]): any {
