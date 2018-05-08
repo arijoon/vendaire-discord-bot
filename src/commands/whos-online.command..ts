@@ -55,7 +55,7 @@ export class WhosOnline implements ICommand {
 
                 result += table.toString();
 
-                msg.channel.send(result, { code: '' })
+                msg.channel.send(result, { code: '', split: true })
                     .then(() => imsg.done())
                     .catch(err => {
                         console.error(err);
