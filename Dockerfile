@@ -1,7 +1,5 @@
 FROM nodejs-base
 
-RUN apk add --update git automake
-
 WORKDIR /app
 COPY package*.json ./
 
