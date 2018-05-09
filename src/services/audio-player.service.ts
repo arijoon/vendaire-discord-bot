@@ -46,7 +46,10 @@ export class AudioPlayerService implements IAudioPlayer {
 
     playRandomFile(channel: VoiceChannel, query?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (!channel) return;
+            if (!channel) {
+              reject("no voice channels");
+              return;
+            } 
 
             let filename;
 
@@ -90,8 +93,6 @@ export class AudioPlayerService implements IAudioPlayer {
             this._voiceConnection = con;
             return con;
         });
-
-        result.catch(err => console.error(err));
 
         return result;
     }
