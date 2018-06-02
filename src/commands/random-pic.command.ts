@@ -53,7 +53,7 @@ export class RandomPic implements ICommand {
                         let attach: MessageAttachment = res.attachments.values().next().value;
                         if (!attach) return res;
 
-                        let url = attach.proxyURL;
+                        let url = attach.url;
                         this._cache.set(filename, url);
 
                         return res;
