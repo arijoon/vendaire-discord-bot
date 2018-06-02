@@ -92,5 +92,4 @@ export class CacheRedis implements IBasicCache {
   escapeKeys(key: string) {
     return key.replace(/\\/g, ":");
   }
-
 }
