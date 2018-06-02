@@ -26,6 +26,25 @@
             "stopOnEntry": false,
             "args": [ ]
         },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Mocha Tests",
+          "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+          "args": [
+            "-r",
+            "ts-node/register",
+            "-r",
+            "reflect-metadata/Reflect",
+            "-u",
+            "tdd",
+            "--timeout",
+            "999999",
+            "--colors",
+            "${workspaceFolder}/src/tests/config-service.spec.ts"
+          ],
+          "internalConsoleOptions": "openOnSessionStart"
+        },
 
         {
             "type": "node",
