@@ -18,7 +18,7 @@ export class CacheRedis implements IBasicCache {
     const enabled = _config.secret.cache;
     if(!enabled) return;
 
-    this._cacheTimeoutInSeconds = _config.secret.cacheTimeout;
+    this._cacheTimeoutInSeconds = _config.secret.cacheTimeout || 76400;
     const server = _config.secret.redis.server;
     const port = _config.secret.redis.port;
 
@@ -79,7 +79,7 @@ export class CacheRedis implements IBasicCache {
 
     key = this.escapeKeys(key);
     return new Promise<void>((r, x) => {
-      this._client.set(key, val, (err, res) => {
+      this._client.set(key, val, 'EX', this._cacheTimeoutInSeconds, (err, res) => {
         if (err) {
           console.error(err);
         }
