@@ -1,4 +1,4 @@
-export interface ICache<TKey, TVal> {
+interface ICache<TKey, TVal> {
 
     Cache: Map<TKey, TVal>;
 
@@ -8,3 +8,11 @@ export interface ICache<TKey, TVal> {
 
     getType<T>(key: TKey): T;
 }
+
+interface IBasicCache {
+    has(key: string): Promise<boolean>;
+    get(key: string): Promise<string>;
+    set(key: string, val: string): Promise<void>;
+}
+
+export { ICache, IBasicCache };

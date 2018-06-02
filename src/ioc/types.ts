@@ -13,6 +13,7 @@ let TYPES = {
     IQuestion: Symbol("IQuestion"),
     IContent: Symbol("IContent"),
     ICacheString: Symbol("ICache<string, any>"),
+    IBasicCache: Symbol("IBasicCache"),
     IPermission: Symbol("IPermission"),
     IMessageUtils: Symbol("IMessageUtils"),
 

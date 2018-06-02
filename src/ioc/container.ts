@@ -21,7 +21,7 @@ import { WhosOnline } from './../commands/whos-online.command.';
 import { MyAnimeListCommand } from './../commands/my-anime-list.command';
 import { MathCommand } from './../commands/math.command';
 import { RateCommand } from './../commands/rate.command';
-import { ICache } from '../contracts/ICache';
+import { ICache, IBasicCache } from '../contracts/ICache';
 import { CacheString } from './../services/cache-string.service';
 import { SpaceOutCommand } from './../commands/space-out.command';
 import { RegionalCommand } from './../commands/regional.command';
@@ -53,6 +53,7 @@ import { Bog } from "../commands/bog.command";
 import { PermissionService } from "../services/permission.service";
 import { Search } from "../commands/search";
 import { AddPicCommand } from '../commands/add-pic.command';
+import { CacheRedis } from 'services/cache-redis.service';
 
 console.log(`[container.ts:${process.pid}] Building container`);
 
@@ -75,6 +76,7 @@ container.bind<IHttp>(TYPES.IHttp).to(HttpService);
 container.bind<IPermission>(TYPES.IPermission).to(PermissionService);
 container.bind<IMessageUtils>(TYPES.IMessageUtils).to(MessageUtilsHelper);
 container.bind<ICache<string, any>>(TYPES.ICacheString).to(CacheString);
+container.bind<IBasicCache>(TYPES.IBasicCache).to(CacheRedis);
 
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(PlayTrump).inSingletonScope();
