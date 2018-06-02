@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    restart: always
+  discord-bot:
+    depends_on:
+      - redis
+    build: .
+    volumes:
+      - /home/pi/prod/discord/assets:/app/assets
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - DiscordBot_redis_server=redis
+      - DiscordBot_redis_port=6379
+    container_name: discord-bot
+
+volumes:
+  redis_data:
+    
+
