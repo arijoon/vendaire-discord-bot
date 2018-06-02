@@ -20,17 +20,11 @@ export class FilesService implements IFiles {
         let fullPath = this._config.pathFromRoot(dir);
 
         return new Promise<string[]>((resolve, reject) => {
-
-            if(this._cache.has(fullPath)) {
-                resolve(this._cache.getType<string[]>(fullPath));
-            }
-
             fs.readdir(fullPath, (err, items) => {
                 if(err) {
                      reject(err);
                 } else {
                      resolve(items);
-                     this._cache.set(fullPath, items);
                 }
             })
         });
