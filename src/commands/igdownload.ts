@@ -53,8 +53,11 @@ export class IgDownload implements ICommand {
                 let rhx: string;
                 let gis: string;
                 let csrf: string;
+                const headers = {
+                  ['user-agent']: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+                }
 
-                this._httpClient.get(url)
+                this._httpClient.get(url, headers)
                     .then(res => {
 
                         const match = this._userId.exec(res);
@@ -65,6 +68,7 @@ export class IgDownload implements ICommand {
                         csrf = csrf_match[1];
 
                       const variables = JSON.stringify({ user_id: id, first: ops.s || ops.n });
+                      // const variables = JSON.stringify({"user_id":"4451807"});
 
                       return this._httpClient.getJson(`${this._api}?query_hash=${this._queryId}&variables=${encodeURIComponent(variables)}`,
                        this.makeHeaders(rhx, variables), this.makeCookie(csrf));
@@ -123,7 +127,7 @@ export class IgDownload implements ICommand {
 
     makeCookie(csrf: string) {
       return {
-        ig_pr: "2",
+        ig_pr: '1',
         csrftoken: csrf
       };
     }
@@ -135,7 +139,8 @@ export class IgDownload implements ICommand {
 
       return {
         ['x-instagram-gis']: hash,
-        ['x-requested-with']: 'XMLHttpRequest'
+        ['x-requested-with']: 'XMLHttpRequest',
+        ['user-agent']: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
       };
     }
     

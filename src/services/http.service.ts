@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import { IHttp } from "../contracts/IHttpService";
 import * as rp from 'request-promise';
+import * as request from 'request';
 import * as http from 'http';
 import URI from 'urijs';
 import { Transform } from "stream";
@@ -22,10 +23,16 @@ export class HttpService implements IHttp {
         }
 
         if(cookies) {
-          const cookie = new tough.Cookie(cookies);
           const jar = rp.jar();
           const domain = this._parentUrl.exec(url)[1];
-          jar.setCookie(cookie, domain);
+          for(let key in cookies) {
+            const cookie = new tough.Cookie({
+              key: key,
+              value: cookies[key]
+            });
+
+            jar.setCookie(cookie, domain);
+          }
 
           options.jar = jar;
         }
@@ -33,32 +40,45 @@ export class HttpService implements IHttp {
         return rp(options);
     }
 
-    get(url: string): Promise<any> {
-        let options = {
+    get(url: string, headers?: any): Promise<any> {
+        let options: any = {
             url: url,
             json: false
         }
 
+        if(headers) {
+          options.headers = headers;
+        }
+
         return rp(options);
     }
-    getFile(url: string): Promise<Transform> {
 
-        return new Promise<any>((resolve, reject) => {
-            http.request(url, function (response) {
-                var data = new Transform();
+  getFile(url: string): Promise<any> {
 
-                response.on('data', function (chunk) {
-                    data.push(chunk);
-                });
+    return new Promise<any>((resolve, reject) => {
+      request.head(url, function (err, res, body) {
+        resolve(request(url));
+      });
+      //   const options = {
+      //     port: 80,
+      //     path: url
+      //   };
 
-                response.on('error', function (err) {
-                    reject(err);
-                });
+      //   http.request(options, function (response) {
+      //     var data = new Transform();
 
-                response.on('end', function () {
-                    resolve(data);
-                });
-            });
-        });
-    }
+      //     response.on('data', function (chunk) {
+      //       data.push(chunk);
+      //     });
+
+      //     response.on('error', function (err) {
+      //       reject(err);
+      //     });
+
+      //     response.on('end', function () {
+      //       resolve(data);
+      //     });
+      //   });
+    });
+  }
 }

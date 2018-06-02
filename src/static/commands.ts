@@ -14,6 +14,9 @@ let commands = {
     randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys' ],
     randomPic: 'randompic',
 
+    // Add pic to the above folder
+    addPic: 'addpic',
+
     // Bog related
     quickrundown: 'quickrundown',
     bog: 'bog',

@@ -1,10 +1,12 @@
-import {ICache} from '../contracts/ICache';
+import { ICache } from '../contracts/ICache';
 import { inject, injectable } from 'inversify';
 import { IFiles } from './../contracts/IFiles';
 import { IConfig } from "../contracts/IConfig";
 import { TYPES } from "../ioc/types";
 
 import * as fs from 'fs';
+import * as path from 'path';
+import { Transform } from 'stream';
 
 @injectable()
 export class FilesService implements IFiles {
@@ -53,4 +55,29 @@ export class FilesService implements IFiles {
                 return result;
             });
     }
+
+  saveFile(data: any, dir: string, name?: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const fullPath = this._config.pathFromRoot(dir);
+      const filename = name 
+      ? `${Date.now()}_${name}` 
+      : `${Date.now()}_${this.randomGenerator(8)}.png`
+
+      const filePath = path.join(fullPath, filename)
+
+      data.pipe(fs.createWriteStream(filePath))
+      .on('close', () => resolve(filename))
+      .on('error', reject);
+    });
+  }
+
+  randomGenerator(length: number): string {
+    const options = "QWERTYUIOPASDFFGHJKLZXCVBNM".split('');
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += options.crandom();
+    }
+
+    return result;
+  }
 }
