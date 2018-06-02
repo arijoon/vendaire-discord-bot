@@ -52,6 +52,7 @@ import { IFiles } from "../contracts/IFiles";
 import { Bog } from "../commands/bog.command";
 import { PermissionService } from "../services/permission.service";
 import { Search } from "../commands/search";
+import { AddPicCommand } from '../commands/add-pic.command';
 
 console.log(`[container.ts:${process.pid}] Building container`);
 
@@ -104,6 +105,7 @@ container.bind<ICommand>(TYPES.ICommand).to(UrbanDicCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(RollCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(FlipCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(WhichCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(AddPicCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(ImMeme).inSingletonScope();
 

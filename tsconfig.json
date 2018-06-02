@@ -12,7 +12,8 @@
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "outDir": "build",
-        "rootDir": "src"
+        "rootDir": "src",
+        "baseUrl": "src"
     },
     "compileOnSave": false,
     "exclude": [
