@@ -23,6 +23,7 @@ import { MathCommand } from './../commands/math.command';
 import { RateCommand } from './../commands/rate.command';
 import { ICache, IBasicCache } from '../contracts/ICache';
 import { CacheString } from './../services/cache-string.service';
+import { CacheRedis } from './../services/cache-redis.service';
 import { SpaceOutCommand } from './../commands/space-out.command';
 import { RegionalCommand } from './../commands/regional.command';
 import { YoutubeSearch } from './../commands/youtube.command';
@@ -53,7 +54,6 @@ import { Bog } from "../commands/bog.command";
 import { PermissionService } from "../services/permission.service";
 import { Search } from "../commands/search";
 import { AddPicCommand } from '../commands/add-pic.command';
-import { CacheRedis } from 'services/cache-redis.service';
 
 console.log(`[container.ts:${process.pid}] Building container`);
 

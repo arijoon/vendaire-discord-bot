@@ -9,13 +9,15 @@ import { PermissionService } from './permission.service';
 export class CacheRedis implements IBasicCache {
 
   _client: redis.RedisClient;
-  _enabled: boolean;
+  _enabled: boolean = false;
   _cacheTimeoutInSeconds: number;
 
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig
   ) {
-    this._enabled = _config.secret.cache;
+    const enabled = _config.secret.cache;
+    if(!enabled) return;
+
     this._cacheTimeoutInSeconds = _config.secret.cacheTimeout;
     const server = _config.secret.redis.server;
     const port = _config.secret.redis.port;
@@ -26,29 +28,47 @@ export class CacheRedis implements IBasicCache {
     });
 
     this._client.on("error", err => {
-      console.error("Error in redis client ", err);
+      console.error("Error in redis client ");
+      console.error(err);
+    });
+
+    this._client.on("connect", () => this._enabled = true);
+    this._client.on("end", function ()  {
+      this._enabled = false;
+      console.error("Connetion to redis closed", arguments);
+    });
+
+    this._client.on("reconnecting", ({attempt, delay, error}) => {
+      this._enabled = false;
+      console.error(`Trying to reconnect attempt; ${attempt}, delay: ${delay}`, error);
     });
   }
 
   has(key: string): Promise<boolean> {
     if (!this._enabled) return Promise.resolve(false);
 
+    key = this.escapeKeys(key);
     return new Promise((r, x) => {
       this._client.exists(key, (err, res) => {
-        if (err)
-          x(err);
-        else
+        if (err) {
+          console.error(err);
+          r(false);
+        } else
           r(res == 1)
       })
     });
   }
 
   get(key: string): Promise<string> {
+    if (!this._enabled) Promise.resolve(null);
+
+    key = this.escapeKeys(key);
     return new Promise((r, x) => {
       this._client.get(key, (err, res) => {
-        if (err)
-          x(err);
-        else
+        if (err) {
+          console.error(err);
+          r("");
+        } else
           r(res);
       })
     });
@@ -56,17 +76,21 @@ export class CacheRedis implements IBasicCache {
 
   set(key: string, val: string): Promise<void> {
     if (!this._enabled) Promise.resolve();
-    return new Promise((r, x) => {
-      this._client.get(key, (err, res) => {
-        if (err)
-          x(err);
-        else
-          r();
+
+    key = this.escapeKeys(key);
+    return new Promise<void>((r, x) => {
+      this._client.set(key, val, (err, res) => {
+        if (err) {
+          console.error(err);
+        }
+
+        r();
       })
     });
   }
 
-  getType<T>(key: string): Promise<T> {
-    throw "Not supported method"
+  escapeKeys(key: string) {
+    return key.replace(/\\/g, ":");
   }
+
 }
