@@ -1,21 +1,55 @@
 # Lets make Vendaire great again [![Build Status](https://travis-ci.org/arijoon/vendaire-discord-bot.svg?branch=dev)](https://travis-ci.org/arijoon/vendaire-discord-bot)
 
-## Install and run
+## Install locally and run
 
 ```js
 npm install
 npm start
 ```
 
+## Service dependencies
+
+If cache is enabled, a redis instance is required, configuration are set in [docker-compose.yml](docker-compose.yml) file, or config files located inside `src` folder.
+
 ### Configuration
 
-- Edit `src/config.secret.json.template` and fill with your info
+- Edit [src/config.secret.json.template](src/config.secret.json.template) and fill with your info
+- Additionally all settings in that file can be fed in using env variables with `DiscordBot` prefix, please check [docker-compose.yml](docker-compose.yml) for reference
 - View audio, content and images config files in the `src` directory. They hold paths for the files to be run
 - Make sure you have populated image folder with the images you wish the command to post
 
+## Docker run
+
+Easiesy way to run the app is using docker. Please check the [docker-compose.yml](docker-compose.yml) for reference. You will need to modify the following line to map it to your instance:
+
+```yml
+volumes:
+  - /home/pi/prod/discord/assets:/app/assets
+```
+
+`/app/assets` is where the applications will be looking for the asset files. that is set inside the [configuration](src/config.secret.json.template) as the `root` field. In order to use docker you must also build the base image.
+
+```sh
+cd base-image
+docker build --tag nodejs-base .
+```
+
+then change directory to the root (where `docker-compose.yml` is located) `cd ..` and then compose the file
+
+```sh
+docker-compose build
+docker-compose up -d
+```
+
+**NOTE** The dockerfiles are using base images that are compatible with RaspberryPi. You should change those in the [base image](base-image/Dockerfile) Docker file if you running it elsewhere
+
+```docker
+FROM resin/raspberry-pi-alpine:latest
+```
+
 ### Commands
 
-```
+```md
 Usage: !![commands] [optional arguments]
 
     Commands:
@@ -61,7 +95,6 @@ Usage: !![commands] [optional arguments]
 
 ```ts
  _command: string = commands.dc; // dc
- _subscription: IDisposable;
 
  constructor(
      @inject(TYPES.IClient) private _client: IClient,
@@ -77,9 +110,7 @@ Usage: !![commands] [optional arguments]
  }
 ```
 
-
-
-The above class implements `ICommand` and is binded in the `container.ts` . Simply bind any new `ICommand` instance and attach to the stream you wish to intercept. It'll work like magic. 
+The above class implements `ICommand` and is binded in the `container.ts` . Simply bind any new `ICommand` instance and attach to the stream you wish to intercept. It'll work like magic.
 
 ## Entry point
 
