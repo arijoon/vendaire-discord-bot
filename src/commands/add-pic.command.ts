@@ -7,6 +7,7 @@ import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 import { IFiles } from "../contracts/IFiles";
 import { IHttp } from '../contracts/IHttpService';
+import { IPermission } from '../contracts/IPermission';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -25,6 +26,7 @@ export class AddPicCommand implements ICommand {
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.IHttp) private _http: IHttp,
     @inject(TYPES.IFiles) private _filesService: IFiles,
+    @inject(TYPES.IPermission) private _permission: IPermission,
   ) { }
 
   attach(): void {
@@ -63,8 +65,10 @@ export class AddPicCommand implements ICommand {
       // Check for attachments
       const attachment = imsg.Message.attachments.first();
 
-      if(attachment.filesize > MaxFileSize)
-        return imsg.send(`Attachment too big ${attachment.filesize}, max size: ${MaxFileSize} bytes`);
+      if(attachment.filesize > MaxFileSize) {
+        if(!ops.o || !this._permission.isAdmin(imsg.Message.author.username))
+          return imsg.send(`Attachment too big ${attachment.filesize}, max size: ${MaxFileSize} bytes`);
+      }
 
       const y = ops._;
       const stream = await this._http.getFile(attachment.url);
@@ -83,10 +87,14 @@ export class AddPicCommand implements ICommand {
 
   setupOptions(args: string[]): any {
     var argv = opt(args)
-      .usage('Save file in the specified folder, max size: 1MB')
+      .usage(`Save file in the specified folder, max size: ${MaxFileSize/(1024*1024)}MB`)
       .options('f', {
         alias: 'folder',
-        describe: 'specify the board',
+        describe: 'specify the folder',
+      }).options('o', {
+        alias: 'override-size',
+        describe: 'override the size limit (only admin can)',
+        default: false
       }).options('h', {
         alias: 'help',
         describe: 'show this message',
