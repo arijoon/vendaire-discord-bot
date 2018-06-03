@@ -89,7 +89,8 @@ export class CacheRedis implements IBasicCache {
     });
   }
 
+  keyEscapeMatcher: RegExp = /\\|\//g;
   escapeKeys(key: string) {
-    return key.replace(/\\/g, ":");
+    return key.replace(this.keyEscapeMatcher, ":");
   }
 }
