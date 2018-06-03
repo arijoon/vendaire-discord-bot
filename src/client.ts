@@ -106,7 +106,7 @@ export class Client implements IClient {
                 channel.fetchMessage(dmsg.MessageId)
                     .then((msg) => this.processMessage(msg))
                     .catch(err => {
-                        console.error(`[!client.ts:${process.pid}] Could not find message by id ${dmsg.MessageId}`, err);
+                        console.error(`[!client.ts:${process.pid}] failed to process message by id ${dmsg.MessageId}`, err);
                     });
             else 
                 console.error(`[!client.ts:${process.pid}] Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
@@ -117,7 +117,7 @@ export class Client implements IClient {
 
     private listenToDiscord() {
         this._client.on("message", (msg) => {
-
+          try {
             if (!msg.content.startsWith(this.prefix)) return;
 
             if (msg.author.bot) return;
@@ -134,6 +134,9 @@ export class Client implements IClient {
             }
 
             this.processMessage(this.lastMsg || msg);
+          } catch(err) {
+            console.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
+          }
         });
 
     }

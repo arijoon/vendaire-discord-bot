@@ -45,7 +45,8 @@ export class CacheRedis implements IBasicCache {
   }
 
   has(key: string): Promise<boolean> {
-    if (!this._enabled) return Promise.resolve(false);
+    if (!this._enabled)
+      return Promise.resolve(false);
 
     key = this.escapeKeys(key);
     return new Promise((r, x) => {
@@ -60,7 +61,8 @@ export class CacheRedis implements IBasicCache {
   }
 
   get(key: string): Promise<string> {
-    if (!this._enabled) Promise.resolve(null);
+    if (!this._enabled)
+      return Promise.resolve(null);
 
     key = this.escapeKeys(key);
     return new Promise((r, x) => {
@@ -75,7 +77,8 @@ export class CacheRedis implements IBasicCache {
   }
 
   set(key: string, val: string): Promise<void> {
-    if (!this._enabled) Promise.resolve();
+    if (!this._enabled)
+      return Promise.resolve();
 
     key = this.escapeKeys(key);
     return new Promise<void>((r, x) => {

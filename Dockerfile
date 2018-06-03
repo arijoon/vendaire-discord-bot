@@ -7,5 +7,5 @@ RUN npm install
 COPY . .
 RUN npm run compile
 
-CMD ["node","build/cluster.js"]
+CMD ["node","build/bootstrap.js"]
 
