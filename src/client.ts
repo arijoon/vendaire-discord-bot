@@ -23,199 +23,212 @@ declare let require: any;
 @injectable()
 export class Client implements IClient {
 
-    prefix: string; 
-    _client: discord.Client;
-    _isAttached: boolean;
+  prefix: string;
+  _client: discord.Client;
+  _isAttached: boolean;
 
-    _mappings: Map<string, ISubject<IMessage>>;
+  _mappings: Map<string, ISubject<IMessage>>;
+  _helpMappings: { [key: string]: IHelp } = {};
 
-    _requstlimit = 2000;
-    _userRequests: Set<string>;
+  _requstlimit = 2000;
+  _userRequests: Set<string>;
 
-    lastMsg: Message;
+  lastMsg: Message;
 
-    constructor(
-        @inject(TYPES.IConfig) private _config: IConfig,
-        @inject(TYPES.IPermission) private _permission: IPermission,
-        @inject(TYPES.IProcess) @optional() private _process: IProcess,
-        @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils
-    ) {
-       this._isAttached = false;
+  constructor(
+    @inject(TYPES.IConfig) private _config: IConfig,
+    @inject(TYPES.IPermission) private _permission: IPermission,
+    @inject(TYPES.IProcess) @optional() private _process: IProcess,
+    @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils
+  ) {
+    this._isAttached = false;
 
-       this.prefix = _config.app.prefix;
+    this.prefix = _config.app.prefix;
 
-       this._client = new discord.Client();
+    this._client = new discord.Client();
 
-       this._mappings = new Map<string, ISubject<IMessage>>();
+    this._mappings = new Map<string, ISubject<IMessage>>();
 
-       this._userRequests = new Set<string>();
+    this._userRequests = new Set<string>();
 
-        this._client.login(this._config.secret.bot.token)
-            .catch(err => {
-                console.error(`Login failed`, err)
-            });;
+    this._client.login(this._config.secret.bot.token)
+      .catch(err => {
+        console.error(`Login failed`, err)
+      });;
 
-       this._client.on("ready", () => this.attachListener())
+    this._client.on("ready", () => this.attachListener())
 
-       let queue = new TimerQueue();
+    let queue = new TimerQueue();
 
-       this._client.on("error",
-           (err) => {
-               console.log(`[master:${process.pid}] Errored, trying to login ...`, err)
-               queue.doTask(
-                   () => this._client.login(this._config.secret.bot.token)
-                       .then(() => console.log(`[client:${process.pid}] Successfully logged in again`))
-                       .catch(err => console.error(`[client:${process.pid}] Failed to login again`, err))
-               )
-           });
+    this._client.on("error",
+      (err) => {
+        console.log(`[master:${process.pid}] Errored, trying to login ...`, err)
+        queue.doTask(
+          () => this._client.login(this._config.secret.bot.token)
+            .then(() => console.log(`[client:${process.pid}] Successfully logged in again`))
+            .catch(err => console.error(`[client:${process.pid}] Failed to login again`, err))
+        )
+      });
+  }
+
+  public getCommandStream(command: string): IObservable<IMessage> {
+
+    if (!this._mappings.has(command)) {
+      this._mappings.set(command, new Subject<IMessage>());
     }
 
-    public getCommandStream(command: string): IObservable<IMessage> {
+    return this._mappings.get(command);
+  }
 
-        if(!this._mappings.has(command)) {
-            this._mappings.set(command, new Subject<IMessage>());
+  public getClient(): discord.Client {
+    return this._client;
+  }
+
+  public attachHelp(helps: IHelp[]) {
+    for(let help of helps) {
+      this._helpMappings[help.Key] = help;
+    }
+  }
+
+  private attachListener() {
+
+    if (this._isAttached) return;
+
+    this._isAttached = true;
+
+    if (this._process && this._process.IsActive) {
+      this.listenToProcessManager();
+    } else {
+      this.listenToDiscord();
+    }
+  }
+
+  private listenToProcessManager() {
+    this._process.MessagesStream.subscribe(dmsg => {
+      let channel = this._client.guilds
+        .get(dmsg.GuildId).channels
+        .get(dmsg.ChannelId) as TextChannel;
+
+      if (channel)
+        channel.fetchMessage(dmsg.MessageId)
+          .then((msg) => this.processMessage(msg))
+          .catch(err => {
+            console.error(`[!client.ts:${process.pid}] failed to process message by id ${dmsg.MessageId}`, err);
+          });
+      else
+        console.error(`[!client.ts:${process.pid}] Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
+    });
+
+    this._process.ready();
+  }
+
+  private listenToDiscord() {
+    this._client.on("message", (msg) => {
+      try {
+        if (!msg.content.startsWith(this.prefix)) return;
+
+        if (msg.author.bot) return;
+
+        if (!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
+          msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
+          return;
         }
 
-        return this._mappings.get(command);
-    }
-
-    public getClient(): discord.Client {
-        return this._client;
-    }
-
-    private attachListener() {
-
-        if (this._isAttached) return;
-
-        this._isAttached = true;
-
-        if(this._process && this._process.IsActive) {
-            this.listenToProcessManager();
+        if (msg.content !== this.prefix) {
+          this.lastMsg = msg;
         } else {
-            this.listenToDiscord();
-        }
-    }
-
-    private listenToProcessManager() {
-        this._process.MessagesStream.subscribe(dmsg => {
-            let channel = this._client.guilds
-                .get(dmsg.GuildId).channels
-                .get(dmsg.ChannelId) as TextChannel;
-
-            if(channel)
-                channel.fetchMessage(dmsg.MessageId)
-                    .then((msg) => this.processMessage(msg))
-                    .catch(err => {
-                        console.error(`[!client.ts:${process.pid}] failed to process message by id ${dmsg.MessageId}`, err);
-                    });
-            else 
-                console.error(`[!client.ts:${process.pid}] Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
-        });
-
-        this._process.ready();
-    }
-
-    private listenToDiscord() {
-        this._client.on("message", (msg) => {
-          try {
-            if (!msg.content.startsWith(this.prefix)) return;
-
-            if (msg.author.bot) return;
-
-            if(!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
-                msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
-                return;
-            }
-
-            if(msg.content !== this.prefix) {
-                this.lastMsg = msg;
-            } else {
-                this._msgUtils.Delete(msg);
-            }
-
-            this.processMessage(this.lastMsg || msg);
-          } catch(err) {
-            console.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
-          }
-        });
-
-    }
-
-    private processMessage(msg: Message) {
-        let foundCommand: boolean = false;
-
-        this._mappings.forEach((subject, command) => {
-
-            if (foundCommand) return;
-
-            const fullCommand = this.prefix + command;
-
-            if (msg.content.toLowerCase().startsWith(fullCommand)) {
-
-                foundCommand = true;
-
-                console.log(`[client.ts:${process.pid}]: Received command: ${command}`);
-
-                let orig = msg.content;
-
-                msg.content = msg.content.substring(fullCommand.length).trim();
-
-                const message = this.buildMessageWrapper(msg, command, orig);
-
-                subject.onNext(message);
-
-                return true;
-            }
-        });
-
-        if(!foundCommand) this.sendReadySignal();
-    }
-
-    private buildMessageWrapper(msg: Message, command: string, originalContent: string): IMessage {
-        const timer = new Timer().start();
-        msg.channel.startTyping();
-
-        setTimeout(() => { // Force terminate typing after 10 secs
-            if(msg.channel.typing) msg.channel.stopTyping();
-        }, 10000);
-
-        const onDone = (cmsg?: string, err?: any, del?: boolean) => {
-
-            msg.content = originalContent;
-
-            const elapsed = timer.stop();
-            const response = cmsg || "";
-
-            if(err)
-                console.error(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed/1000} seconds ${response}`);
-            else
-                console.log(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed/1000} seconds ${response}`);
-
-            msg.channel.stopTyping(true);
-
-            this.sendReadySignal();
+          this._msgUtils.Delete(msg);
         }
 
-        const wrapper = new MessageWrapper(onDone, msg, timer);
+        this.processMessage(this.lastMsg || msg);
+      } catch (err) {
+        console.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
+      }
+    });
 
-        return wrapper;
+  }
+
+  private processMessage(msg: Message) {
+    let foundCommand: boolean = false;
+
+    this._mappings.forEach((subject, command) => {
+
+      if (foundCommand) return;
+
+      const fullCommand = this.prefix + command;
+
+      if (msg.content.toLowerCase().startsWith(fullCommand)) {
+
+        foundCommand = true;
+
+        console.log(`[client.ts:${process.pid}]: Received command: ${command}`);
+
+        let orig = msg.content;
+
+        msg.content = msg.content.substring(fullCommand.length).trim();
+
+        const message = this.buildMessageWrapper(msg, command, orig);
+
+        // Check if this is for help
+        if(this._helpMappings[command] && message.Message.content.indexOf("--help") >= 0) {
+          message.send(`${this.prefix}${this._helpMappings[command].Usage}`);
+          message.done();
+        } else {
+          subject.onNext(message);
+        }
+
+        return true;
+      }
+    });
+
+    if (!foundCommand) this.sendReadySignal();
+  }
+
+  private buildMessageWrapper(msg: Message, command: string, originalContent: string): IMessage {
+    const timer = new Timer().start();
+    msg.channel.startTyping();
+
+    setTimeout(() => { // Force terminate typing after 10 secs
+      if (msg.channel.typing) msg.channel.stopTyping();
+    }, 10000);
+
+    const onDone = (cmsg?: string, err?: any, del?: boolean) => {
+
+      msg.content = originalContent;
+
+      const elapsed = timer.stop();
+      const response = cmsg || "";
+
+      if (err)
+        console.error(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+      else
+        console.log(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+
+      msg.channel.stopTyping(true);
+
+      this.sendReadySignal();
     }
 
-    private isAtRequestLimit(username: string): boolean {
+    const wrapper = new MessageWrapper(onDone, msg, timer);
 
-        if(this._userRequests.has(username)) return true;
+    return wrapper;
+  }
 
-        this._userRequests.add(username);
+  private isAtRequestLimit(username: string): boolean {
 
-        setTimeout(() => this._userRequests.delete(username), this._requstlimit);
+    if (this._userRequests.has(username)) return true;
 
-        return false;
-    }
+    this._userRequests.add(username);
 
-    private sendReadySignal() {
-        if(this._process && this._process.IsActive)
-            this._process.ready();
-    }
+    setTimeout(() => this._userRequests.delete(username), this._requstlimit);
+
+    return false;
+  }
+
+  private sendReadySignal() {
+    if (this._process && this._process.IsActive)
+      this._process.ready();
+  }
 
 }
 

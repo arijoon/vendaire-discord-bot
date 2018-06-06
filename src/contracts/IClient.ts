@@ -6,4 +6,6 @@ import { IObservable } from 'rx';
 export interface IClient {
     getCommandStream(command: string): IObservable<IMessage>
     getClient(): Client;
+
+    attachHelp(helps: IHelp[])
 }
