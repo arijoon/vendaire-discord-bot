@@ -11,149 +11,164 @@ import { IPermission } from "../contracts/IPermission";
 import * as path from 'path';
 
 @injectable()
-export class CountUsage implements ICommand {
+export class CountUsage implements ICommand, IHasHelp {
 
-    MAX_NUM = 5000;
-    _command: string = commands.countusage;
-    _cleanCommand: string = commands.clean;
-    _collectors: MessageCollector[] = [];
-    _subscriptions: IDisposable[] = [];
-    _numReg = /\d+/;
-    _phraseReg = /[A-Za-z\-\! ]+/;
+  MAX_NUM = 5000;
+  _command: string = commands.countusage;
+  _cleanCommand: string = commands.clean;
+  _collectors: MessageCollector[] = [];
+  _subscriptions: IDisposable[] = [];
+  _numReg = /\d+/;
+  _phraseReg = /[A-Za-z\-\! ]+/;
 
+  constructor(
+    @inject(TYPES.IClient) private _client: IClient,
+    @inject(TYPES.IPermission) private _permission: IPermission
+  ) { }
 
-    constructor(
-        @inject(TYPES.IClient) private _client: IClient,
-        @inject(TYPES.IPermission) private _permission: IPermission
-    ) { }
+  attach(): void {
+    this._subscriptions.push(this._client
+      .getCommandStream(this._command)
+      .subscribe(imsg => {
+        let msg = imsg.Message;
 
-    attach(): void {
-        this._subscriptions.push(this._client
-            .getCommandStream(this._command)
-            .subscribe(imsg => {
-                let msg = imsg.Message;
+        const content = msg.content;
 
-                const content = msg.content;
+        let numR = this._numReg.exec(content);
+        let phraseR = this._phraseReg.exec(content);
 
-                let numR = this._numReg.exec(content);
-               let phraseR = this._phraseReg.exec(content);
+        if (!phraseR) {
+          imsg.done();
+          return;
+        }
 
-                if(!phraseR) {
-                    imsg.done();
-                    return;
-                }
+        let phrase = phraseR[0].trim();
 
-                let phrase = phraseR[0].trim();
+        let num;
+        if (numR)
+          num = Number(numR[0]);
+        else
+          num = 100;
 
-                let num;
-               if(numR)
-                    num = Number(numR[0]);
-                else
-                    num = 100;
+        if (num > this.MAX_NUM) num = this.MAX_NUM;
 
-                if(num > this.MAX_NUM) num = this.MAX_NUM;
-                
-                let phraseMatcher = new RegExp(phrase, 'i')
+        let phraseMatcher = new RegExp(phrase, 'i')
 
-                this.fetchMessages(msg, num)
-                    .then(msges => {
-                        let authorMap = new Map<string, number>();
+        this.fetchMessages(msg, num)
+          .then(msges => {
+            let authorMap = new Map<string, number>();
 
-                        let counter = 0;
-                        msges.forEach((m: Message, index) => {
-                            if (m.author.bot
-                                || !phraseMatcher.test(m.content)) 
-                                return;
+            let counter = 0;
+            msges.forEach((m: Message, index) => {
+              if (m.author.bot
+                || !phraseMatcher.test(m.content))
+                return;
 
-                            counter ++;
+              counter++;
 
-                            let u = m.author.username;
+              let u = m.author.username;
 
-                            if (!authorMap.has(u))
-                                authorMap.set(u, 1);
-                            else
-                                authorMap.set(u, authorMap.get(u) + 1);
-                        });
+              if (!authorMap.has(u))
+                authorMap.set(u, 1);
+              else
+                authorMap.set(u, authorMap.get(u) + 1);
+            });
 
-                        let result = `Total in ${counter} messages:\n\n`;
-                        authorMap.forEach((count: number, uname: string) => {
-                            result += `\t${uname}: ${count}\n`;
-                        })
+            let result = `Total in ${counter} messages:\n\n`;
+            authorMap.forEach((count: number, uname: string) => {
+              result += `\t${uname}: ${count}\n`;
+            })
 
-                        msg.channel.sendCode('md', result).then(() => imsg.done());
-                    }).catch(err => {
-                        console.error(err);
-                        imsg.done();
-                    });
-            }));
+            msg.channel.sendCode('md', result).then(() => imsg.done());
+          }).catch(err => {
+            console.error(err);
+            imsg.done();
+          });
+      }));
 
-        this._subscriptions.push(this._client
-            .getCommandStream(this._cleanCommand)
-            .subscribe(imsg => {
-                let msg = imsg.Message;
-                const content = msg.content;
+    this._subscriptions.push(this._client
+      .getCommandStream(this._cleanCommand)
+      .subscribe(imsg => {
+        let msg = imsg.Message;
+        const content = msg.content;
 
-                if(!this._permission.isAdmin(msg.author.username)) {
-                    msg.channel.send('You cannot bulk delete');
-                    imsg.done();
-                    return;
-                }
+        if (!this._permission.isAdmin(msg.author.username)) {
+          msg.channel.send('You cannot bulk delete');
+          imsg.done();
+          return;
+        }
 
-                let numR = this._numReg.exec(content);
+        let numR = this._numReg.exec(content);
 
-                let num;
-                if (numR)
-                    num = Number(numR[0]);
-                else
-                    num = 100;
+        let num;
+        if (numR)
+          num = Number(numR[0]);
+        else
+          num = 100;
 
-                if (num > this.MAX_NUM) num = this.MAX_NUM;
+        if (num > this.MAX_NUM) num = this.MAX_NUM;
 
-                this.fetchMessages(msg, num < 10 ? 10 : num)
-                    .then(msges => {
+        this.fetchMessages(msg, num < 10 ? 10 : num)
+          .then(msges => {
 
-                        if(msges.length > num) {
-                            msges = msges.slice(0, num);
-                        }
+            if (msges.length > num) {
+              msges = msges.slice(0, num);
+            }
 
-                        msges = msges.filter(m => (m.author.bot || msg.mentions.users.get(m.author.id)) && m.deletable);
+            msges = msges.filter(m => (m.author.bot || msg.mentions.users.get(m.author.id)) && m.deletable);
 
-                        msges.forEach(m => m.delete())
+            msges.forEach(m => m.delete())
 
-                        imsg.done();
-                    }).catch(err => {
-                        console.error(err);
-                        imsg.done();
-                    });
-            }));
-    }
+            imsg.done();
+          }).catch(err => {
+            console.error(err);
+            imsg.done();
+          });
+      }));
+  }
 
-    fetchMessages(mainMessage: Message, remaining: number, result: Message[]= []): Promise<Message[]> {
-        return new Promise<Message[]>((resolve, reject) => {
+  public getHelp(): IHelp[] {
+    return [
+      {
+        Key: this._command,
+        Usage: `countusage TEXT NUMBER_OF_MESSAGES_TO_SEARCH (max: ${this.MAX_NUM})`,
+        Message: "counts the number of times a text has appeared"
+      },
+      {
+        Key: this._cleanCommand,
+        Usage: "clean NUMBER_OF_MESSAGES_TO_REMOVE",
+         Message: "removes the last x number of messages the bot has posted"
+      }
+    ]
+  }
 
-            let innerFetch = (mainMsg: Message, remaining: number, result: Message[], resolve: Function, reject: Function) => {
-                let current = remaining > 100 ? 100 : remaining;
-                remaining -= current;
+  fetchMessages(mainMessage: Message, remaining: number, result: Message[] = []): Promise<Message[]> {
+    return new Promise<Message[]>((resolve, reject) => {
 
-                let options: any = { limit: current };
-                if(result.length > 0) options.before = result[result.length-1].id
+      let innerFetch = (mainMsg: Message, remaining: number, result: Message[], resolve: Function, reject: Function) => {
+        let current = remaining > 100 ? 100 : remaining;
+        remaining -= current;
 
-                mainMsg.channel.fetchMessages(options)
-                    .then(msgs => {
-                        result.push.apply(result, msgs.array())
+        let options: any = { limit: current };
+        if (result.length > 0) options.before = result[result.length - 1].id
 
-                        if (remaining == 0) {
-                            resolve(result);
-                            return;
-                        }
+        mainMsg.channel.fetchMessages(options)
+          .then(msgs => {
+            result.push.apply(result, msgs.array())
 
-                        innerFetch(mainMsg, remaining, result, resolve, reject);
-                    });
-            };
+            if (remaining == 0) {
+              resolve(result);
+              return;
+            }
 
-            innerFetch(mainMessage, remaining, result, resolve, reject);
-        });
+            innerFetch(mainMsg, remaining, result, resolve, reject);
+          });
+      };
 
-    }
+      innerFetch(mainMessage, remaining, result, resolve, reject);
+    });
+
+  }
+
 
 }
