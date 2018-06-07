@@ -11,7 +11,7 @@ let commands = {
     dc: 'dc',
     
     // Post random Pics
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc' ],
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc', 'tekken' ],
     randomPic: 'randompic',
 
     // Add pic to the above folder
