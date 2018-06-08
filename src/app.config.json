@@ -21,7 +21,7 @@
   "assets": {
     "root": "assets",
     "audio": {
-      "trump": "trump-audio"
+      "root": "audio"
     },
     "images": {
       "root": "assets/images",
