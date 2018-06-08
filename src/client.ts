@@ -128,7 +128,6 @@ export class Client implements IClient {
 
   private listenToDiscord() {
     this._client.on("message", (msg) => {
-      this.onDiscordMessage(msg);
       if (!msg.content.startsWith(this.prefix)) return;
 
       if (msg.author.bot) return;
@@ -137,6 +136,8 @@ export class Client implements IClient {
         msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
         return;
       }
+
+      this.onDiscordMessage(msg);
     });
   }
 
