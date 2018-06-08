@@ -10,6 +10,7 @@ export class  TimerQueue {
 
     constructor(timeout: number = 1000) {
         this._timeout = timeout;
+        this._queue = [];
         this._tasks = new Map<IDisposable, Function>();
     }
 
@@ -27,10 +28,6 @@ export class  TimerQueue {
 
         this._tasks.set(d, task);
         this._queue.unshift(d);
-    }
-
-    setNewTimeout(timeout: number) {
-        this._timeout = timeout;
     }
 
     private update() {

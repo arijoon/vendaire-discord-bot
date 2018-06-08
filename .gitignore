@@ -17,6 +17,7 @@ secret
 # Tmp files
 .cache/
 tmp/
+.nyc_output/
 
 
 # Ignored directories
