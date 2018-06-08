@@ -129,11 +129,6 @@ export class Client implements IClient {
   private listenToDiscord() {
     this._client.on("message", (msg) => {
       this.onDiscordMessage(msg);
-    });
-  }
-
-  private onDiscordMessage(msg: Message) {
-    try {
       if (!msg.content.startsWith(this.prefix)) return;
 
       if (msg.author.bot) return;
@@ -142,7 +137,11 @@ export class Client implements IClient {
         msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
         return;
       }
+    });
+  }
 
+  private onDiscordMessage(msg: Message) {
+    try {
       this.processMessage(msg);
     } catch (err) {
       this._logger.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
