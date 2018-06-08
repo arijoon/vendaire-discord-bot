@@ -9,6 +9,7 @@ import { Subject, ISubject, IObservable } from 'rx';
 import { injectable, inject, optional } from 'inversify';
 import { IClient } from './contracts';
 import { swearWords } from './static';
+import { commands } from './static';
 
 import * as discord from 'discord.js';
 import { TYPES } from './ioc/types';
@@ -23,12 +24,11 @@ export class Client implements IClient {
   _isAttached: boolean;
 
   _mappings: Map<string, ISubject<IMessage>>;
+  _all: ISubject<IMessage> = new Subject<IMessage>();
   _helpMappings: { [key: string]: IHelp } = {};
 
   _requstlimit = 2000;
   _userRequests: Set<string>;
-
-  lastMsg: Message;
 
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig,
@@ -76,6 +76,10 @@ export class Client implements IClient {
     return this._mappings.get(command);
   }
 
+  public getGlobalCommandStream(): IObservable<IMessage> {
+    return this._all;
+  }
+
   public getClient(): discord.Client {
     return this._client;
   }
@@ -84,6 +88,10 @@ export class Client implements IClient {
     for(let help of helps) {
       this._helpMappings[help.Key] = help;
     }
+  }
+
+  public processDiscordMessage(msg: Message) {
+    this.onDiscordMessage(msg);
   }
 
   private attachListener() {
@@ -120,32 +128,34 @@ export class Client implements IClient {
 
   private listenToDiscord() {
     this._client.on("message", (msg) => {
-      try {
-        if (!msg.content.startsWith(this.prefix)) return;
-
-        if (msg.author.bot) return;
-
-        if (!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
-          msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
-          return;
-        }
-
-        if (msg.content !== this.prefix) {
-          this.lastMsg = msg;
-        } else {
-          this._msgUtils.Delete(msg);
-        }
-
-        this.processMessage(this.lastMsg || msg);
-      } catch (err) {
-        this._logger.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
-      }
+      this.onDiscordMessage(msg);
     });
+  }
 
+  private onDiscordMessage(msg: Message) {
+    try {
+      if (!msg.content.startsWith(this.prefix)) return;
+
+      if (msg.author.bot) return;
+
+      if (!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
+        msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
+        return;
+      }
+
+      this.processMessage(msg);
+    } catch (err) {
+      this._logger.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
+    }
   }
 
   private processMessage(msg: Message) {
     let foundCommand: boolean = false;
+
+    // Handle special replay case
+    if(msg.content === this.prefix) {
+      msg.content = this.prefix + commands.replay
+    }
 
     this._mappings.forEach((subject, command) => {
 
@@ -171,6 +181,7 @@ export class Client implements IClient {
           message.done();
         } else {
           subject.onNext(message);
+          this._all.onNext(message);
         }
 
         return true;
@@ -205,7 +216,7 @@ export class Client implements IClient {
       this.sendReadySignal();
     }
 
-    const wrapper = new MessageWrapper(onDone, msg, timer);
+    const wrapper = new MessageWrapper(onDone, msg, timer, msg.content, command);
 
     return wrapper;
   }

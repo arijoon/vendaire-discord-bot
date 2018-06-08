@@ -2,33 +2,33 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 
 @injectable()
-export class CacheString implements ICache<string, any> {
+export class InMemoryCache implements ICache<string, any> {
 
-    Cache: Map<string, any>;
+    _cache: Map<string, any>;
 
     _enabled: boolean;
 
     constructor(
-        @inject(TYPES.IConfig) private _config: IConfig
+        @inject(TYPES.IConfig) config: IConfig
     ) {
-        this.Cache = new Map<string, any>();
-        this._enabled = _config.secret.cache;
+        this._cache = new Map<string, any>();
+        this._enabled = config.secret.cache;
     }
 
     has(key: string): boolean {
         if(!this._enabled) return false;
 
-        return this.Cache.has(key);
+        return this._cache.has(key);
     }
 
     get(key: string): any {
-        return this.Cache.get(key);
+        return this._cache.get(key);
     }
 
     set(key: string, val: any): void {
         if(!this._enabled) return;
 
-        this.Cache.set(key, val);
+        this._cache.set(key, val);
     }
 
     getType<T>(key: string): T {
