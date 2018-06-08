@@ -18,7 +18,7 @@ export class YoutubeSearch implements ICommand {
         @inject(TYPES.IConfig) private _config: IConfig
     ){
         this._yt = new Youtube();
-        this._yt.setKey(_config.secret.youtube.key)
+        this._yt.setKey(_config.app.youtube.key)
     }
 
     attach(): void {

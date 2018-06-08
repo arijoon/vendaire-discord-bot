@@ -1,12 +1,49 @@
 {
-    "env": {
-        "development": {
-            "prefix": "~!!"
-        },
-        "production": {
-            "prefix": "!!"
-        }
+  "env": {
+    "development": {
+      "cache": false,
+      "prefix": "~!!"
     },
-
-    "assets": "assets"
+    "production": {
+      "cache": true,
+      "prefix": "!!"
+    }
+  },
+  "cacheTimeout": 86400,
+  "redis": {
+    "server": "localhost",
+    "port": 9079
+  },
+  "api": {
+    "random-question": "http://jservice.io/api/random",
+    "4chan": "http://a.4cdn.org"
+  },
+  "assets": {
+    "root": "assets",
+    "audio": {
+      "trump": "trump-audio"
+    },
+    "images": {
+      "root": "assets/images",
+      "tfw": "tfw",
+      "bog": "bog",
+      "exposed": "exposed",
+      "god": "god",
+      "tsu": "tsu",
+      "fap": "fap",
+      "call": "call",
+      "bullshit": "bullshit",
+      "memri": "memri",
+      "yousmart": "you-smart",
+      "ungabunga": "ungabunga",
+      "kys": "kys",
+      "misc": "misc",
+      "tekken": "tekken",
+      "lol": "lol"
+    },
+    "content": {
+      "root": "assets/content",
+      "quickrundown": "quickrundown.txt"
+    }
+  }
 }
