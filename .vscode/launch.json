@@ -41,7 +41,7 @@
             "--timeout",
             "999999",
             "--colors",
-            "${workspaceFolder}/src/tests/utils/logger.spec.ts"
+            "${workspaceFolder}/src/tests/utils/timer-queue.spec.ts"
           ],
           "internalConsoleOptions": "openOnSessionStart"
         },

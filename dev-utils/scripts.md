@@ -1,6 +1,6 @@
 # Developer scripts to help with development
 
-## Generating index files from existing directories:
+## Generating index files from existing directories
 
 interfaces:
 
