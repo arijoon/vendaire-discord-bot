@@ -4,7 +4,6 @@ interface IConfig {
     admin: string;
     images: Map<string, string>;
     api: Map<string, string>;
-    audios: any;
     content: any;
     app: any;
 
