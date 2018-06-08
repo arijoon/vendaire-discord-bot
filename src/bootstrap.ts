@@ -1,8 +1,8 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import './extensions/index';
-import { container } from "./ioc/container";
-import { TYPES } from "./ioc/types";
-import { IClient } from "./contracts/IClient";
+import { container } from './ioc/container';
+import { TYPES } from './ioc/types';
+import { IClient } from './contracts';
 
 const commands: ICommand[] = container.getAll<ICommand>(TYPES.ICommand);
 const client: IClient = container.get<IClient>(TYPES.IClient);

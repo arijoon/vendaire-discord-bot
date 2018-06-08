@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { DiscordMessage } from '../models/discord-message';
-import { IProcessManager } from '../contracts/IProcessManager';
+import { IProcessManager } from '../contracts';
 import { TYPES } from 'ioc/types';
 
 import * as os from 'os';

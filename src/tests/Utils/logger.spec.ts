@@ -1,4 +1,4 @@
-import { Logger } from '../../helpers/logger';
+import { Logger } from '../../helpers';
 import { expect } from 'chai';
 import 'mocha';
 

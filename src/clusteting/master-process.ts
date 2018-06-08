@@ -1,10 +1,10 @@
-import {IMessageUtils} from '../contracts/IMessageUtils';
+import {IMessageUtils} from '../contracts';
 import { inject, injectable } from 'inversify';
 import { DiscordMessage } from './../models/discord-message';
-import { IProcessManager } from './../contracts/IProcessManager';
-import { TYPES } from "../ioc/types";
-import { swearWords } from "../static/swear-words";
-import { TimerQueue } from "../components/timer-queue.com";
+import { IProcessManager } from './../contracts';
+import { TYPES } from '../ioc/types';
+import { swearWords } from '../static';
+import { TimerQueue } from '../components/timer-queue.com';
 
 import * as util from 'util';
 import * as discord from 'discord.js';

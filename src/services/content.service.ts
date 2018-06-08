@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { TYPES } from "../ioc/types";
+import { TYPES } from '../ioc/types';
 
 import * as fs from 'fs';
 

@@ -1,5 +1,5 @@
 import { inject, injectable, optional } from 'inversify';
-import { TYPES } from "../ioc/types";
+import { TYPES } from '../ioc/types';
 
 import * as rp from 'request-promise';
 

@@ -1,19 +1,19 @@
-import { IMessageUtils } from './contracts/IMessageUtils';
+import { IMessageUtils } from './contracts';
 import * as util from 'util';
 import { TextChannel } from 'discord.js';
-import { IProcess } from './contracts/IProcess.';
-import { Timer } from './helpers/timer.helper';
+import { IProcess } from './contracts';
+import { Timer } from './helpers';
 import { MessageWrapper } from './models/message-wrapper.model';
 import { Message } from 'discord.js';
-import { Subject, ISubject, IObservable } from "rx";
-import { injectable, inject, optional } from "inversify";
-import { IClient } from './contracts/IClient';
-import { swearWords } from "./static/swear-words";
+import { Subject, ISubject, IObservable } from 'rx';
+import { injectable, inject, optional } from 'inversify';
+import { IClient } from './contracts';
+import { swearWords } from './static';
 
 import * as discord from 'discord.js';
-import { TYPES } from "./ioc/types";
-import { IMessage } from "./contracts/IMessage";
-import { TimerQueue } from "./components/timer-queue.com";
+import { TYPES } from './ioc/types';
+import { IMessage } from './contracts';
+import { TimerQueue } from './components/timer-queue.com';
 
 @injectable()
 export class Client implements IClient {

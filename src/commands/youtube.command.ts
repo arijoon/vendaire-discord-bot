@@ -1,9 +1,9 @@
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { inject } from 'inversify';
 import { injectable } from 'inversify';
-import { commands } from "../static/commands";
-import { TYPES } from "../ioc/types";
-import { Message } from "discord.js";
+import { commands } from '../static';
+import { TYPES } from '../ioc/types';
+import { Message } from 'discord.js';
 
 import * as Youtube from 'youtube-node';
 

@@ -1,8 +1,8 @@
 import { injectable, inject } from 'inversify';
-import { commands } from "../static/commands";
-import { TYPES } from "../ioc/types";
-import { IClient } from "../contracts/IClient";
-import { commonRegex } from "../helpers/common-regex";
+import { commands } from '../static';
+import { TYPES } from '../ioc/types';
+import { IClient } from '../contracts';
+import { commonRegex } from '../helpers';
 
 import * as path from 'path';
 import * as cheerio from 'cheerio';

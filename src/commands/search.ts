@@ -1,13 +1,13 @@
 import { IDisposable } from 'rx';
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
 
 import * as path from 'path';
-import { RichEmbed } from "discord.js";
-import { commonRegex } from "../helpers/common-regex";
-import { colors } from "../static/colors";
+import { RichEmbed } from 'discord.js';
+import { commonRegex } from '../helpers';
+import { colors } from '../static';
 
 @injectable()
 export class Search implements ICommand {

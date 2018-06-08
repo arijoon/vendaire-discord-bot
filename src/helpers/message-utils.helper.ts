@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
-import { Message } from "discord.js";
-import { IMessageUtils } from './../contracts/IMessageUtils';
+import { Message } from 'discord.js';
+import { IMessageUtils } from './../contracts';
 
 @injectable()
 export class MessageUtilsHelper implements IMessageUtils {

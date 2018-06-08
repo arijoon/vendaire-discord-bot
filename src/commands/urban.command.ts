@@ -1,10 +1,10 @@
-import { IMessage } from '../contracts/IMessage';
+import { IMessage } from '../contracts';
 import { IDisposable } from 'rx';
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
-import { Message } from "discord.js";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
+import { Message } from 'discord.js';
 
 import * as opt from 'optimist';
 import * as _ from 'lodash';
