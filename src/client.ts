@@ -41,7 +41,7 @@ export class Client implements IClient {
 
     this._userRequests = new Set<string>();
 
-    this._client.login(this._config.secret.bot.token)
+    this._client.login(this._config.app.bot.token)
       .catch(err => {
         this._logger.error(`Login failed`, err)
       });;
@@ -54,7 +54,7 @@ export class Client implements IClient {
       (err) => {
         this._logger.info(`Errored, trying to login ...`, err)
         queue.doTask(
-          () => this._client.login(this._config.secret.bot.token)
+          () => this._client.login(this._config.app.bot.token)
             .then(() => this._logger.info(`Successfully logged in again`))
             .catch(err => this._logger.error(`Failed to login again`, err))
         )

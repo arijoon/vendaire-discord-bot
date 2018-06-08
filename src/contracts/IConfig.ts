@@ -5,7 +5,6 @@ interface IConfig {
     images: Map<string, string>;
     api: Map<string, string>;
     audios: any;
-    secret: any;
     content: any;
     app: any;
 

@@ -12,7 +12,7 @@ export class InMemoryCache implements ICache<string, any> {
         @inject(TYPES.IConfig) config: IConfig
     ) {
         this._cache = new Map<string, any>();
-        this._enabled = config.secret.cache;
+        this._enabled = config.app.cache;
     }
 
     has(key: string): boolean {

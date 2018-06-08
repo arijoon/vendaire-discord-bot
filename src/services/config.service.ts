@@ -12,14 +12,11 @@ export class Config implements IConfig {
 
   _secret: any = require('../config.secret.json');
   _appConfig: any = require('../app.config.json');
-  _contentConfig: any = require('../content.config.json');
-  _apiConfig: any = require('../api.config.json');
-  _imagesConfig: any = require('../images.config.json');
   _audiosConfig = require('../audios.config.json');
 
   constructor() {
     this._root = this._secret.root;
-    this._images = this._imagesConfig;
+    this._images = this._appConfig.assets.images;
 
 
     let env = process.env.NODE_ENV || 'production';
@@ -29,15 +26,11 @@ export class Config implements IConfig {
       this._appConfig[key] = this._appConfig['env'][env][key];
     }
 
-    this._secret = this.mergeCollections(process.env, this._secret, "DiscordBot");
+    this._appConfig = this.mergeCollections(process.env, this.mergeDeep(this._appConfig, this._secret), "DiscordBot");
   }
 
   get root(): string {
     return this._root;
-  }
-
-  get secret(): any {
-    return this._secret;
   }
 
   get images(): Map<string, string> {
@@ -45,7 +38,7 @@ export class Config implements IConfig {
   }
 
   get api(): Map<string, string> {
-    return this._apiConfig;
+    return this._appConfig.api;
   }
 
   get audios(): any {
@@ -53,7 +46,7 @@ export class Config implements IConfig {
   }
 
   get content(): any {
-    return this._contentConfig;
+    return this._appConfig.assets.content;
   }
 
   get admin(): string {
@@ -80,7 +73,7 @@ export class Config implements IConfig {
       const keyChain = key.split('_');
       keyChain.shift();
 
-      if(keyChain.length < 1) continue; 
+      if (keyChain.length < 1) continue;
 
       this.mergeKeys(keyChain, result, envCollection[key]);
     }
@@ -90,19 +83,43 @@ export class Config implements IConfig {
 
   mergeKeys(keys: string[], collection: any, value: any) {
     // base case
-    if(keys.length == 1) {
+    if (keys.length == 1) {
       collection[keys[0]] = value;
       return;
     }
 
     const type = typeof collection[keys[0]];
 
-    if(type === "undefined") {
+    if (type === "undefined") {
       collection[keys[0]] = {};
     }
 
     const newCollection = collection[keys[0]];
     keys.shift();
     this.mergeKeys(keys, newCollection, value);
+  }
+
+  isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+  }
+
+  /**
+   * Merge objects deep, source values will overwrite target
+   */
+  mergeDeep(target, source) {
+    let output = Object.assign({}, target);
+    if (this.isObject(target) && this.isObject(source)) {
+      Object.keys(source).forEach(key => {
+        if (this.isObject(source[key])) {
+          if (!(key in target))
+            Object.assign(output, { [key]: source[key] });
+          else
+            output[key] = this.mergeDeep(target[key], source[key]);
+        } else {
+          Object.assign(output, { [key]: source[key] });
+        }
+      });
+    }
+    return output;
   }
 }

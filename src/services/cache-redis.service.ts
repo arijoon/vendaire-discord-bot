@@ -11,14 +11,14 @@ export class CacheRedis implements IBasicCache {
   _cacheTimeoutInSeconds: number;
 
   constructor(
-    @inject(TYPES.IConfig) private _config: IConfig
+    @inject(TYPES.IConfig) config: IConfig
   ) {
-    const enabled = _config.secret.cache;
+    const enabled = config.app.cache;
     if(!enabled) return;
 
-    this._cacheTimeoutInSeconds = _config.secret.cacheTimeout || 76400;
-    const server = _config.secret.redis.server;
-    const port = _config.secret.redis.port;
+    this._cacheTimeoutInSeconds = config.app.cacheTimeout || 76400;
+    const server = config.app.redis.server;
+    const port = config.app.redis.port;
 
     this._client = redis.createClient({
       host: server,
