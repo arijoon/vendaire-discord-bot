@@ -92,6 +92,9 @@ let commands = {
     // Flip a coin
     flip: 'flip',
 
+    // replay the last command
+    replay: 'replay',
+
     // Games
     games: {
         rps: 'grps'
