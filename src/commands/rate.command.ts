@@ -1,9 +1,9 @@
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { inject } from 'inversify';
 import { injectable } from 'inversify';
-import { commands } from "../static/commands";
-import { TYPES } from "../ioc/types";
-import { commonRegex } from "../helpers/common-regex";
+import { commands } from '../static';
+import { TYPES } from '../ioc/types';
+import { commonRegex } from '../helpers';
 
 import * as path from 'path';
 

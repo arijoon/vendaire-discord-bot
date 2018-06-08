@@ -1,10 +1,10 @@
 import { injectable, inject } from 'inversify';
-import { IAudioPlayer } from './../contracts/IAudioPlayer';
+import { IAudioPlayer } from './../contracts';
 import { VoiceChannel, VoiceConnection } from 'discord.js';
 
 import * as path from 'path';
-import * as fs from "fs";
-import { TYPES } from "../ioc/types";
+import * as fs from 'fs';
+import { TYPES } from '../ioc/types';
 
 // declare let require: any;
 

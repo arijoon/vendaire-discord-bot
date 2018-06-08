@@ -1,8 +1,8 @@
 import { IDisposable } from 'rx';
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
 
 import * as path from 'path';
 import * as Table from 'cli-table';

@@ -1,11 +1,11 @@
-import { IMessage } from './../contracts/IMessage';
-import { IClient } from '../contracts/IClient';
-import { IQuestionService } from './../contracts/IQuestionService';
+import { IMessage } from './../contracts';
+import { IClient } from '../contracts';
+import { IQuestionService } from './../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
-import { TextChannel, Channel, GroupDMChannel } from "discord.js";
-import { Question } from "../models/question.model";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
+import { TextChannel, Channel, GroupDMChannel } from 'discord.js';
+import { Question } from '../models/question.model';
 
 @injectable()
 export class QuestionCommand implements ICommand {

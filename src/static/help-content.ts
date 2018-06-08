@@ -1,5 +1,5 @@
-import { Indentation } from './../helpers/indentation.helper';
-import { commands } from "./commands";
+import { Indentation } from './../helpers';
+import { commands } from './commands';
 
 let indent = new Indentation();
 

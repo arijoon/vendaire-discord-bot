@@ -1,4 +1,4 @@
-import { Config } from '../services/config.service';
+import { Config } from '../services';
 import { expect } from 'chai';
 import 'mocha';
 

@@ -1,12 +1,12 @@
 import { IDisposable } from 'rx';
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
 
 import * as _ from 'lodash';
 import * as cheerio from 'cheerio';
-import { commonRegex } from "../helpers/common-regex";
+import { commonRegex } from '../helpers';
 
 @injectable()
 export class IgImageCommand implements ICommand {

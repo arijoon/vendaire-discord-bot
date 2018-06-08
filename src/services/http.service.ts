@@ -3,7 +3,7 @@ import * as rp from 'request-promise';
 import * as request from 'request';
 import * as http from 'http';
 import URI from 'urijs';
-import { Transform } from "stream";
+import { Transform } from 'stream';
 
 const tough = require('tough-cookie');
 

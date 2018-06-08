@@ -1,10 +1,10 @@
 import { Channel, RichEmbed } from 'discord.js';
 import { inject, injectable } from 'inversify';
-import { IClient } from '../../contracts/IClient';
+import { IClient } from '../../contracts';
 import { IDisposable } from 'rx';
-import { commands } from "../../static/commands";
-import { TYPES } from "../../ioc/types";
-import { colors } from "../../static/colors";
+import { commands } from '../../static';
+import { TYPES } from '../../ioc/types';
+import { colors } from '../../static';
 
 @injectable()
 export class RockPaperSiccors implements ICommand {

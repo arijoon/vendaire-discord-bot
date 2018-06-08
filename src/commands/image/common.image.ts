@@ -1,4 +1,4 @@
-import {IMessage} from '../../contracts/IMessage';
+import {IMessage} from '../../contracts';
 
 const jimp = require('jimp');
 

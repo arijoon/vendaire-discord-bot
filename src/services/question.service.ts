@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
-import { IQuestionService } from './../contracts/IQuestionService';
-import { TYPES } from "../ioc/types";
-import { Question } from "../models/question.model";
+import { IQuestionService } from './../contracts';
+import { TYPES } from '../ioc/types';
+import { Question } from '../models/question.model';
 
 @injectable()
 export class QuestionService implements IQuestionService {

@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
+import { TYPES } from '../ioc/types';
 
 @injectable()
 export class CacheString implements ICache<string, any> {

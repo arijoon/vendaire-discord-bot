@@ -1,16 +1,16 @@
 import { RichEmbed } from 'discord.js';
 import { IDisposable } from 'rx';
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
 
 import * as rp from 'request-promise';
 import * as opt from 'optimist';
 import * as querystring from 'querystring';
 import * as token from 'google-translate-token';
-import { colors } from "../static/colors";
-import { langs } from "../static/languages";
+import { colors } from '../static';
+import { langs } from '../static';
 
 @injectable()
 export class TranslateCommand implements ICommand {

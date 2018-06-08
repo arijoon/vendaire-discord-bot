@@ -1,12 +1,12 @@
-import { IAudioPlayer } from './../contracts/IAudioPlayer';
-import { IClient } from './../contracts/IClient';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
-import { helpContent } from "../static/help-content";
-import { inject, injectable } from "inversify";
-import { IDisposable } from "rx";
-import { VoiceChannel, Message } from "discord.js";
-import { IMessage } from "../contracts/IMessage";
+import { IAudioPlayer } from './../contracts';
+import { IClient } from './../contracts';
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
+import { helpContent } from '../static';
+import { inject, injectable } from 'inversify';
+import { IDisposable } from 'rx';
+import { VoiceChannel, Message } from 'discord.js';
+import { IMessage } from '../contracts';
 
 
 @injectable()

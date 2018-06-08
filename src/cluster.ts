@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import './extensions/index';
-import { IProcessManager } from './contracts/IProcessManager';
+import { IProcessManager } from './contracts';
 import { ProcessManager } from './clusteting/process.manager';
 import { Master } from './clusteting/master-process';
-import { IProcess } from './contracts/IProcess.';
+import { IProcess } from './contracts';
 import { WorkerProcess } from './clusteting/worker-process';
-import { container } from "./ioc/container";
-import { TYPES } from "./ioc/types";
+import { container } from './ioc/container';
+import { TYPES } from './ioc/types';
 
 declare let require: any;
 

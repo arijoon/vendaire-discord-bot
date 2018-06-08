@@ -1,9 +1,9 @@
 import { IDisposable } from 'rx';
-import { IClient } from '../contracts/IClient';
+import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
-import { TYPES } from "../ioc/types";
-import { commands } from "../static/commands";
-import { MessageCollector, Message } from "discord.js";
+import { TYPES } from '../ioc/types';
+import { commands } from '../static';
+import { MessageCollector, Message } from 'discord.js';
 
 @injectable()
 export class CountUsage implements ICommand, IHasHelp {

@@ -1,4 +1,4 @@
-import { IMessage } from './../contracts/IMessage';
+import { IMessage } from './../contracts';
 import { Message } from 'discord.js';
 
 export class MessageWrapper implements IMessage {

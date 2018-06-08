@@ -1,8 +1,8 @@
 import { inject, injectable, Container } from 'inversify';
 import { ISubject, Subject, IObservable } from 'rx';
-import { IProcess } from '../contracts/IProcess.';
+import { IProcess } from '../contracts';
 import { DiscordMessage } from '../models/discord-message';
-import { TYPES } from "../ioc/types";
+import { TYPES } from '../ioc/types';
 
 @injectable()
 export class WorkerProcess implements IProcess {

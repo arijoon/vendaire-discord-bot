@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
-import { TYPES } from "./types";
-import { Client } from "../client";
+import { TYPES } from './types';
+import { Client } from '../client';
 import * as Services from '../services';
 import * as Commands from '../commands';
 import * as Contracts from '../contracts';

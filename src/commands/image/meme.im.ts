@@ -1,10 +1,10 @@
 import { CommonImage } from './common.image';
-import { IMessage } from '../../contracts/IMessage';
+import { IMessage } from '../../contracts';
 import { IDisposable } from 'rx';
-import { IClient } from '../../contracts/IClient';
+import { IClient } from '../../contracts';
 import { inject, injectable } from 'inversify';
-import { TYPES } from "../../ioc/types";
-import { commands } from "../../static/commands";
+import { TYPES } from '../../ioc/types';
+import { commands } from '../../static';
 
 const jimp = require('jimp');
 
