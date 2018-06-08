@@ -432,15 +432,6 @@
         "colors": "1.0.3"
       }
     },
-    "cluster": {
-      "version": "0.7.7",
-      "resolved": "https://registry.npmjs.org/cluster/-/cluster-0.7.7.tgz",
-      "integrity": "sha1-5JfiZ8yVa9CwUTrbSqOTNX0Ahe8=",
-      "requires": {
-        "log": "1.4.0",
-        "mkdirp": "0.5.1"
-      }
-    },
     "co": {
       "version": "4.6.0",
       "resolved": "https://registry.npmjs.org/co/-/co-4.6.0.tgz",
@@ -1257,11 +1248,6 @@
       "version": "4.6.0",
       "resolved": "https://registry.npmjs.org/lodash.some/-/lodash.some-4.6.0.tgz",
       "integrity": "sha1-G7nzFO9ri63tE7VJFpsqlF62jk0="
-    },
-    "log": {
-      "version": "1.4.0",
-      "resolved": "https://registry.npmjs.org/log/-/log-1.4.0.tgz",
-      "integrity": "sha1-S6HYkP3iSbAx3KA7w36q8yVlbxw="
     },
     "long": {
       "version": "3.2.0",

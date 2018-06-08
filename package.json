@@ -4,10 +4,9 @@
   "description": "Make vandaire greate again ",
   "main": "build/bootstrap.js",
   "scripts": {
-    "start": "npm run compile && SET NODE_ENV=production && nodemon --exec node build/cluster.js",
-    "forever": "forever start build/cluster.js",
+    "start": "npm run compile && SET NODE_ENV=production && nodemon --exec node build/bootstrap.js",
+    "forever": "forever start build/bootstrap.js",
     "unix:prod:run": "npm run compile && export NODE_ENV=production && npm run forever",
-    "dev:multi": "SET NODE_ENV=development && tsc && nodemon --watch build/**.js build/cluster.js",
     "prod:single": "npm run compile & SET NODE_ENV=production && nodemon --exec node build/bootstrap.js",
     "dev:run": "npm run compile & nodemon --exec node build/bootstrap.js",
     "compile": "npm run clean && tsc && npm run copyFiles",
@@ -25,7 +24,6 @@
   "dependencies": {
     "cheerio": "^0.22.0",
     "cli-table": "^0.3.1",
-    "cluster": "^0.7.7",
     "discord.js": "^11.1.0",
     "google-translate-token": "^1.0.0",
     "googleapis": "^19.0.0",
