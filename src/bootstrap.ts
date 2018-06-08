@@ -4,9 +4,11 @@ import { ICommand } from './contracts/ICommand';
 import { container } from "./ioc/container";
 import { TYPES } from "./ioc/types";
 import { IClient } from "./contracts/IClient";
+import { Logger } from "helpers/logger";
 
 const commands: ICommand[] = container.getAll<ICommand>(TYPES.ICommand);
 const client: IClient = container.get<IClient>(TYPES.IClient);
+const logger: ILogger = container.get<ILogger>(TYPES.Logger);
 const helps: IHelp[] = [];
 
 // Attach all commands
@@ -24,8 +26,8 @@ for (let i = 0; i < commands.length; i++) {
 
 client.attachHelp(helps);
 
-console.log("[bootstrap.ts] Attahed " + commands.length + " command" + (commands.length > 1 ? "s" : ""));
-console.log(`[bootstrap.ts] attached ${helps.length} helps`)
+logger.info("Attahed " + commands.length + " command" + (commands.length > 1 ? "s" : ""));
+logger.info(`Attached ${helps.length} helps`)
 
 function instanceOfHasHelp(object: any): object is IHasHelp {
   return 'getHelp' in object;

@@ -7,10 +7,9 @@ import { Timer } from './helpers/timer.helper';
 import { MessageWrapper } from './models/message-wrapper.model';
 import { IConfig } from './contracts/IConfig';
 import { Message } from 'discord.js';
-import { Observable, Subject, ISubject, IObservable } from "rx";
+import { Subject, ISubject, IObservable } from "rx";
 import { injectable, inject, optional } from "inversify";
 import { IClient } from './contracts/IClient';
-import { commands } from "./static/commands";
 import { swearWords } from "./static/swear-words";
 
 import * as discord from 'discord.js';
@@ -39,6 +38,7 @@ export class Client implements IClient {
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.IPermission) private _permission: IPermission,
     @inject(TYPES.IProcess) @optional() private _process: IProcess,
+    @inject(TYPES.Logger) private _logger: ILogger,
     @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils
   ) {
     this._isAttached = false;
@@ -53,7 +53,7 @@ export class Client implements IClient {
 
     this._client.login(this._config.secret.bot.token)
       .catch(err => {
-        console.error(`Login failed`, err)
+        this._logger.error(`Login failed`, err)
       });;
 
     this._client.on("ready", () => this.attachListener())
@@ -62,11 +62,11 @@ export class Client implements IClient {
 
     this._client.on("error",
       (err) => {
-        console.log(`[master:${process.pid}] Errored, trying to login ...`, err)
+        this._logger.info(`Errored, trying to login ...`, err)
         queue.doTask(
           () => this._client.login(this._config.secret.bot.token)
-            .then(() => console.log(`[client:${process.pid}] Successfully logged in again`))
-            .catch(err => console.error(`[client:${process.pid}] Failed to login again`, err))
+            .then(() => this._logger.info(`Successfully logged in again`))
+            .catch(err => this._logger.error(`Failed to login again`, err))
         )
       });
   }
@@ -113,10 +113,10 @@ export class Client implements IClient {
         channel.fetchMessage(dmsg.MessageId)
           .then((msg) => this.processMessage(msg))
           .catch(err => {
-            console.error(`[!client.ts:${process.pid}] failed to process message by id ${dmsg.MessageId}`, err);
+            this._logger.error(`failed to process message by id ${dmsg.MessageId}`, err);
           });
       else
-        console.error(`[!client.ts:${process.pid}] Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
+        this._logger.error(`Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
     });
 
     this._process.ready();
@@ -142,7 +142,7 @@ export class Client implements IClient {
 
         this.processMessage(this.lastMsg || msg);
       } catch (err) {
-        console.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
+        this._logger.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
       }
     });
 
@@ -161,7 +161,7 @@ export class Client implements IClient {
 
         foundCommand = true;
 
-        console.log(`[client.ts:${process.pid}]: Received command: ${command}`);
+        this._logger.info(`Received command: ${command}`);
 
         let orig = msg.content;
 
@@ -200,9 +200,9 @@ export class Client implements IClient {
       const response = cmsg || "";
 
       if (err)
-        console.error(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+        this._logger.error(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
       else
-        console.log(`[client.ts:${process.pid}]: Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+        this._logger.info(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
 
       msg.channel.stopTyping(true);
 

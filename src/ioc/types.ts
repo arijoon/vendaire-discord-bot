@@ -23,7 +23,10 @@ let TYPES = {
 
     // Apis
     FourChanApi: Symbol("FourChanApi"),
-    ICommand: Symbol("ICommand")
+    ICommand: Symbol("ICommand"),
+
+    // Utils
+    Logger: Symbol("ILogger")
 };
 
 export { TYPES };

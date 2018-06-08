@@ -28,6 +28,7 @@ export class Master {
         @inject(TYPES.IProcessManager) private _processManager: IProcessManager,
         @inject(TYPES.IPermission) private _permission: IPermission,
         @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils,
+        @inject(TYPES.Logger) private _logger: ILogger,
         @inject(TYPES.IConfig) private _config: IConfig
     ) {
         this.prefix = _config.app.prefix;
@@ -47,11 +48,11 @@ export class Master {
 
        this._client.on("error",
            () => {
-               console.log(`[master:${process.pid}] Disconnected, trying to login ...`)
+               this._logger.info(`[master:${process.pid}] Disconnected, trying to login ...`)
                queue.doTask(
                    () => this._client.login(this._config.secret.bot.token)
-                       .then(() => console.log(`[master:${process.pid}] Successfully logged in again`))
-                       .catch(err => console.error(`[master:${process.pid}] Failed to login again`, err))
+                       .then(() => this._logger.info(`[master:${process.pid}] Successfully logged in again`))
+                       .catch(err => this._logger.error(`[master:${process.pid}] Failed to login again`, err))
                )
            });
 

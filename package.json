@@ -44,6 +44,7 @@
     "request-promise": "^4.2.2",
     "rx": "^4.1.0",
     "rxjs": "^5.3.0",
+    "stack-trace": "0.0.10",
     "tough-cookie": "^2.3.4",
     "urijs": "^1.19.1",
     "uws": "^0.14.5",
