@@ -8,7 +8,7 @@ describe('Secret collecton', () => {
     process.env["DiscordBot_redis_port"] = "myPort";
 
     const configService = new Config();
-    const secret = configService.secret;
+    const secret = configService.app;
 
     expect(secret.redis.server).to.equal("myserver");
     expect(secret.redis.port).to.equal("myPort");
