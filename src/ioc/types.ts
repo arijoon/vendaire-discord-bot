@@ -15,10 +15,6 @@ let TYPES = {
     IPermission: Symbol("IPermission"),
     IMessageUtils: Symbol("IMessageUtils"),
 
-    // Multithreading
-    IProcess: Symbol("IProcess"),
-    IProcessManager: Symbol("IProcessManager"),
-
     // Apis
     FourChanApi: Symbol("FourChanApi"),
     ICommand: Symbol("ICommand"),

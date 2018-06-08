@@ -1,12 +1,8 @@
-import { IMessageUtils } from './contracts';
-import * as util from 'util';
-import { TextChannel } from 'discord.js';
-import { IProcess } from './contracts';
 import { Timer } from './helpers';
 import { MessageWrapper } from './models/message-wrapper.model';
 import { Message } from 'discord.js';
 import { Subject, ISubject, IObservable } from 'rx';
-import { injectable, inject, optional } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { IClient } from './contracts';
 import { swearWords } from './static';
 import { commands } from './static';
@@ -33,9 +29,7 @@ export class Client implements IClient {
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.IPermission) private _permission: IPermission,
-    @inject(TYPES.IProcess) @optional() private _process: IProcess,
     @inject(TYPES.Logger) private _logger: ILogger,
-    @inject(TYPES.IMessageUtils) private _msgUtils: IMessageUtils
   ) {
     this._isAttached = false;
 
@@ -100,33 +94,6 @@ export class Client implements IClient {
 
     this._isAttached = true;
 
-    if (this._process && this._process.IsActive) {
-      this.listenToProcessManager();
-    } else {
-      this.listenToDiscord();
-    }
-  }
-
-  private listenToProcessManager() {
-    this._process.MessagesStream.subscribe(dmsg => {
-      let channel = this._client.guilds
-        .get(dmsg.GuildId).channels
-        .get(dmsg.ChannelId) as TextChannel;
-
-      if (channel)
-        channel.fetchMessage(dmsg.MessageId)
-          .then((msg) => this.processMessage(msg))
-          .catch(err => {
-            this._logger.error(`failed to process message by id ${dmsg.MessageId}`, err);
-          });
-      else
-        this._logger.error(`Unable to fetch channel `, util.inspect(dmsg), util.inspect(this._client.guilds));
-    });
-
-    this._process.ready();
-  }
-
-  private listenToDiscord() {
     this._client.on("message", (msg) => {
       if (!msg.content.startsWith(this.prefix)) return;
 
@@ -187,8 +154,6 @@ export class Client implements IClient {
         return true;
       }
     });
-
-    if (!foundCommand) this.sendReadySignal();
   }
 
   private buildMessageWrapper(msg: Message, command: string, originalContent: string): IMessage {
@@ -207,13 +172,11 @@ export class Client implements IClient {
       const response = cmsg || "";
 
       if (err)
-        this._logger.error(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+        this._logger.error(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`, err);
       else
         this._logger.info(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
 
       msg.channel.stopTyping(true);
-
-      this.sendReadySignal();
     }
 
     const wrapper = new MessageWrapper(onDone, msg, timer, msg.content, command);
@@ -231,11 +194,5 @@ export class Client implements IClient {
 
     return false;
   }
-
-  private sendReadySignal() {
-    if (this._process && this._process.IsActive)
-      this._process.ready();
-  }
-
 }
 
