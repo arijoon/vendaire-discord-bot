@@ -1,6 +1,7 @@
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { DiscordMessage } from '../models/discord-message';
 import { IProcessManager } from '../contracts/IProcessManager';
+import { TYPES } from 'ioc/types';
 
 import * as os from 'os';
 
@@ -16,7 +17,9 @@ export class ProcessManager implements IProcessManager {
     _messageQueue: DiscordMessage[];
     _available: any[];
 
-    constructor() {
+    constructor(
+        @inject(TYPES.Logger) private _logger: ILogger,
+    ) {
         this._workers = new Map<number, any>();
         this._availableSet = new Set<any>();
         this._messageQueue = [];
@@ -34,12 +37,12 @@ export class ProcessManager implements IProcessManager {
     start(cluster: any) {
         this._cluster = cluster;
 
-        console.log(`[process-manager.ts:${process.pid}] Starting master with ${this.numCpus} cores`);
+        this._logger.info(`[process-manager.ts:${process.pid}] Starting master with ${this.numCpus} cores`);
 
         this.startWorker();
 
         this._cluster.on('exit', (worker, code, signal) => {
-            console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`);
+            this._logger.info(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`);
 
             this.startWorker();
 
@@ -63,7 +66,7 @@ export class ProcessManager implements IProcessManager {
 
         this._workers.set(w.pid, w);
 
-        console.log(`[+] Added Worker ${w.process.pid}`);
+        this._logger.info(`[+] Added Worker ${w.process.pid}`);
 
         w.on('message', (msg) => {
             if (msg.ready) {

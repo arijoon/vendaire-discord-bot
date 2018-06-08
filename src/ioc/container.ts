@@ -54,10 +54,16 @@ import { Bog } from "../commands/bog.command";
 import { PermissionService } from "../services/permission.service";
 import { Search } from "../commands/search";
 import { AddPicCommand } from '../commands/add-pic.command';
+import { Logger } from '../helpers/logger';
 
-console.log(`[container.ts:${process.pid}] Building container`);
+const consoleLogger = new Logger(console);
 
-let container = new Container();
+consoleLogger.info(`[container.ts:${process.pid}] Building container`);
+
+const container = new Container();
+
+// Utils
+container.bind<ILogger>(TYPES.Logger).toConstantValue(consoleLogger);
 
 // Core components
 container.bind<Container>(TYPES.Container).toConstantValue(container);

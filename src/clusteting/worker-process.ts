@@ -1,5 +1,4 @@
-import getDecorators from "inversify-inject-decorators";
-import { inject, injectable, multiInject, Container } from 'inversify';
+import { inject, injectable, Container } from 'inversify';
 import { ICommand } from './../contracts/ICommand';
 import { ISubject, Subject, IObservable } from 'rx';
 import { IProcess } from '../contracts/IProcess.';
@@ -13,6 +12,7 @@ export class WorkerProcess implements IProcess {
     _stream: ISubject<DiscordMessage>;
 
     constructor(
+        @inject(TYPES.Logger) private _logger: ILogger,
         @inject(TYPES.Container) private _container: Container
     ) {
         this._stream = new Subject<DiscordMessage>();
@@ -40,7 +40,7 @@ export class WorkerProcess implements IProcess {
             commands[i].attach()
         }
 
-        console.log(`[bootstrap.ts:${process.pid}] Attahed ${commands.length} command${(commands.length > 1 ? "s" : "")}`);
+        this._logger.info(`[bootstrap.ts:${process.pid}] Attahed ${commands.length} command${(commands.length > 1 ? "s" : "")}`);
     }
 
     /** Check whether process is active i.e. multi-threading */
