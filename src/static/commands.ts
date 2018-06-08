@@ -2,7 +2,6 @@ let commands = {
 
     // Glboal Prefix 
     prefix: "!!",
-    // prefix: "~!!",
     
     // Show help
     help : [ "help", " --help", " help" ],
