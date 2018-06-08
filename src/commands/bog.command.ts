@@ -1,11 +1,7 @@
-import { IConfig } from './../contracts/IConfig';
-import { IFiles } from './../contracts/IFiles';
 import { injectable, inject } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
 import { commands } from "../static/commands";
 import { TYPES } from "../ioc/types";
 import { IClient } from "../contracts/IClient";
-import { IContent } from "../contracts/IContent";
 
 import * as path from 'path';
 

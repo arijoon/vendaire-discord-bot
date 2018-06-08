@@ -1,7 +1,6 @@
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 

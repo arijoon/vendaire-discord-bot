@@ -1,4 +1,3 @@
-import {IConfig} from '../contracts/IConfig';
 import { injectable, inject } from 'inversify';
 import { IAudioPlayer } from './../contracts/IAudioPlayer';
 import { VoiceChannel, VoiceConnection } from 'discord.js';

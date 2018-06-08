@@ -1,9 +1,7 @@
 import { Channel, RichEmbed } from 'discord.js';
 import { inject, injectable } from 'inversify';
-import { IConfig } from '../../contracts/IConfig';
 import { IClient } from '../../contracts/IClient';
 import { IDisposable } from 'rx';
-import { ICommand } from '../../contracts/ICommand';
 import { commands } from "../../static/commands";
 import { TYPES } from "../../ioc/types";
 import { colors } from "../../static/colors";

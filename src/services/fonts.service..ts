@@ -1,8 +1,5 @@
 import { IFont } from './../contracts/images/IFont';
-import { ICache } from '../contracts/ICache';
 import { inject, injectable } from 'inversify';
-import { IFiles } from './../contracts/IFiles';
-import { IConfig } from "../contracts/IConfig";
 import { TYPES } from "../ioc/types";
 
 const jimp = require('jimp');

@@ -1,7 +1,4 @@
-import { IHttp } from './../contracts/IHttpService';
-import { IConfig } from './../contracts/IConfig';
 import { injectable, inject } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
 import { commands } from "../static/commands";
 import { TYPES } from "../ioc/types";
 import { IClient } from "../contracts/IClient";

@@ -1,3 +1,3 @@
-export interface ICommand {
+interface ICommand {
     attach(): void
 }

@@ -1,12 +1,8 @@
 import { IMessage } from './../contracts/IMessage';
-import { IConfig } from './../contracts/IConfig';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
-import { IFiles } from "../contracts/IFiles";
-import { IBasicCache } from '../contracts/ICache';
 
 import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';

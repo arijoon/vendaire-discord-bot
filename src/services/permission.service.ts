@@ -1,5 +1,3 @@
-import { IPermission } from './../contracts/IPermission';
-import { IConfig } from './../contracts/IConfig';
 import { injectable, inject } from 'inversify';
 import { TYPES } from "../ioc/types";
 

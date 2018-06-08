@@ -10,12 +10,25 @@
 			"taskName": "compile",
 			"args": ["run", "tsc"],
 			"suppressTaskName": true,
-			"isShellCommand": true,
+      "isShellCommand": true,
+      "isBuildCommand": true,
 			"command": "npm",
 			"options": {
 				"cwd": "${workspaceRoot}"	
-			}
-		},
+      },
+      "problemMatcher": "$tsc"
+    },
+		{
+			"taskName": "typescript-validate",
+			"args": ["run", "tsc-validate"],
+      "suppressTaskName": true,
+      "isShellCommand": true,
+			"command": "npm",
+			"options": {
+				"cwd": "${workspaceRoot}"	
+      },
+      "problemMatcher": "$tsc"
+    },
 		{
 			"taskName": "Run Server",
 			"args": ["run", "start"],

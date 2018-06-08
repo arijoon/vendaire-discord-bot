@@ -1,8 +1,6 @@
 import { IMessage } from './../contracts/IMessage';
 import { IClient } from '../contracts/IClient';
-import { IConfig } from '../contracts/IConfig';
 import { IQuestionService } from './../contracts/IQuestionService';
-import { ICommand } from '../contracts/ICommand';
 import { injectable, inject } from 'inversify';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";

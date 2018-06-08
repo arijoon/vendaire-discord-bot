@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { IConfig } from './../contracts/IConfig';
 
 import * as path from 'path';
 

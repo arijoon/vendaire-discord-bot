@@ -1,6 +1,4 @@
-import { IConfig } from './../contracts/IConfig';
 import { injectable, inject } from 'inversify';
-import { ICache } from './../contracts/ICache';
 import { TYPES } from "../ioc/types";
 
 @injectable()

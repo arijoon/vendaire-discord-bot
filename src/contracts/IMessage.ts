@@ -1,4 +1,3 @@
-import { ITimer } from './ITimer';
 import { Message } from 'discord.js';
 
 export interface IMessage {

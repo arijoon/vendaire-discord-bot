@@ -1,6 +1,4 @@
-import { IConfig } from './../contracts/IConfig';
 import { injectable, inject } from 'inversify';
-import { IBasicCache } from './../contracts/ICache';
 import { TYPES } from "../ioc/types";
 import * as redis from 'redis';
 import { PermissionService } from './permission.service';

@@ -1,5 +1,4 @@
 import { DiscordMessage } from './../models/discord-message';
-import { IStartable } from './IStartable';
 import { IObservable } from 'rx';
 
 export interface IProcess extends IStartable {

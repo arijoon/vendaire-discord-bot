@@ -1,5 +1,4 @@
 import { inject, injectable, Container } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
 import { ISubject, Subject, IObservable } from 'rx';
 import { IProcess } from '../contracts/IProcess.';
 import { DiscordMessage } from '../models/discord-message';

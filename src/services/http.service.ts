@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { IHttp } from "../contracts/IHttpService";
 import * as rp from 'request-promise';
 import * as request from 'request';
 import * as http from 'http';
