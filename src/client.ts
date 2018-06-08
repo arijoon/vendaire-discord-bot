@@ -1,11 +1,9 @@
 import { IMessageUtils } from './contracts/IMessageUtils';
-import { IPermission } from './contracts/IPermission';
 import * as util from 'util';
 import { TextChannel } from 'discord.js';
 import { IProcess } from './contracts/IProcess.';
 import { Timer } from './helpers/timer.helper';
 import { MessageWrapper } from './models/message-wrapper.model';
-import { IConfig } from './contracts/IConfig';
 import { Message } from 'discord.js';
 import { Subject, ISubject, IObservable } from "rx";
 import { injectable, inject, optional } from "inversify";
@@ -16,8 +14,6 @@ import * as discord from 'discord.js';
 import { TYPES } from "./ioc/types";
 import { IMessage } from "./contracts/IMessage";
 import { TimerQueue } from "./components/timer-queue.com";
-
-declare let require: any;
 
 @injectable()
 export class Client implements IClient {

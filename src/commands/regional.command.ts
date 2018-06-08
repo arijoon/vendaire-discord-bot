@@ -1,5 +1,4 @@
 import { IClient } from './../contracts/IClient';
-import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 import { inject, injectable } from "inversify";

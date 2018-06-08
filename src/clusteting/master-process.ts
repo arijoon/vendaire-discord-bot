@@ -1,9 +1,7 @@
 import {IMessageUtils} from '../contracts/IMessageUtils';
-import { IPermission } from '../contracts/IPermission';
 import { inject, injectable } from 'inversify';
 import { DiscordMessage } from './../models/discord-message';
 import { IProcessManager } from './../contracts/IProcessManager';
-import { IConfig } from '../contracts/IConfig';
 import { TYPES } from "../ioc/types";
 import { swearWords } from "../static/swear-words";
 import { TimerQueue } from "../components/timer-queue.com";

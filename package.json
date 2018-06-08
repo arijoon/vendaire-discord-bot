@@ -17,6 +17,7 @@
     "test:all": "npm test **/*.spec.ts",
     "clean": "rm -rf build",
     "tsc": "tsc",
+    "tsc-validate": "tsc --noEmit",
     "setDev": "SET NODE_ENV=development"
   },
   "author": "Arman Yaraee",

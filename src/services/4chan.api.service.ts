@@ -1,4 +1,3 @@
-import { IConfig } from '../contracts/IConfig';
 import { inject, injectable, optional } from 'inversify';
 import { TYPES } from "../ioc/types";
 

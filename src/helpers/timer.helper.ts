@@ -1,5 +1,3 @@
-import { ITimer } from "../contracts/ITimer";
-
 export class Timer implements ITimer {
 
     private _start: number;

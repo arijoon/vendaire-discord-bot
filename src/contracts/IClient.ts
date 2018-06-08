@@ -1,5 +1,4 @@
 import { IMessage } from './IMessage';
-import { Message } from 'discord.js';
 import { Client } from 'discord.js';
 import { IObservable } from 'rx';
 

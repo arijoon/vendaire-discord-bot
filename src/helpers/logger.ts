@@ -28,7 +28,8 @@ export class Logger implements ILogger {
     const funcName = trace.getFunctionName() || trace.getMethodName();
     const typeName = trace.getTypeName();
     const lineNumber = trace.getLineNumber();
+    const suffix = [funcName, typeName].filter(i => i).join(' ')
 
-    return `[${process.pid}, ${filename}:${lineNumber}, ${funcName ? funcName + ", ": ""}${typeName}]: ${msg}`
+    return `[${process.pid} ${filename}:${lineNumber}${suffix ? " " + suffix: ""}]: ${msg}`
   }
 }

@@ -1,4 +1,3 @@
-import { ITimer } from '../contracts/ITimer';
 import { IMessage } from './../contracts/IMessage';
 import { Message } from 'discord.js';
 

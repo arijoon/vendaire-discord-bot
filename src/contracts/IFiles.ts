@@ -1,6 +1,4 @@
-import { Transform } from "stream";
-
-export interface IFiles {
+interface IFiles {
     getAllFiles(dir: string): Promise<string[]>;
 
     /** Saves and returns the filename, data must have pipe */

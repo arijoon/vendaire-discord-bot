@@ -1,5 +1,3 @@
-import { IPermission } from './../contracts/IPermission';
-import { ICache } from './../contracts/ICache';
 let TYPES = {
     // Core
     Container: Symbol("Container"),

@@ -1,4 +1,4 @@
-export interface ITimer {
+interface ITimer {
     start(): ITimer;
     stop(): number;
 

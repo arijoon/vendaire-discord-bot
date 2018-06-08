@@ -1,10 +1,8 @@
 import { FourChanApi } from './../services/4chan.api.service';
-import { IPermission } from '../contracts/IPermission';
 import { IMessage } from '../contracts/IMessage';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
-import { ICommand } from '../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 import { Message } from "discord.js";

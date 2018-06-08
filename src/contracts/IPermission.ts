@@ -1,3 +1,3 @@
-export interface IPermission {
+interface IPermission {
     isAdmin(username: string): boolean
 }

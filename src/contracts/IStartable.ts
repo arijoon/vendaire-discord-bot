@@ -1,3 +1,3 @@
-export interface IStartable {
+interface IStartable {
     start(): void;
 }

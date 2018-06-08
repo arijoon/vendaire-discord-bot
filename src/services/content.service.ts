@@ -1,8 +1,5 @@
-import {ICache} from '../contracts/ICache';
 import { inject, injectable } from 'inversify';
-import { IContent } from './../contracts/IContent';
 import { TYPES } from "../ioc/types";
-import { IConfig } from "../contracts/IConfig";
 
 import * as fs from 'fs';
 

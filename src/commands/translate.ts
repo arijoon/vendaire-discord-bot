@@ -1,10 +1,7 @@
 import { RichEmbed } from 'discord.js';
-import { IConfig } from './../contracts/IConfig';
-import { ICache } from '../contracts/ICache';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts/IClient';
 import { injectable, inject } from 'inversify';
-import { ICommand } from './../contracts/ICommand';
 import { TYPES } from "../ioc/types";
 import { commands } from "../static/commands";
 

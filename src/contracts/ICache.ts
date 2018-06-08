@@ -14,5 +14,3 @@ interface IBasicCache {
     get(key: string): Promise<string>;
     set(key: string, val: string): Promise<void>;
 }
-
-export { ICache, IBasicCache };
