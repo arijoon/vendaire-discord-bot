@@ -29,7 +29,7 @@
         {
           "type": "node",
           "request": "launch",
-          "name": "Mocha Tests",
+          "name": "Mocha test current file",
           "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
           "args": [
             "-r",
@@ -41,7 +41,7 @@
             "--timeout",
             "999999",
             "--colors",
-            "${workspaceFolder}/src/tests/utils/timer-queue.spec.ts"
+            "${file}"
           ],
           "internalConsoleOptions": "openOnSessionStart"
         },
