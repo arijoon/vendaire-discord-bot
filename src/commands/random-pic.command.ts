@@ -61,7 +61,7 @@ export class RandomPic implements ICommand {
   }
 
   selectRandomFile(dir: string): Promise<string> {
-    const fullPath = path.join(this._config.images["root"], this._command, this._config.images[this._command][dir]);
+    const fullPath = path.join(this._config.images["root"], this._command, dir);
 
     return this._filesService
       .getAllFiles(fullPath)
