@@ -52,8 +52,8 @@ export class DidThanosKillMeComand implements ICommand, IHasHelp {
     Promise.resolve().then(async _ => {
       // 0 - wins
       // 1 - spares
-      const userIdLastChar = imsg.userId[imsg.userId.length-1];
-      const result = (+userIdLastChar) % 2;
+      const userIdNumber = this.getNumberFromSnowfalke(imsg.userId);
+      const result = userIdNumber % 2;
       const pattern = this._patterns[result];
       const filename = await this.selectRandomFile(pattern);
 
@@ -76,4 +76,10 @@ export class DidThanosKillMeComand implements ICommand, IHasHelp {
         return this._config.pathFromRoot(fullPath, lst.crandom());
       });
   }
+
+  private getNumberFromSnowfalke(snowflake: string): number {
+    return (snowflake.split("") as any[])
+      .reduce((ac, current) => (+ac) + (+current));
+  }
+
 }
