@@ -14,6 +14,7 @@ let TYPES = {
     IBasicCache: Symbol("IBasicCache"),
     IPermission: Symbol("IPermission"),
     IMessageUtils: Symbol("IMessageUtils"),
+    IOrderedSetDataAccess: Symbol("IOrderedSetDataAccess"),
 
     // Apis
     FourChanApi: Symbol("FourChanApi"),

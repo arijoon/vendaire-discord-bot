@@ -6,7 +6,6 @@ import { commands } from '../static';
 
 import * as path from 'path';
 import * as opt from 'optimist';
-import { Message, MessageAttachment } from 'discord.js';
 
 const MaxFileSize: number = 1048576; // 1MB
 
@@ -30,7 +29,7 @@ export class AddPicCommand implements ICommand {
       .subscribe(imsg => this.subscription(imsg));
   }
 
-  subscription(imsg: IMessage) {
+  private subscription(imsg: IMessage) {
     const msg = imsg.Message;
 
     Promise.resolve().then(async _ => {
@@ -65,13 +64,12 @@ export class AddPicCommand implements ICommand {
           return imsg.send(`Attachment too big ${attachment.filesize}, max size: ${MaxFileSize} bytes`);
       }
 
-      const y = ops._;
       const stream = await this._http.getFile(attachment.url);
       const dir = path.join(this._config.images["root"], this._config.images[ops.f]);
-      const filename = await this._filesService.saveFile(stream, dir, attachment.filename);
+      const filename = await this._filesService.saveFile(stream, dir, attachment.filename + msg.author.username);
 
       return imsg.send(`Successfully added as ${filename} in ${ops.f}`);
-    }).then(info => {
+    }).then(_ => {
       imsg.done();
     }).catch(err => {
       imsg.send("ooops, something went wrong", { reply: imsg.Message });

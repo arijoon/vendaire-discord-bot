@@ -84,7 +84,7 @@ export class TranslateCommand implements ICommand {
         var argv = opt(args).options('l', {
             alias: 'lang',
             describe: 'Set the target language',
-            default: 'ru'
+            default: 'en'
         }).options('f', {
             alias: 'from',
             describe: 'Set the from language',

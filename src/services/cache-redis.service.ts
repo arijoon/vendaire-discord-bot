@@ -1,7 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import * as redis from 'redis';
-import { PermissionService } from './permission.service';
 
 @injectable()
 export class CacheRedis implements IBasicCache {

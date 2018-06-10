@@ -86,6 +86,9 @@ let commands = {
     // Roll dice i.e. 1d20
     roll: 'roll',
 
+    // Remind a user of a message in time x
+    remind: 'remind',
+
     // Choose an option at random
     which: 'which',
 

@@ -45,5 +45,11 @@
       "root": "assets/content",
       "quickrundown": "quickrundown.txt"
     }
+  },
+  "commands": {
+    "remind": {
+      "pollingInMin": 10,
+      "pollingLoadMultiplier": 1.5
+    }
   }
 }
