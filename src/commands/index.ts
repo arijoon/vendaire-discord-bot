@@ -21,6 +21,7 @@ export * from "./question.command";
 export * from "./random-pic.command";
 export * from "./rate.command";
 export * from "./regional.command";
+export * from "./remind.command";
 export * from "./replay.command";
 export * from "./roll.command";
 export * from "./search";

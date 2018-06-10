@@ -22,7 +22,7 @@
       "integrity": "sha1-kEUl2D80vkCOnvEND5a/e43Rlg8=",
       "dev": true,
       "requires": {
-        "@types/node": "7.0.12"
+        "@types/node": "7.0.65"
       }
     },
     "@types/lodash": {
@@ -38,9 +38,9 @@
       "dev": true
     },
     "@types/node": {
-      "version": "7.0.12",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-7.0.12.tgz",
-      "integrity": "sha1-rl9noZwV91IUgATbB8u7Ny5p78k=",
+      "version": "7.0.65",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-7.0.65.tgz",
+      "integrity": "sha512-iUdyWWikcQnGvIZnYh5ZxnxeREykndA9+iGdo068NGNutibWknDjmmNMq/8cnS1eaTCcgqJsPsFppw3XJWNlUg==",
       "dev": true
     },
     "@types/redis": {
@@ -50,7 +50,7 @@
       "dev": true,
       "requires": {
         "@types/events": "1.2.0",
-        "@types/node": "7.0.12"
+        "@types/node": "7.0.65"
       }
     },
     "@types/rx": {

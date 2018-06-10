@@ -34,6 +34,7 @@ container.bind<IHttp>(TYPES.IHttp).to(Services.HttpService);
 container.bind<IPermission>(TYPES.IPermission).to(Services.PermissionService);
 container.bind<ICache<string, any>>(TYPES.ICacheString).to(Services.InMemoryCache);
 container.bind<IBasicCache>(TYPES.IBasicCache).to(Services.CacheRedis);
+container.bind<IOrderedSetDataAccess>(TYPES.IOrderedSetDataAccess).to(Services.OrderedSetDataAccess);
 
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(Commands.PlayTrump).inSingletonScope();
@@ -66,6 +67,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.FlipCommand).inSingletonSco
 container.bind<ICommand>(TYPES.ICommand).to(Commands.WhichCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.AddPicCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.Replay).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.RemindCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 

@@ -7,5 +7,6 @@ export * from "./content.service";
 export * from "./files.service";
 export * from "./fonts.service";
 export * from "./http.service";
+export * from "./OrderedSetDataAccess";
 export * from "./permission.service";
 export * from "./question.service";

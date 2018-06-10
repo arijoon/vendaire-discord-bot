@@ -7,6 +7,10 @@ export class MessageWrapper implements IMessage {
   Content: string;
   Command: string;
 
+  public readonly id: string;
+  public readonly guidId: string;
+  public readonly channelId: string;
+
   constructor(
     private _onDone: (msg?: string, err?: any) => void,
     msg: Message,
@@ -18,6 +22,10 @@ export class MessageWrapper implements IMessage {
     this.Timer = timer;
     this.Content = content;
     this.Command = command;
+
+    this.id = msg.id;
+    this.guidId = msg.guild.id;
+    this.channelId = msg.channel.id;
   }
 
   done(msg?: string, err?: any): void {

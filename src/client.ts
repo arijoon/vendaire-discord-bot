@@ -88,6 +88,12 @@ export class Client implements IClient {
     this.onDiscordMessage(msg);
   }
 
+  public sendMessage(guildId: string, channelId: string, content: string, options?: any): Promise<any> {
+    const guild = this._client.guilds.get(guildId);
+    const channel = guild.channels.get(channelId) as discord.TextChannel;
+    return channel.send(content, options);
+  }
+
   private attachListener() {
 
     if (this._isAttached) return;

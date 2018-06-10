@@ -13,4 +13,13 @@ export interface IClient {
 
     attachHelp(helps: IHelp[])
     processDiscordMessage(msg: Message);
+
+    /**
+     * Send a message to a specified channel
+     * @param guildId Id of the guild
+     * @param channel Id of the channel 
+     * @param content content of the message
+     * @param options discord options to send with the message
+     */
+    sendMessage(guildId: string, channelId: string, content: string, options?: any): Promise<any>
 }
