@@ -150,7 +150,7 @@ export class Client implements IClient {
 
         // Check if this is for help
         if(this._helpMappings[command] && message.Message.content.indexOf("--help") >= 0) {
-          message.send(`${this.prefix}${this._helpMappings[command].Usage}`);
+          message.send(`USAGE: ${this.prefix}${this._helpMappings[command].Usage}`, { code: 'md'});
           message.done();
         } else {
           subject.onNext(message);
