@@ -65,7 +65,7 @@ export class AddPicCommand implements ICommand {
       }
 
       const stream = await this._http.getFile(attachment.url);
-      const dir = path.join(this._config.images["root"], commands.randomPic, this._config.images[commands.randomPic][ops.f]);
+      const dir = path.join(this._config.images["root"], commands.randomPic, ops.f);
       const filename = await this._filesService.saveFile(stream, dir, `_${msg.author.username}_` + attachment.filename);
 
       return imsg.send(`Successfully added as ${filename} in ${ops.f}`);
