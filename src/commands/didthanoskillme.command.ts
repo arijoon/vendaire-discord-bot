@@ -53,7 +53,7 @@ export class DidThanosKillMeComand implements ICommand, IHasHelp {
       // 0 - wins
       // 1 - spares
       const userIdLastChar = imsg.userId[imsg.userId.length-1];
-      const result = (+userIdLastChar + 1) % 2;
+      const result = (+userIdLastChar) % 2;
       const pattern = this._patterns[result];
       const filename = await this.selectRandomFile(pattern);
 
