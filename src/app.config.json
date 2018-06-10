@@ -25,22 +25,23 @@
     },
     "images": {
       "root": "assets/images",
-      "randomPic": {
-      "tfw": "tfw",
-      "bog": "bog",
-      "exposed": "exposed",
-      "god": "god",
-      "tsu": "tsu",
-      "fap": "fap",
-      "call": "call",
-      "bullshit": "bullshit",
-      "memri": "memri",
-      "yousmart": "you-smart",
-      "ungabunga": "ungabunga",
-      "kys": "kys",
-      "misc": "misc",
-      "tekken": "tekken",
-        "lol": "lol"
+      "randompic": {
+        "tfw": "tfw",
+        "bog": "bog",
+        "exposed": "exposed",
+        "god": "god",
+        "tsu": "tsu",
+        "fap": "fap",
+        "call": "call",
+        "bullshit": "bullshit",
+        "memri": "memri",
+        "yousmart": "you-smart",
+        "ungabunga": "ungabunga",
+        "kys": "kys",
+        "misc": "misc",
+        "tekken": "tekken",
+        "lol": "lol",
+        "todd": "todd"
       }
     },
     "content": {

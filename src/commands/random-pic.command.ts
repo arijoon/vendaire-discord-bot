@@ -23,7 +23,7 @@ export class RandomPic implements ICommand {
   attach(): void {
     // Chosen folder
     for (let i = 0; i < this._commands.length; i++) {
-      let command = this._commands[i];
+      const command = this._commands[i];
 
       this._client
         .getCommandStream(command)
@@ -47,10 +47,10 @@ export class RandomPic implements ICommand {
 
         return msg.channel.send('', { file: filename })
           .then(async (res: Message) => {
-            let attach: MessageAttachment = res.attachments.values().next().value;
+            const attach: MessageAttachment = res.attachments.values().next().value;
             if (!attach) return res;
 
-            let url = attach.url;
+            const url = attach.url;
             await this._cache.set(filename, url);
 
             return res;
@@ -61,7 +61,7 @@ export class RandomPic implements ICommand {
   }
 
   selectRandomFile(dir: string): Promise<string> {
-    let fullPath = path.join(this._config.images["root"], this._config.images[this._command][dir]);
+    const fullPath = path.join(this._config.images["root"], this._command, this._config.images[this._command][dir]);
 
     return this._filesService
       .getAllFiles(fullPath)

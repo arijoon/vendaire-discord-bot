@@ -11,7 +11,8 @@
             "cwd": "${workspaceRoot}",
             "program": "${workspaceRoot}\\src\\bootstrap.ts",
             "env": {
-                "NODE_ENV": "development"
+                "NODE_ENV": "development",
+                "DiscordBot_redis_disabled": "true",
             },
             "sourceMaps": true,
             "outFiles": [
