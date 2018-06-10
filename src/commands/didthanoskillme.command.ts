@@ -68,7 +68,7 @@ export class DidThanosKillMeComand implements ICommand, IHasHelp {
   }
 
   private selectRandomFile(pattern: string): Promise<string> {
-    let fullPath = path.join(this._config.images["root"], this._config.images["commandImages"], this._command);
+    let fullPath = path.join(this._config.images["root"], this._command);
 
     return this._filesService
       .getAllFilesWithName(fullPath, new RegExp(pattern))

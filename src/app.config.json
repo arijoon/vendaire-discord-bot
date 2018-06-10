@@ -25,6 +25,7 @@
     },
     "images": {
       "root": "assets/images",
+      "randomPic": {
       "tfw": "tfw",
       "bog": "bog",
       "exposed": "exposed",
@@ -39,8 +40,8 @@
       "kys": "kys",
       "misc": "misc",
       "tekken": "tekken",
-      "lol": "lol",
-      "commandImages": "command-images"
+        "lol": "lol"
+      }
     },
     "content": {
       "root": "assets/content",
