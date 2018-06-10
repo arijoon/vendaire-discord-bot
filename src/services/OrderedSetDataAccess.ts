@@ -13,7 +13,7 @@ export class OrderedSetDataAccess implements IOrderedSetDataAccess {
     @inject(TYPES.Logger) private _logger: ILogger,
   ) {
 
-    const enabled = !!config.app.redis;
+    const enabled = !!config.app.redis && !config.app.redis.disabled;
     if (!enabled) return;
 
     const server = config.app.redis.server;
@@ -42,6 +42,9 @@ export class OrderedSetDataAccess implements IOrderedSetDataAccess {
   }
 
   addValues(setKey: string, values: IKeyValuePair[]): Promise<void> {
+    if(!this._enabled) 
+      return Promise.resolve();
+
     return new Promise<void>((r, x) => {
       const args : (string|number)[] = [];
       for(let v of values){
@@ -61,6 +64,9 @@ export class OrderedSetDataAccess implements IOrderedSetDataAccess {
   }
 
   getRange(setKey: string, min: number, max: number, limit?: number): Promise<IKeyValuePair[]> {
+    if(!this._enabled) 
+      return Promise.resolve([]);
+
     if(!limit)
       limit = 100;
 
@@ -86,6 +92,9 @@ export class OrderedSetDataAccess implements IOrderedSetDataAccess {
   }
 
   removeRange(setKey: string, min: number, max: number): Promise<void> {
+    if(!this._enabled) 
+      return Promise.resolve();
+
     return new Promise<void>((r, x) => {
       this._client.zremrangebyscore(setKey, min, max, (err, _) => {
         if(err)

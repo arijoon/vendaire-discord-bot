@@ -39,7 +39,8 @@
       "kys": "kys",
       "misc": "misc",
       "tekken": "tekken",
-      "lol": "lol"
+      "lol": "lol",
+      "commandImages": "command-images"
     },
     "content": {
       "root": "assets/content",

@@ -3,6 +3,7 @@ export * from "./add-pic.command";
 export * from "./ban-phrase";
 export * from "./bog.command";
 export * from "./count-usage.";
+export * from "./didthanoskillme.command";
 export * from "./disconnect.command";
 export * from "./flip.command";
 export * from "./games/rps";

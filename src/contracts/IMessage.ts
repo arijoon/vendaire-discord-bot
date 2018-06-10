@@ -3,6 +3,7 @@ import { Message } from 'discord.js';
 export interface IMessage {
 
   readonly id: string;
+  readonly userId: string;
   readonly guidId: string;
   readonly channelId: string;
   Message: Message;

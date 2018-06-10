@@ -8,6 +8,7 @@ export class MessageWrapper implements IMessage {
   Command: string;
 
   public readonly id: string;
+  public readonly userId: string;
   public readonly guidId: string;
   public readonly channelId: string;
 
@@ -26,6 +27,7 @@ export class MessageWrapper implements IMessage {
     this.id = msg.id;
     this.guidId = msg.guild.id;
     this.channelId = msg.channel.id;
+    this.userId = msg.author.id;
   }
 
   done(msg?: string, err?: any): void {
