@@ -58,26 +58,6 @@ export class HttpService implements IHttp {
       request.head(url, function (err, res, body) {
         resolve(request(url));
       });
-      //   const options = {
-      //     port: 80,
-      //     path: url
-      //   };
-
-      //   http.request(options, function (response) {
-      //     var data = new Transform();
-
-      //     response.on('data', function (chunk) {
-      //       data.push(chunk);
-      //     });
-
-      //     response.on('error', function (err) {
-      //       reject(err);
-      //     });
-
-      //     response.on('end', function () {
-      //       resolve(data);
-      //     });
-      //   });
     });
   }
 }
