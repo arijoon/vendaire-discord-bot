@@ -26,6 +26,9 @@ let commands = {
     // Is something randomizer
     is: [ 'is', 'are', 'does', 'will', 'would', 'has', 'have'],
 
+    // Did thanos kill me
+    didthanoskillme: 'didthanoskillme',
+
     // Rate something out of 10
     rate: 'rate',
 

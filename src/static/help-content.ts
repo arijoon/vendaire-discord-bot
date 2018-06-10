@@ -43,5 +43,7 @@ helpContent.usage += `${indent}whosonline                   \tShow who is online
 helpContent.usage += `${indent}clean {num}                  \tclean the last {num} bot messages\n`
 helpContent.usage += `${indent}imdb {moviename} [options]   \tSearch imdb for moviename\n`
 helpContent.usage += `${indent}translate {text} [options]   \ttranslate the text\n`
+helpContent.usage += `${indent}didthanoskillme              \tdetermines whether thanos killed you\n`
+helpContent.usage += `${indent}remind                       \treminds you of a message in future, use --help\n`
 
 export { helpContent }

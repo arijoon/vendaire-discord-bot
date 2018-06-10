@@ -10,7 +10,8 @@ export class StubMessage implements IMessage {
   constructor(content: string, command?: string,
      public id: string = "1",
      public guidId: string = "1",
-     public channelId: string = "1"
+     public channelId: string = "1",
+     public userId: string = "1"
     ) {
     this.Message = new discord.Message(null, null, null);
     this.Content = content;
