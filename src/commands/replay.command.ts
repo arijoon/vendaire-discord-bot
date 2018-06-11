@@ -18,7 +18,7 @@ export class Replay implements ICommand, IHasHelp {
     this._client
       .getCommandStream(this._command)
       .subscribe(imsg => {
-        const key = imsg.Message.author.discriminator;
+        const key = this.makeKey(imsg);
         if (this._cache.has(key)) {
           this._client.processDiscordMessage(this._cache.get(key));
         }
@@ -32,7 +32,7 @@ export class Replay implements ICommand, IHasHelp {
           return;
         }
 
-        const key = imsg.Message.author.discriminator;
+        const key = this.makeKey(imsg);
         this._cache.set(key, imsg.Message);
       });
   }
@@ -45,5 +45,9 @@ export class Replay implements ICommand, IHasHelp {
         Usage: "replay|Enter the prefix without commands"
       }
     ]
+  }
+
+  private makeKey(imsg: IMessage) {
+    return `${imsg.userId}:${imsg.channelId}:${imsg.guidId}`;
   }
 }
