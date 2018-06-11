@@ -1,5 +1,5 @@
 import { Timer } from './helpers';
-import { MessageWrapper } from './models/message-wrapper.model';
+import { MessageWrapper } from './models/MessageWrapper';
 import { Message } from 'discord.js';
 import { Subject, ISubject, IObservable } from 'rx';
 import { injectable, inject } from 'inversify';

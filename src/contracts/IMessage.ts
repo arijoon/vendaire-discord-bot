@@ -6,10 +6,11 @@ export interface IMessage {
   readonly userId: string;
   readonly guidId: string;
   readonly channelId: string;
-  Message: Message;
-  Timer: ITimer;
-  Content: string;
-  Command: string;
+  readonly Message: Message;
+  readonly Timer: ITimer;
+  readonly Content: string;
+  readonly Command: string;
+  readonly onDone: Promise<{ msg?: string, err?: any }>;
 
   done(msg?: string, err?: any): void;
 

@@ -7,6 +7,8 @@ export class StubMessage implements IMessage {
   Content: string;
   Command: string;
 
+  onDone: Promise<{ msg?: string; err?: any; }>;
+
   constructor(content: string, command?: string,
      public id: string = "1",
      public guidId: string = "1",
@@ -17,15 +19,16 @@ export class StubMessage implements IMessage {
     this.Content = content;
     this.Command = command;
 
-    this.donePromise = new Promise<void>(r => this.donePromiseCallback = r);
+    this.onDone = new Promise(r => this.donePromiseCallback = r);;
+    this.donePromise = this.onDone.then(() => {});
   }
 
   sentResult : { content?: string, options?: any};
   donePromise: Promise<void>;
-  private donePromiseCallback: () => void;
+  private donePromiseCallback: (resp: {msg?: string, err?: any}) => void;
 
   done(msg?: string, err?: any): void {
-    this.donePromiseCallback();
+    this.donePromiseCallback({msg, err});
   }
 
   send(content?: string, options?: any): Promise<discord.Message | discord.Message[]> {
