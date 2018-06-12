@@ -82,7 +82,7 @@ export class RandomPic implements ICommand {
       this._lastRandomInx[key]  = Math.floor(Math.random() * lst.length);
     }
 
-    const range = RandomRange * lst.length;
+    const range = Math.ceil(RandomRange * lst.length);
     this._lastRandomInx[key] = (this._lastRandomInx[key] + (Math.ceil(Math.random() * range))) % lst.length;
     
     return lst[this._lastRandomInx[key]];
