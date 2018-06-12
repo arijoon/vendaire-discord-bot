@@ -44,7 +44,7 @@ export class AddPicCommand implements ICommand {
       }
 
       if(!ops.f) {
-        return imsg.send("You must specify the folder with --f flag");
+        return imsg.send("You must specify the folder with -f flag");
       }
 
       if(this._folders.indexOf(ops.f) < 0) {
