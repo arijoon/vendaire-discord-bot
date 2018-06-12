@@ -13,6 +13,7 @@ export class RateCommand implements ICommand {
   readonly _command: string = commands.rate;
 
   readonly _chances = {
+    0: "bloody disgusting, should kill self",
     1: "would not touch with a stick",
     2: "would not touch",
     8: "would like to decimate",
@@ -32,7 +33,7 @@ export class RateCommand implements ICommand {
       .subscribe(imsg => {
         const msg = imsg.Message;
 
-        let roll = this.getRoll(2);
+        let roll = this.getRoll(1);
 
         let result: string;
         let options: any = {};
@@ -67,7 +68,7 @@ export class RateCommand implements ICommand {
   private getRoll(tries: number): number {
     let highest = 0;
     for (let i = 0; i < tries; i++) {
-      let roll = Math.ceil(Math.random() * 10);
+      let roll = Math.ceil(Math.random() * 11) - 1;
 
       if (roll > highest) highest = roll
     }
