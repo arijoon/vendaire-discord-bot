@@ -32,7 +32,7 @@ export class RateCommand implements ICommand {
       .subscribe(imsg => {
         const msg = imsg.Message;
 
-        let roll = this.getRoll(3);
+        let roll = this.getRoll(2);
 
         let result: string;
         let options: any = {};
@@ -64,10 +64,10 @@ export class RateCommand implements ICommand {
       });
   }
 
-  getRoll(tries: number): number {
+  private getRoll(tries: number): number {
     let highest = 0;
     for (let i = 0; i < tries; i++) {
-      let roll = Math.floor(Math.random() * 10);
+      let roll = Math.ceil(Math.random() * 10);
 
       if (roll > highest) highest = roll
     }
