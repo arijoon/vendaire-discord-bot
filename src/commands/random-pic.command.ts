@@ -8,6 +8,7 @@ import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
 
 const RandomRange: number = 1/20;
+const RandomRangeMin: number = 5;
 
 @injectable()
 export class RandomPic implements ICommand {
@@ -82,7 +83,8 @@ export class RandomPic implements ICommand {
       this._lastRandomInx[key]  = Math.floor(Math.random() * lst.length);
     }
 
-    const range = Math.ceil(RandomRange * lst.length);
+    let range = Math.ceil(RandomRange * lst.length);
+    range = range < RandomRangeMin ? RandomRangeMin : range;
     this._lastRandomInx[key] = (this._lastRandomInx[key] + (Math.ceil(Math.random() * range))) % lst.length;
     
     return lst[this._lastRandomInx[key]];
