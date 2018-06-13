@@ -9,7 +9,7 @@
       "prefix": "!!"
     }
   },
-  "cacheTimeout": 86400,
+  "cacheTimeout": 259200,
   "redis": {
     "server": "localhost",
     "port": 9079
