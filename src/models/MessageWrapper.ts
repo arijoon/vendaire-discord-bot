@@ -41,6 +41,10 @@ export class MessageWrapper implements IMessage {
   }
 
   send(content?: string, options?: any): Promise<Message | Message[]> {
+    if(options && !content) {
+      return this.Message.channel.send(options);
+    }
+
     return this.Message.channel.send(content, options);
   }
 }

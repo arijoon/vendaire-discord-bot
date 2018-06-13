@@ -45,10 +45,10 @@ export class RandomPic implements ICommand {
       .then(async (filename: string) => {
 
         if (await this._cache.has(filename)) {
-          return msg.channel.send(await this._cache.get(filename));
+          return imsg.send(null, { files: [await this._cache.get(filename)] });
         }
 
-        return msg.channel.send('', { file: filename })
+        return imsg.send(null, { file: filename })
           .then(async (res: Message) => {
             const attach: MessageAttachment = res.attachments.values().next().value;
             if (!attach) return res;
