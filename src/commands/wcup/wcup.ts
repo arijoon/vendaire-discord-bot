@@ -6,7 +6,7 @@ import { commands } from '../../static';
 import { countries } from './countries';
 import * as moment from 'moment';
 
-const secondsTillEndOfDay = () => (-new Date() + new Date().setHours(24,0,0,0))/1e3;
+const secondsTillEndOfDay = () => Math.ceil((-new Date() + new Date().setHours(24,0,0,0))/1e3);
 const secondsInFullDay = 24*60*60;
 
 @injectable()
