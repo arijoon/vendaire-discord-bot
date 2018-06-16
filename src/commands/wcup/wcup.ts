@@ -107,8 +107,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
         countryCodes.push(this.getIsoCode(item["away_team"].code));
       }
 
-      await this._cache.set(key, isoCode, secondsTillEndOfDay());
       isoCode = countryCodes.popRandom();
+      await this._cache.set(key, isoCode, secondsTillEndOfDay());
     }
 
     return `:flag_${isoCode}:`.repeat(Math.ceil(Math.random() * 30));
