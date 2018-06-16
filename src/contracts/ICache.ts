@@ -9,5 +9,5 @@ interface ICache<TKey, TVal> {
 interface IBasicCache {
     has(key: string): Promise<boolean>;
     get(key: string): Promise<string>;
-    set(key: string, val: string): Promise<void>;
+    set(key: string, val: string, expiryInSeconds?: number): Promise<void>;
 }

@@ -69,6 +69,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.AddPicCommand).inSingletonS
 container.bind<ICommand>(TYPES.ICommand).to(Commands.Replay).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.RemindCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.DidThanosKillMeComand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.WorldCupCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 
