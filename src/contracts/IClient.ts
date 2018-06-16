@@ -12,7 +12,11 @@ export interface IClient {
     getClient(): Client;
 
     attachHelp(helps: IHelp[])
-    processDiscordMessage(msg: Message);
+
+    /**
+     * force process a specific message 
+     */
+    processDiscordMessage(guildId: string, channelId: string, messageId: string): Promise<void>;
 
     /**
      * Send a message to a specified channel
