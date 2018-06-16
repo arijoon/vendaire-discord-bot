@@ -4,6 +4,7 @@ import { IClient } from '../../contracts';
 import { TYPES } from '../../ioc/types';
 import { commands } from '../../static';
 import { countries } from './countries';
+import * as moment from 'moment';
 
 const secondsTillEndOfDay = () => (-new Date() + new Date().setHours(24,0,0,0))/1e3;
 const secondsInFullDay = 24*60*60;
@@ -74,7 +75,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     for(let item of data) {
       const home = item["home_team"];
       const away = item["away_team"];
-      let message = `:flag_${this.getIsoCode(home.code)}: vs :flag_${this.getIsoCode(away.code)}: at ${(new Date(item.datetime)).toLocaleTimeString('en-GB')}`;
+      let message = `:flag_${this.getIsoCode(home.code)}: vs :flag_${this.getIsoCode(away.code)}: at ${this.getTimeString(item.datetime)}`;
       if(item.winner) {
         message += ` (${home.goals} : ${away.goals})`;
       }
@@ -113,5 +114,14 @@ export class WorldCupCommand implements ICommand, IHasHelp {
         throw new Error(`country not found for Fifa code: ${fifaCode}`);
       }
       return country.code.toLowerCase()
+  }
+
+  private getTimeString(dateTime: string) {
+    const date = moment(dateTime);
+    date.locale('en');
+    if(!date.isDST())
+      date.add(1, 'hour'); // will be ahead of UTC
+
+    return date.format('LT');
   }
 }
