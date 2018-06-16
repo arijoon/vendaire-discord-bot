@@ -67,7 +67,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
 
   private async matches(day: string) {
     const suffix = `/matches/${day}`;
-    const data = await this.fetch(suffix, secondsTillEndOfDay());
+    const data = await this.fetch(suffix, 60);
 
     const messages: string[] = [];
 
