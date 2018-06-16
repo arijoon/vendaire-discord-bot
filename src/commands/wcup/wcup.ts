@@ -5,6 +5,7 @@ import { TYPES } from '../../ioc/types';
 import { commands } from '../../static';
 import { countries } from './countries';
 import * as moment from 'moment';
+import { ITeam } from './api-contracts';
 
 const secondsTillEndOfDay = () => Math.ceil((-new Date() + new Date().setHours(24,0,0,0))/1e3);
 const secondsInFullDay = 24*60*60;
@@ -53,12 +54,15 @@ export class WorldCupCommand implements ICommand, IHasHelp {
         case 'matches':
         case 'matches today':
           return this.matches('today');
+        case 'matches t':
         case 'matches tomorrow':
           return this.matches('tomorrow');
         case 'country':
           return this.country(imsg.userId);
         case 'groups':
           return this.groups();
+        case 'team':
+          return this.team();
         default: 
           return this.getHelp()[0].Usage;
       }
@@ -136,8 +140,15 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     return messages.join('\n');
   }
 
-  private async flag() {
-    // TODO
+  private async team() {
+    const suffix = '/teams';
+
+    const data: ITeam[] = await this.fetch(suffix, secondsInFullDay);
+
+    const team = data.crandom();
+    const flag = `:flag_${this.getIsoCode(team.fifa_code)}:`;
+
+    return `**${team.country}** ${flag.repeat(3)}`
   }
 
   private async fetch(suffix: string, expiry: number, extraKey?: string) {
