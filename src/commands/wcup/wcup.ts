@@ -34,7 +34,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   getHelp(): IHelp[] {
     const commands = {
       'matches': 'shows the matches of the day',
-      'country': 'picks a daily country for you',
+      'country': 'picks a daily country for you from teams playing',
       'flag': 'post a flag of a country in World Cup'
     }
     return [{
@@ -55,6 +55,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
           return this.matches('today');
         case 'matches tomorrow':
           return this.matches('tomorrow');
+        case 'country':
+          return this.country(imsg.userId);
         default: 
           return this.getHelp()[0].Usage;
       }
@@ -86,17 +88,38 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     return messages.join('\n');
   }
 
-  private async country() {
-    // TODO
+  private async country(uuid: string) {
+    // if the user already has a country for the day, return it
+    let isoCode: string;
+    const key = `${this._command}::country:uuid:${uuid}`;
 
+    if (await this._cache.has(key)) {
+      isoCode = await this._cache.get(key);
+    } else {
+
+      // Get all teams for today
+      const suffix = '/matches/today';
+      const data: any[] = await this.fetch(suffix, secondsTillEndOfDay(), 'country');
+      const countryCodes: string[] = []
+
+      for (let item of data) {
+        countryCodes.push(this.getIsoCode(item["home_team"].code));
+        countryCodes.push(this.getIsoCode(item["away_team"].code));
+      }
+
+      await this._cache.set(key, isoCode, secondsTillEndOfDay());
+      isoCode = countryCodes.popRandom();
+    }
+
+    return `:flag_${isoCode}:`.repeat(Math.ceil(Math.random() * 30));
   }
 
   private async flag() {
     // TODO
   }
 
-  private async fetch(suffix: string, expiry: number) {
-    const key = `${this._command}::${suffix}`;
+  private async fetch(suffix: string, expiry: number, extraKey?: string) {
+    const key = `${this._command}::${extraKey ? `${extraKey}:` : ''}${suffix}`;
     if (await this._cache.has(key)) {
       return JSON.parse(await this._cache.get(key));
     }
@@ -109,17 +132,17 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   }
 
   private getIsoCode(fifaCode: string) {
-      const country = countries[fifaCode]
-      if(!country) {
-        throw new Error(`country not found for Fifa code: ${fifaCode}`);
-      }
-      return country.code.toLowerCase()
+    const country = countries[fifaCode]
+    if (!country) {
+      throw new Error(`country not found for Fifa code: ${fifaCode}`);
+    }
+    return country.code.toLowerCase()
   }
 
   private getTimeString(dateTime: string) {
     const date = moment(dateTime);
     date.locale('en');
-    if(!date.isDST())
+    if (!date.isDST())
       date.add(1, 'hour'); // will be ahead of UTC
 
     return date.format('LT');
