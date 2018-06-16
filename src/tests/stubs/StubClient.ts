@@ -29,7 +29,7 @@ export class StubClient implements IClient {
     throw new Error("Method not implemented.");
   }
 
-  processDiscordMessage(msg: discord.Message) {
+  processDiscordMessage(guildId: string, channelId: string, messageId: string) : Promise<void> {
     throw new Error("Method not implemented.");
   }
 

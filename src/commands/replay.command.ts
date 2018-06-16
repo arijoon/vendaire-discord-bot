@@ -8,32 +8,39 @@ import { commands } from '../static';
 export class Replay implements ICommand, IHasHelp {
 
   _command: string = commands.replay;
-  _cache = new Map<string, any>();
 
   constructor(
-    @inject(TYPES.IClient) private _client: IClient
+    @inject(TYPES.IClient) private _client: IClient,
+    @inject(TYPES.IBasicCache) private _cache: IBasicCache
   ) { }
 
   public attach(): void {
     this._client
       .getCommandStream(this._command)
       .subscribe(imsg => {
-        const key = this.makeKey(imsg);
-        if (this._cache.has(key)) {
-          this._client.processDiscordMessage(this._cache.get(key));
-        }
-
-        imsg.done();
+        Promise.resolve().then(async _ => {
+          const key = this.makeKey(imsg);
+          if (await this._cache.has(key)) {
+            const message: IMessageDetail = JSON.parse(await this._cache.get(key));
+            await this._client.processDiscordMessage(message.guildId, message.channelId, message.messageId);
+          }
+        }).then(_ => imsg.done())
+          .catch(err => imsg.done('', err));
       });
 
     this._client.getGlobalCommandStream()
-      .subscribe(imsg => {
+      .subscribe(async imsg => {
         if (imsg.Command === this._command) {
           return;
         }
 
         const key = this.makeKey(imsg);
-        this._cache.set(key, imsg.Message);
+        const message: IMessageDetail = {
+          guildId: imsg.guidId,
+          channelId: imsg.channelId,
+          messageId: imsg.id
+        }
+        await this._cache.set(key, JSON.stringify(message));
       });
   }
 
@@ -48,6 +55,12 @@ export class Replay implements ICommand, IHasHelp {
   }
 
   private makeKey(imsg: IMessage) {
-    return `${imsg.userId}:${imsg.channelId}:${imsg.guidId}`;
+    return `${this._command}::${imsg.userId}:${imsg.channelId}:${imsg.guidId}`;
   }
+}
+
+interface IMessageDetail {
+  guildId: string;
+  channelId: string;
+  messageId: string;
 }

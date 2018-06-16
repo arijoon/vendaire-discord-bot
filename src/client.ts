@@ -6,11 +6,11 @@ import { injectable, inject } from 'inversify';
 import { IClient } from './contracts';
 import { swearWords } from './static';
 import { commands } from './static';
-
-import * as discord from 'discord.js';
 import { TYPES } from './ioc/types';
 import { IMessage } from './contracts';
 import { TimerQueue } from './components/timer-queue.com';
+
+import * as discord from 'discord.js';
 
 @injectable()
 export class Client implements IClient {
@@ -84,14 +84,24 @@ export class Client implements IClient {
     }
   }
 
-  public processDiscordMessage(msg: Message) {
+  public async processDiscordMessage(guildId: string, channelId: string, messageId: string) {
+    const channel = this.getChannel(guildId, channelId);
+    const msg = await channel.fetchMessage(messageId);
+
+    if(!msg)
+      throw new Error(`Message ${messageId} not found`)
+    
     this.onDiscordMessage(msg);
   }
 
   public sendMessage(guildId: string, channelId: string, content: string, options?: any): Promise<any> {
-    const guild = this._client.guilds.get(guildId);
-    const channel = guild.channels.get(channelId) as discord.TextChannel;
+    const channel = this.getChannel(guildId, channelId);
     return channel.send(content, options);
+  }
+
+  private getChannel(guildId: string, channelId: string) {
+    const guild = this._client.guilds.get(guildId);
+    return guild.channels.get(channelId) as discord.TextChannel;
   }
 
   private attachListener() {
