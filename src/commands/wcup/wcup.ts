@@ -78,7 +78,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     const suffix = `/matches/${day}`;
     const data = await this.fetch(suffix, 60);
 
-    const messages: string[] = [];
+    const messages: string[] = ['Matches'];
 
     for(let item of data) {
       const home = item["home_team"];
@@ -124,7 +124,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     const suffix = '/teams/group_results';
 
     const data: any[] = await this.fetch(suffix, 60*60);
-    const messages: string[] = [];
+    const messages: string[] = ['Groups'];
 
     for(let item of data) {
       const group = item.group;
