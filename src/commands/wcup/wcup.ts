@@ -57,6 +57,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
           return this.matches('tomorrow');
         case 'country':
           return this.country(imsg.userId);
+        case 'groups':
+          return this.groups();
         default: 
           return this.getHelp()[0].Usage;
       }
@@ -112,6 +114,26 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     }
 
     return `:flag_${isoCode}:`.repeat(Math.ceil(Math.random() * 30));
+  }
+
+  private async groups() {
+    const suffix = '/teams/group_results';
+
+    const data: any[] = await this.fetch(suffix, 60*60);
+    const messages: string[] = [];
+
+    for(let item of data) {
+      const group = item.group;
+      let message = `:regional_indicator_${group.letter.toLowerCase()}:\t`
+      for(let teams of group.teams) {
+        const team = teams.team;
+        message += `:flag_${this.getIsoCode(team.fifa_code)}: ${team.points} \t`
+      }
+
+      messages.push(message);
+    }
+
+    return messages.join('\n');
   }
 
   private async flag() {
