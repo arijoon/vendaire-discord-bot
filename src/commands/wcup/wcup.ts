@@ -100,7 +100,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
       return JSON.parse(await this._cache.get(key));
     }
 
-    const result = this._http.getJson(this._api + suffix);
+    const result = await this._http.getJson(this._api + suffix);
 
     this._cache.set(key, JSON.stringify(result), expiry);
 
