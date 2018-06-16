@@ -110,6 +110,9 @@ let commands = {
         rps: 'grps'
     },
 
+    // World cup
+    wcup: 'wcup',
+
     // Image processing
     image: {
         gray: 'imgray',

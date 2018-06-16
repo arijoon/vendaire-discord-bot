@@ -30,6 +30,7 @@ export * from "./space-out.command";
 export * from "./suggest";
 export * from "./translate";
 export * from "./urban.command";
+export * from "./wcup/wcup";
 export * from "./which.command";
 export * from "./whos-online.command.";
 export * from "./youtube.command";
