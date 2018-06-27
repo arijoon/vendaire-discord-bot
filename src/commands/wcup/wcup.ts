@@ -126,11 +126,9 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     const data: any[] = await this.fetch(suffix, 60*60);
     const messages: string[] = ['Groups'];
 
-    for(let item of data) {
-      const group = item.group;
+    for(let group of data) {
       let message = `:regional_indicator_${group.letter.toLowerCase()}:\t`
-      for(let teams of group.teams) {
-        const team = teams.team;
+      for(let team of group.ordered_teams) {
         message += `:flag_${this.getIsoCode(team.fifa_code)}: ${team.points} \t`
       }
 
