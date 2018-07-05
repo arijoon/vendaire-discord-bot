@@ -13,7 +13,8 @@
         "moduleResolution": "node",
         "outDir": "build",
         "rootDir": "src",
-        "baseUrl": "src"
+        "baseUrl": "src",
+        "allowUnreachableCode": true
     },
     "compileOnSave": false,
     "exclude": [

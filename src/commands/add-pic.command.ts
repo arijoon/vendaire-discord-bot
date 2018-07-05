@@ -43,13 +43,14 @@ export class AddPicCommand implements ICommand {
         return imsg.send(argv.help(), { code: 'md' });
       }
 
-      if(!ops.f) {
+      const folder = ops.f || (ops._ && ops._.length > 0 ? ops._[0].trim() : null);
+      if(!folder) {
         return imsg.send("You must specify the folder with -f flag");
       }
 
-      if(this._folders.indexOf(ops.f) < 0) {
+      if(this._folders.indexOf(folder) < 0) {
         const readableFolders = this._folders.join(", ");
-        return imsg.send(`${ops.f} is not in available list of folders: ${readableFolders}`);
+        return imsg.send(`${folder} is not in available list of folders: ${readableFolders}`);
       }
 
       if(imsg.Message.attachments.size < 1) {
@@ -65,10 +66,10 @@ export class AddPicCommand implements ICommand {
       }
 
       const stream = await this._http.getFile(attachment.url);
-      const dir = path.join(this._config.images["root"], commands.randomPic, ops.f);
+      const dir = path.join(this._config.images["root"], commands.randomPic, folder);
       const filename = await this._filesService.saveFile(stream, dir, `_${msg.author.username}_` + attachment.filename);
 
-      return imsg.send(`Successfully added as ${filename} in ${ops.f}`);
+      return imsg.send(`Successfully added as ${filename} in ${folder}`);
     }).then(_ => {
       imsg.done();
     }).catch(err => {
