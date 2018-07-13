@@ -44,11 +44,21 @@ export class RandomPic implements ICommand {
     this.selectRandomFile(command)
       .then(async (filename: string) => {
 
-        if (await this._cache.has(filename)) {
-          return imsg.send(null, { files: [await this._cache.get(filename)] });
+        const guildId = imsg.guidId;
+        let channelId = imsg.channelId;
+
+        if(command.toLowerCase() == 'nsfw') {  // Special case
+          channelId = await this._client.getNsfwChannel(guildId);
+
+          if(!channelId)
+            return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
         }
 
-        return imsg.send(null, { file: filename })
+        if (await this._cache.has(filename)) {
+          return this._client.sendMessage(guildId, channelId, "", { files: [await this._cache.get(filename)] });
+        }
+
+        return this._client.sendMessage(guildId, channelId, "", { file: filename })
           .then(async (res: Message) => {
             const attach: MessageAttachment = res.attachments.values().next().value;
             if (!attach) return res;
