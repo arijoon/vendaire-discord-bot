@@ -13,7 +13,7 @@ let commands = {
     // Dependencies: rate, addpic
     randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc',
      'tekken', 'todd', 'anime', 'beargrylls', 'indian',
-     'sfv', 'blazbluecf'
+     'sfv', 'blazbluecf', 'kpop'
     ],
     randomPic: 'randompic',
 
