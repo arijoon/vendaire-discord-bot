@@ -24,7 +24,7 @@
   "dependencies": {
     "cheerio": "^0.22.0",
     "cli-table": "^0.3.1",
-    "discord.js": "^11.1.0",
+    "discord.js": "^11.3.2",
     "google-translate-token": "^1.0.0",
     "googleapis": "^19.0.0",
     "imdb-api": "^2.2.2",

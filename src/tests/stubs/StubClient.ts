@@ -33,6 +33,10 @@ export class StubClient implements IClient {
     throw new Error("Method not implemented.");
   }
 
+  getNsfwChannel(guildId: string): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+
   sendMessage(guildId: string, channelId: string, content: string, options?: any): Promise<any> {
     return Promise.resolve(_ => {
       return this._messages.push({

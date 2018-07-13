@@ -99,6 +99,13 @@ export class Client implements IClient {
     return channel.send(content, options);
   }
 
+  public getNsfwChannel(guildId: string): Promise<string> {
+    const channels = this._client.guilds.get(guildId).channels;
+    const channel = channels.filter((channel: discord.TextChannel) => channel.nsfw).first();
+
+    return Promise.resolve(channel && channel.id);
+  }
+
   private getChannel(guildId: string, channelId: string) {
     const guild = this._client.guilds.get(guildId);
     return guild.channels.get(channelId) as discord.TextChannel;
