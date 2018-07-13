@@ -7,7 +7,7 @@ import { commands } from '../static';
 import * as path from 'path';
 import * as opt from 'optimist';
 
-const MaxFileSize: number = 4194304; // 1MB
+const MaxFileSize: number = 1024 * 1024 * 5; // 5MB
 
 @injectable()
 export class AddPicCommand implements ICommand {
