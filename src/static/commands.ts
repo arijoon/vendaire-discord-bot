@@ -114,6 +114,9 @@ let commands = {
     // World cup
     wcup: 'wcup',
 
+    // Magic 8 ball
+    eightball: '8ball',
+
     // Image processing
     image: {
         gray: 'imgray',

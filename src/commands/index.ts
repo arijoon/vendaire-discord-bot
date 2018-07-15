@@ -5,6 +5,7 @@ export * from "./bog.command";
 export * from "./count-usage.";
 export * from "./didthanoskillme.command";
 export * from "./disconnect.command";
+export * from "./eight-ball.command";
 export * from "./flip.command";
 export * from "./games/rps";
 export * from "./help.command";
