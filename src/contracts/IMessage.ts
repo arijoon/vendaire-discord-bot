@@ -16,4 +16,10 @@ export interface IMessage {
 
   /** Send a message to the same channel */
   send(content?: string, options?: any): Promise<Message | Message[]>;
+
+  /**
+   * Get a set of messages as string
+   * @param options fetch messageOption
+   */
+  fetchMessages(options?: any): Promise<string[]>;
 }

@@ -36,4 +36,8 @@ export class StubMessage implements IMessage {
 
     return Promise.resolve<discord.Message>({} as discord.Message );
   }
+
+  fetchMessages(options?: any): Promise<string[]> {
+    throw new Error("Method not implemented.");
+  }
 }
