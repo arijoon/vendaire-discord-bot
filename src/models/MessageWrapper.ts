@@ -47,4 +47,12 @@ export class MessageWrapper implements IMessage {
 
     return this.Message.channel.send(content, options);
   }
+
+  fetchMessages(options?: any): Promise<string[]> {
+    return this.Message.channel
+      .fetchMessages(options)
+      .then(msgs => {
+        return msgs.map(m => m.content);
+      });
+  }
 }
