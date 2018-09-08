@@ -117,6 +117,9 @@ let commands = {
     // Magic 8 ball
     eightball: '8ball',
 
+    // Steam helpers
+    steamurl: 'steamurl',
+
     // Image processing
     image: {
         gray: 'imgray',
