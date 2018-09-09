@@ -3,12 +3,12 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
-import { commonRegex } from '../helpers';
 
 @injectable()
 export class SteamUrlCommand implements ICommand {
 
   _command: string = commands.steamurl;
+  _steamLink: RegExp = /(https?:\/\/steam(community)?\.com\S+)/g
   _subscriptions: IDisposable[] = [];
 
   constructor(
@@ -21,40 +21,46 @@ export class SteamUrlCommand implements ICommand {
       .subscribe(async (imsg) => {
         const content = imsg.Content;
 
-        const url = this.getSteamLink(content);
+        let urls: string[] = null;
+        urls = this.getSteamLink(content);
 
-        if(url) {
-          imsg.send(`steam://openurl/${url}`);
-          imsg.done();
-        } else {
-          // Get from previous messages
+        if(!urls) {
           const msgs = await imsg.fetchMessages({ limit: 10});
 
           for(let msg of msgs) {
-            const url = this.getSteamLink(msg);
+            urls = this.getSteamLink(msg);
 
-            if (url) {
-              imsg.send(`steam://openurl/${url}`);
-              imsg.done();
-              return;
+            if (urls) {
+              break;
             }
           }
+        }
 
-          imsg.send("no steam links found dumbass");
+        if(urls) { // links were found
+          const response = urls
+            .map(url => `steam://openurl/${url}`)
+            .join("\n");
+
+          await imsg.send(response);
+          imsg.done();
+        } else {
+          await imsg.send("no steam links found dumbass");
           imsg.done("No links found");
         }
       }));
   }
 
   getSteamLink(content) {
-    const link = commonRegex.link.exec(content);
-
-    if (link && link.length > 0) {
-      const url = link[0];
-
-      return url;
+    const results: string[] = [];
+    let match: RegExpExecArray = null
+    while(match = this._steamLink.exec(content)) {
+      if (match && match.length > 0) {
+        results.push(match[0]);
+      }
     }
 
-    return null;
+    return results.length > 0
+      ? results
+      : null;
   }
 }
