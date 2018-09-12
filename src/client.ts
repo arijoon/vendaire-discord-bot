@@ -1,9 +1,9 @@
-import { Timer } from './helpers';
+import { Timer, makeSearcher } from './helpers';
 import { MessageWrapper } from './models/MessageWrapper';
 import { Message } from 'discord.js';
 import { Subject, ISubject, IObservable } from 'rx';
 import { injectable, inject } from 'inversify';
-import { IClient } from './contracts';
+import { IClient, ISearcher } from './contracts';
 import { swearWords } from './static';
 import { commands } from './static';
 import { TYPES } from './ioc/types';
@@ -25,6 +25,8 @@ export class Client implements IClient {
 
   _requstlimit = 2000;
   _userRequests: Set<string>;
+
+  _commandSearch: ISearcher;
 
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig,
@@ -177,6 +179,20 @@ export class Client implements IClient {
         return true;
       }
     });
+
+    if(!foundCommand) {
+      const command = msg.content.split(' ');
+
+      if(command.length > 0) {
+        const c = command[0].replace(this.prefix, '');
+
+        const closeMatches = this.proximityCommands(c);
+
+        if(closeMatches.length > 0) {
+          msg.channel.send(`Did you mean?\n${closeMatches.join(', ')}`)
+        }
+      }
+    }
   }
 
   private buildMessageWrapper(msg: Message, command: string, originalContent: string): IMessage {
@@ -216,6 +232,31 @@ export class Client implements IClient {
     setTimeout(() => this._userRequests.delete(username), this._requstlimit);
 
     return false;
+  }
+
+  private proximityCommands(key: string): string[] {
+    if(!this._commandSearch) this.initCommandSearch();
+    return this._commandSearch.search(key);
+  }
+
+  /**
+   * initialise commandSearch ISearcher
+   * @param commands array of commands as strings
+   */
+  private initCommandSearch() {
+    const options = {
+      shouldSort: true,
+      threshold: 0.5,
+      location: 0,
+      distance: 5,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      keys: ['key'],
+      id: 'key'
+    };
+    const commands = Array.from(this._mappings.keys());
+    this._commandSearch = makeSearcher(
+      commands.map(c => ({ key: c})), options);
   }
 }
 
