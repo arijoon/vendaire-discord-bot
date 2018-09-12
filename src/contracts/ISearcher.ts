@@ -1,6 +1,6 @@
 /**
  * Any string searching instance
  */
-interface ISearcher {
-    search(key: string): number;
+export interface ISearcher {
+    search(key: string): any[];
 }
