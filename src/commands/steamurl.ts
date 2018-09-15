@@ -8,7 +8,7 @@ import { commands } from '../static';
 export class SteamUrlCommand implements ICommand {
 
   _command: string = commands.steamurl;
-  _steamLink: RegExp = /(https?:\/\/steam(community)?\.com\S+)/g
+  _steamLink: RegExp = /(https?:\/\/(.+\.)?steam(community|powered)?\.com\S+)/g
   _subscriptions: IDisposable[] = [];
 
   constructor(
