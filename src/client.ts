@@ -55,12 +55,19 @@ export class Client implements IClient {
     this._client.on("error",
       (err) => {
         this._logger.info(`Errored, trying to login ...`, err)
-        queue.doTask(
-          () => this._client.login(this._config.app.bot.token)
-            .then(() => this._logger.info(`Successfully logged in again`))
-            .catch(err => this._logger.error(`Failed to login again`, err))
-        )
+        this.handleLoginFailure(queue, this._client, this._config.app.bot.token);
       });
+  }
+
+  private handleLoginFailure(queue, client, token) {
+    queue.doTask(
+      () => client.login(token)
+        .then(() =>this._logger.info(`Successfully logged in again`))
+        .catch(err => {
+          this._logger.error(`Failed to login again`, err)
+          this.handleLoginFailure(queue, client, token);
+      })
+    );
   }
 
   public getCommandStream(command: string): IObservable<IMessage> {
