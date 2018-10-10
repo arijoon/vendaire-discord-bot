@@ -13,6 +13,7 @@ let commands = {
     // Dependencies: rate, addpic
     randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc',
      'tekken', 'todd', 'anime', 'beargrylls', 'indian',
+     'umaru', // requests
      'sfv', 'blazbluecf', 'kpop',
      'nsfw' // special case, will post it to the NSFW channel
     ],
