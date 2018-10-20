@@ -56,6 +56,10 @@ export class FilesService implements IFiles {
 
       const filePath = path.join(fullPath, filename)
 
+      if(!fs.existsSync(fullPath)) {
+        fs.mkdirSync(fullPath);
+      }
+
       data.pipe(fs.createWriteStream(filePath))
       .on('close', () => resolve(filename))
       .on('error', reject);
