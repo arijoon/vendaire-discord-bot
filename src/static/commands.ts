@@ -11,11 +11,12 @@ let commands = {
     
     // Post random Pics
     // Dependencies: rate, addpic
-    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc',
-     'tekken', 'todd', 'anime', 'beargrylls', 'indian', 'dafuq',
-     'umaru', 'boomer', 'zoomer', // requests
-     'sfv', 'blazbluecf', 'kpop',
-     'nsfw' // special case, will post it to the NSFW channel
+    randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc'
+     ,'tekken', 'todd', 'anime-legacy', 'anime', 'beargrylls', 'indian', 'dafuq'
+     ,'umaru', 'boomer', 'zoomer', 'anims', 'animr', 'pepe' // requests
+     ,'sfv', 'blazbluecf', 'kpop'
+     ,'nsfw' // special case, will post it to the NSFW channel
+     ,"trash" // for removed items
     ],
     randomPic: 'randompic',
 
