@@ -78,7 +78,7 @@ export class RandomPic implements ICommand {
     const fullPath = path.join(this._config.images["root"], this._command, dir);
 
     return this._filesService
-      .getAllFiles(fullPath)
+      .getAllFiles(fullPath, { recursive: true })
       .then(lst => {
         return this._config.pathFromRoot(fullPath, lst.crandom());
       });
