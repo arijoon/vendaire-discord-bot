@@ -56,8 +56,8 @@ export class AddPicCommand implements ICommand {
         return imsg.send(`${folder} is not in available list of folders: ${readableFolders}`);
       }
 
-      // Check for attachments
-      const url = this.getUrl(imsg);
+      // Check for attachments or links
+      const url = await this.getUrlFromCurrentOrFromHistory(imsg);
       const { stream, size, name } = await this._http.getFile(url);
 
       if(size > MaxFileSize) {
@@ -89,11 +89,27 @@ export class AddPicCommand implements ICommand {
     }
 
     if (imsg.Message.attachments.size < 1) {
-      throw new Error("No Attachments");
+      throw new Error("No Attachments or links found");
     }
     const attachment = imsg.Message.attachments.first();
 
     return attachment.url;
+  }
+
+  private async getUrlFromCurrentOrFromHistory(imsg: IMessage) {
+    try {
+      return this.getUrl(imsg);
+    } catch (_) {
+      // Current message has none, search in history:
+      const msgs = await imsg.fetchFullMessages({ limit: 10 });
+
+      for (let msg of msgs) {
+        try { //TODO very ugly, refactor asap
+          return this.getUrl(msg);
+        } catch (_) { }
+      }
+    }
+    throw new Error("No Attachments or links found");
   }
 
   private extractParentFolder(folder: string) {

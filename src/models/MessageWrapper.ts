@@ -1,3 +1,4 @@
+import { Config } from './../services/config.service';
 import { IMessage } from './../contracts';
 import { Message } from 'discord.js';
 
@@ -55,6 +56,14 @@ export class MessageWrapper implements IMessage {
       .fetchMessages(options)
       .then(msgs => {
         return msgs.map(m => m.content);
+      });
+  }
+
+  fetchFullMessages(options?: any): Promise<IMessage[]> {
+    return this.Message.channel
+      .fetchMessages(options)
+      .then(msgs => {
+        return msgs.map(m => new MessageWrapper(() => undefined, m, this.Timer, m.content, this.Command));
       });
   }
 }
