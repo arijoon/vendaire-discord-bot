@@ -23,4 +23,10 @@ export interface IMessage {
    * @param options fetch messageOption
    */
   fetchMessages(options?: any): Promise<string[]>;
+
+  /**
+   * Get a set of messages as IMessage
+   * @param options fetch messageOption
+   */
+  fetchFullMessages(options?: any): Promise<IMessage[]>;
 }

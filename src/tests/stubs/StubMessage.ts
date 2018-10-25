@@ -41,4 +41,8 @@ export class StubMessage implements IMessage {
   fetchMessages(options?: any): Promise<string[]> {
     throw new Error("Method not implemented.");
   }
+
+  fetchFullMessages(options?: any): Promise<IMessage[]> {
+    throw new Error("Method not implemented.");
+  }
 }
