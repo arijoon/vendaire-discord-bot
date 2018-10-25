@@ -6,6 +6,7 @@ import { commands } from '../static';
 
 import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
+import { pathSeperator } from './add-pic.command';
 
 const RandomRange: number = 1/20;
 const RandomRangeMin: number = 5;
@@ -40,8 +41,8 @@ export class RandomPic implements ICommand {
   }
 
   subscription(imsg: IMessage, command: string) {
-    const msg = imsg.Message;
-    this.selectRandomFile(command)
+    let dir = this.extractDirectoryPathFromCommand(imsg);
+    this.selectRandomFile(dir)
       .then(async (filename: string) => {
 
         const guildId = imsg.guidId;
@@ -81,6 +82,18 @@ export class RandomPic implements ICommand {
       .then(lst => {
         return this._config.pathFromRoot(fullPath, this.getRandom(lst, dir));
       });
+  }
+
+  /**
+   * In case of directory commands, it will extract the path: "!!tfw/r hello world" -> "tfw/r"
+   */
+  private extractDirectoryPathFromCommand(imsg: IMessage): string {
+    let dir = imsg.Command;
+    if (imsg.Content.startsWith(pathSeperator)) {
+      dir += imsg.Content.split(' ')[0];
+    }
+
+    return dir;
   }
 
   _lastRandomInx: { [key: string]: number } = {};

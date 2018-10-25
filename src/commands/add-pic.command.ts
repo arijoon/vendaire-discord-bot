@@ -7,6 +7,7 @@ import { commands } from '../static';
 import * as path from 'path';
 import * as opt from 'optimist';
 
+export const pathSeperator = '/';
 const MaxFileSize: number = 1024 * 1024 * 5; // 5MB
 
 @injectable()
@@ -43,7 +44,8 @@ export class AddPicCommand implements ICommand {
         return imsg.send(argv.help(), { code: 'md' });
       }
 
-      const folder = ops.f || (ops._ && ops._.length > 0 ? ops._[0].trim() : null);
+      const fullFolder = ops.f || (ops._ && ops._.length > 0 ? ops._[0].trim() : null);
+      const folder = this.extractParentFolder(fullFolder);
       if(!folder) {
         return imsg.send("You must specify the folder with -f flag");
       }
@@ -66,17 +68,21 @@ export class AddPicCommand implements ICommand {
       }
 
       const stream = await this._http.getFile(attachment.url);
-      const dir = path.join(this._config.images["root"], commands.randomPic, folder);
+      const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
       const filename = await this._filesService.saveFile(stream, dir, `_${msg.author.username}_` + attachment.filename);
 
-      return imsg.send(`Successfully added as ${filename} in ${folder}`);
+      return imsg.send(`Successfully added as ${filename} in ${fullFolder}`);
     }).then(_ => {
       imsg.done();
     }).catch(err => {
-      imsg.send("ooops, something went wrong", { reply: imsg.Message });
+      imsg.send("ooops, something went wrong", { reply: imsg.Message, code: err });
       imsg.done(err, true);
     });
 
+  }
+
+  private extractParentFolder(folder: string) {
+    return folder.split(pathSeperator)[0];
   }
 
   setupOptions(args: string[]): any {
@@ -84,7 +90,7 @@ export class AddPicCommand implements ICommand {
       .usage(`Save file in the specified folder, max size: ${MaxFileSize/(1024*1024)}MB`)
       .options('f', {
         alias: 'folder',
-        describe: 'specify the folder',
+        describe: 'specify the folder, can have subfolders, e.g. tfw/r',
       }).options('o', {
         alias: 'override-size',
         describe: 'override the size limit (only admin can)',
