@@ -96,6 +96,9 @@ export class AddPicCommand implements ICommand {
     return attachment.url;
   }
 
+  /**
+   * Get url from current message or previous 10
+   */
   private async getUrlFromCurrentOrFromHistory(imsg: IMessage) {
     try {
       return this.getUrl(imsg);
