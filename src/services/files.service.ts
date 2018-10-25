@@ -3,7 +3,8 @@ import { TYPES } from '../ioc/types';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Transform } from 'stream';
+import * as moment from 'moment';
+import { createRecursive } from '../helpers';
 
 @injectable()
 export class FilesService implements IFiles {
@@ -50,20 +51,27 @@ export class FilesService implements IFiles {
   saveFile(data: any, dir: string, name?: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const fullPath = this._config.pathFromRoot(dir);
+      const [time, formatted] = this.readableTimeStamp();
+      const prefix = `${time}_${formatted}_`;
       const filename = name 
-      ? `${Date.now()}_${name}` 
-      : `${Date.now()}_${this.randomGenerator(8)}.png`
+      ? `${prefix}${name}` 
+      : `${prefix}${this.randomGenerator(8)}.png`
 
       const filePath = path.join(fullPath, filename)
 
-      if(!fs.existsSync(fullPath)) {
-        fs.mkdirSync(fullPath);
-      }
+      createRecursive(fullPath)
 
       data.pipe(fs.createWriteStream(filePath))
       .on('close', () => resolve(filename))
       .on('error', reject);
     });
+  }
+
+  readableTimeStamp(): [number, string] {
+    const time = Date.now();
+    const formatted = moment(time).format('YYYY-MMM-DD_HH-mm-ss');
+
+    return [time, formatted];
   }
 
   randomGenerator(length: number): string {
