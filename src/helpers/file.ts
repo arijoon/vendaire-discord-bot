@@ -8,7 +8,7 @@ import * as path from 'path';
 export function createRecursive(fullPath: string) {
   const sep = path.sep;
   const initDir = path.isAbsolute(fullPath) ? sep : '';
-  const baseDir = '.';
+  const baseDir = sep === '\\' ? '.' : '';
   if (!fs.existsSync(fullPath)) {
     fullPath.split(sep).reduce((total, current) => {
       const newVal = path.join(baseDir, total, current);
