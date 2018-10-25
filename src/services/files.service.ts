@@ -4,27 +4,31 @@ import { TYPES } from '../ioc/types';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as moment from 'moment';
-import { createRecursive } from '../helpers';
+import { createRecursive, getAllFilesRecursive } from '../helpers';
 
 @injectable()
 export class FilesService implements IFiles {
 
     constructor(
-        @inject(TYPES.IConfig) private _config: IConfig,
-        @inject(TYPES.ICacheString) private _cache: ICache<string, any>
+        @inject(TYPES.IConfig) private _config: IConfig
     ) { }
 
-    getAllFiles(dir: string): Promise<string[]> {
+    getAllFiles(dir: string, options?: IFileQueryOptions): Promise<string[]> {
         let fullPath = this._config.pathFromRoot(dir);
 
         return new Promise<string[]>((resolve, reject) => {
+          if(options && options.recursive) {
+            resolve(getAllFilesRecursive(fullPath));
+          } else {
+            //LEGACY: Maintain for backwards compatibilit
             fs.readdir(fullPath, (err, items) => {
                 if(err) {
                      reject(err);
                 } else {
                      resolve(items);
                 }
-            })
+            });
+          }
         });
     }
 
