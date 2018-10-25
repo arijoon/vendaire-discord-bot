@@ -80,7 +80,7 @@ export class RandomPic implements ICommand {
     return this._filesService
       .getAllFiles(fullPath)
       .then(lst => {
-        return this._config.pathFromRoot(fullPath, this.getRandom(lst, dir));
+        return this._config.pathFromRoot(fullPath, lst.crandom());
       });
   }
 
