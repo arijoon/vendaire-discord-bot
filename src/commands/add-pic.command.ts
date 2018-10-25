@@ -1,3 +1,4 @@
+import { commonRegex, getAll } from './../helpers/common-regex';
 import { IMessage } from '../contracts';
 import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
@@ -37,7 +38,7 @@ export class AddPicCommand implements ICommand {
 
       const content = msg.content.trim();
 
-      let argv = this.setupOptions(content.split(' '));
+      let argv = this.setupOptions(content.split(' '), imsg);
       let ops = argv.argv
 
       if(ops.h) {
@@ -55,21 +56,17 @@ export class AddPicCommand implements ICommand {
         return imsg.send(`${folder} is not in available list of folders: ${readableFolders}`);
       }
 
-      if(imsg.Message.attachments.size < 1) {
-        return imsg.send("No attachments found");
-      }
-
       // Check for attachments
-      const attachment = imsg.Message.attachments.first();
+      const url = this.getUrl(imsg);
+      const { stream, size, name } = await this._http.getFile(url);
 
-      if(attachment.filesize > MaxFileSize) {
-        if(!ops.o || !this._permission.isAdmin(imsg.Message.author.username))
-          return imsg.send(`Attachment too big ${attachment.filesize}, max size: ${MaxFileSize} bytes`);
+      if(size > MaxFileSize) {
+        if(!ops.o || !this._permission.isAdmin(imsg.author))
+          return imsg.send(`Attachment too big ${size}, max size: ${MaxFileSize} bytes`);
       }
 
-      const stream = await this._http.getFile(attachment.url);
       const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
-      const filename = await this._filesService.saveFile(stream, dir, `_${msg.author.username}_` + attachment.filename);
+      const filename = await this._filesService.saveFile(stream, dir, `_${msg.author.username}_` + name);
 
       return imsg.send(`Successfully added as ${filename} in ${fullFolder}`);
     }).then(_ => {
@@ -81,11 +78,29 @@ export class AddPicCommand implements ICommand {
 
   }
 
+  /**
+   * If message has any urls, extract that, otherwise get the attachments
+   */
+  private getUrl(imsg: IMessage) {
+    const urls = getAll(imsg.Content, commonRegex.allLinks);
+
+    if(urls && urls.length > 0) {
+      return urls[0];
+    }
+
+    if (imsg.Message.attachments.size < 1) {
+      throw new Error("No Attachments");
+    }
+    const attachment = imsg.Message.attachments.first();
+
+    return attachment.url;
+  }
+
   private extractParentFolder(folder: string) {
     return folder.split(pathSeperator)[0];
   }
 
-  setupOptions(args: string[]): any {
+  setupOptions(args: string[], imsg: IMessage): any {
     var argv = opt(args)
       .usage(`Save file in the specified folder, max size: ${MaxFileSize/(1024*1024)}MB`)
       .options('f', {
@@ -93,7 +108,7 @@ export class AddPicCommand implements ICommand {
         describe: 'specify the folder, can have subfolders, e.g. tfw/r',
       }).options('o', {
         alias: 'override-size',
-        describe: 'override the size limit (only admin can)',
+        describe: `override the size limit (you ${this._permission.isAdmin(imsg.author) ? 'can' : '**cannot**'} do this)`,
         default: false
       }).options('h', {
         alias: 'help',
@@ -102,5 +117,4 @@ export class AddPicCommand implements ICommand {
 
     return argv;
   }
-
 }

@@ -9,6 +9,7 @@ export class MessageWrapper implements IMessage {
 
   public readonly id: string;
   public readonly userId: string;
+  public readonly author: string;
   public readonly guidId: string;
   public readonly channelId: string;
   public readonly onDone: Promise<{ msg?: string; err?: any; }>;
@@ -31,6 +32,7 @@ export class MessageWrapper implements IMessage {
     this.guidId = msg.guild.id;
     this.channelId = msg.channel.id;
     this.userId = msg.author.id;
+    this.author = msg.author.username;
 
     this.onDone = new Promise(r => this._onDoneResolver = r);
   }
