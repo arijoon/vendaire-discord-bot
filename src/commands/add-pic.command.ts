@@ -118,7 +118,7 @@ export class AddPicCommand implements ICommand {
 
   setupOptions(args: string[], imsg: IMessage): any {
     var argv = opt(args)
-      .usage(`Save file in the specified folder, max size: ${MaxFileSize/(1024*1024)}MB`)
+      .usage(`Save file from (url | attachment) in this message or previous ones in the specified folder, max size: ${MaxFileSize/(1024*1024)}MB`)
       .options('f', {
         alias: 'folder',
         describe: 'specify the folder, can have subfolders, e.g. tfw/r',
