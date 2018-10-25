@@ -3,5 +3,11 @@ interface IHttp {
     get(url: string, headers?: any): Promise<any>;
 
     /** Returns a stream that can be piped */
-    getFile(url: string): Promise<any>;
+    getFile(url: string): Promise<IHttpFileResult>;
+}
+
+interface IHttpFileResult {
+  stream: any;
+  size: number;
+  name: string;
 }

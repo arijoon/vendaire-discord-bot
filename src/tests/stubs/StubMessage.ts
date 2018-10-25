@@ -6,6 +6,7 @@ export class StubMessage implements IMessage {
   Message: discord.Message;  
   Content: string;
   Command: string;
+  author: string;
 
   onDone: Promise<{ msg?: string; err?: any; }>;
 

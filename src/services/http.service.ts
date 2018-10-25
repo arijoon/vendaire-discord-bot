@@ -52,12 +52,21 @@ export class HttpService implements IHttp {
         return rp(options);
     }
 
-  getFile(url: string): Promise<any> {
+  getFile(url: string): Promise<IHttpFileResult> {
 
     return new Promise<any>((resolve, reject) => {
-      request.head(url, function (err, res, body) {
-        resolve(request(url));
+      const fileNameFromUrl = this.fileNameFromUrl;
+      request.head(url, function (err, res, _) {
+        if (err) reject(err);
+        const size = res.headers['content-length'];
+        const name = fileNameFromUrl(url);
+        resolve({ stream: request(url), name, size });
       });
     });
+  }
+
+  fileNameFromUrl(url: string) {
+    const components = url.split('/');
+    return components[components.length - 1];
   }
 }
