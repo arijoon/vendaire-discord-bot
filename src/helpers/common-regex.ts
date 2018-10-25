@@ -4,6 +4,12 @@ export const commonRegex = {
     usermention: /<@\d+>/
 }
 
+/**
+ * Get all matches from content
+ * @param content content string to search in
+ * @param reg Regex to use for searching
+ * @param group Regex group to extract
+ */
 export function getAll(content: string, reg: RegExp, group: number = 0) {
   reg = new RegExp(reg);
   const results: string[] = [];
