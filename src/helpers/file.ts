@@ -41,3 +41,14 @@ export function getAllFilesRecursive(srcPath: string): string[] {
 
   return files;
 }
+
+export function getAllFoldersRecursive(srcPath: string): string[] {
+  const items = fs.readdirSync(srcPath);
+  const folders = items.filter(item => fs.statSync(path.join(srcPath, item)).isDirectory());
+  return folders.reduce((total, current) => {
+    total.push.apply(total, getAllFoldersRecursive(path.join(srcPath, current))
+      .map(item => path.join(current, item)));
+
+      return total;
+  }, folders);
+}

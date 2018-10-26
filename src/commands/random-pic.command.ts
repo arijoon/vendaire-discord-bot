@@ -3,10 +3,12 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
+import * as opt from 'optimist';
 
 import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
 import { pathSeperator } from './add-pic.command';
+import { getMainContent } from '../helpers';
 
 const RandomRange: number = 1/20;
 const RandomRangeMin: number = 5;
@@ -40,43 +42,72 @@ export class RandomPic implements ICommand {
       .subscribe(imsg => this.subscription(imsg, this._commands.crandom()));
   }
 
-  subscription(imsg: IMessage, command: string) {
-    let dir = this.extractDirectoryPathFromCommand(imsg);
-    this.selectRandomFile(dir)
-      .then(async (filename: string) => {
+  async subscription(imsg: IMessage, command: string) {
+    Promise.resolve().then(async () => {
 
-        const guildId = imsg.guidId;
-        let channelId = imsg.channelId;
+      let argv = this.setupOptions(imsg.Content.trim().split(' '));
+      let ops = argv.argv;
 
-        if(command.toLowerCase() == 'nsfw') {  // Special case
-          channelId = await this._client.getNsfwChannel(guildId);
+      if (ops.h) { // return help
+        return imsg.send(argv.help(), { code: 'md' });
+      }
 
-          if(!channelId)
-            return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
-        }
+      const dir = this.extractDirectoryPathFromCommand(command, getMainContent(ops));
+      const fullPath = path.join(this._config.images["root"], this._command, dir);
 
-        if (await this._cache.has(filename)) {
-          return this._client.sendMessage(guildId, channelId, "", { files: [await this._cache.get(filename)] });
-        }
+      if (ops.l) { // list the folders
+        return this.listFolders(imsg, fullPath);
+      }
 
-        return this._client.sendMessage(guildId, channelId, "", { file: filename })
-          .then(async (res: Message) => {
-            const attach: MessageAttachment = res.attachments.values().next().value;
-            if (!attach) return res;
+      return this.selectRandomFile(fullPath)
+        .then(async (filename: string) => {
 
-            const url = attach.url;
-            await this._cache.set(filename, url);
+          const guildId = imsg.guidId;
+          let channelId = imsg.channelId;
 
-            return res;
-          })
-      })
-      .then(() => imsg.done())
+          if (command.toLowerCase() == 'nsfw') {  // Special case
+            channelId = await this._client.getNsfwChannel(guildId);
+
+            if (!channelId)
+              return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
+          }
+
+          if (await this._cache.has(filename)) {
+            return this._client.sendMessage(guildId, channelId, "", { files: [await this._cache.get(filename)] });
+          }
+
+          return this._client.sendMessage(guildId, channelId, "", { file: filename })
+            .then(async (res: Message) => {
+              const attach: MessageAttachment = res.attachments.values().next().value;
+              if (!attach) return res;
+
+              const url = attach.url;
+              await this._cache.set(filename, url);
+
+              return res;
+            })
+        })
+    }).then(() => imsg.done())
       .catch(err => imsg.done(err, true));
   }
 
-  selectRandomFile(dir: string): Promise<string> {
-    const fullPath = path.join(this._config.images["root"], this._command, dir);
+  async listFolders(imsg: IMessage, fullPath: string) {
+    const cmdPath = imsg.Command == this._command
+      ? path.join(this._config.images["root"], this._command)
+      : fullPath
 
+    const dir = this.extractDirectoryPathFromCommand(imsg.Command, imsg.Content);
+
+    const folders = await this._filesService.getAllFolders(cmdPath);
+    const message = folders.reduce((msg, current) => {
+      const indentLevel = '\t'.repeat((current.match(/[\\\/]/g) || []).length);
+      return `${msg}\n${indentLevel}${current}`;
+    }, `Folders under ${dir}:\n`);
+
+    return imsg.send(message, { code: 'md', split: true });
+  }
+
+  selectRandomFile(fullPath: string): Promise<string> {
     return this._filesService
       .getAllFiles(fullPath, { recursive: true })
       .then(lst => {
@@ -84,13 +115,16 @@ export class RandomPic implements ICommand {
       });
   }
 
+  formatFolderList(folders: string[], dir: string) {
+    return   }
+
   /**
    * In case of directory commands, it will extract the path: "!!tfw/r hello world" -> "tfw/r"
    */
-  private extractDirectoryPathFromCommand(imsg: IMessage): string {
-    let dir = imsg.Command;
-    if (imsg.Content.startsWith(pathSeperator)) {
-      dir += imsg.Content.split(' ')[0];
+  private extractDirectoryPathFromCommand(command: string, content: string): string {
+    let dir = command;
+    if (content && content.startsWith(pathSeperator)) {
+      dir += content.split(' ')[0];
     }
 
     return dir;
@@ -111,5 +145,19 @@ export class RandomPic implements ICommand {
     this._lastRandomInx[key] = (this._lastRandomInx[key] + (Math.ceil(Math.random() * range))) % lst.length;
     
     return lst[this._lastRandomInx[key]];
+  }
+
+  setupOptions(args: string[]): any {
+    var argv = opt(args)
+      .usage("Post a random picture from available folders/subfolders")
+      .options('l', {
+        alias: 'list',
+        describe: 'list all available folders',
+      }).options('h', {
+        alias: 'help',
+        describe: 'show this message',
+      });
+
+    return argv;
   }
 }
