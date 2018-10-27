@@ -5,8 +5,6 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 
 import * as opt from 'optimist';
-import * as crypto from 'crypto';
-import { commonRegex } from '../helpers';
 
 @injectable()
 export class IgDownload implements ICommand {
@@ -66,9 +64,10 @@ export class IgDownload implements ICommand {
             }));
           }).then(res => {
             const start = (+ops.s) || 0;
-            const end =(+ops.n || 1) + start;
+            const end = (+ops.n || 1) + start;
             return res.map(r => r.image)
               .slice(start, end);
+
           }).then((res: string[]) => {
             if (res.length > 10) {
               for (let i = 0; i < res.length / 10; i++) {
