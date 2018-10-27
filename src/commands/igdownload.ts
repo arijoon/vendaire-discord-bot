@@ -36,9 +36,9 @@ export class IgDownload implements ICommand {
 
         let url = this.getUrl(ops._[0]);
 
-        this._httpClient.getJson(url)
-          .then(res => {
-            return JSON.parse(res.contents.split('window._sharedData = ')[1]
+        this._httpClient.get(url)
+          .then(body => {
+            return JSON.parse(body.split('window._sharedData = ')[1]
               .split('\;\<\/script>')[0])
               .entry_data.ProfilePage[0]
               .graphql.user.edge_owner_to_timeline_media.edges
@@ -87,7 +87,7 @@ export class IgDownload implements ICommand {
   }
 
   getUrl(user: string) {
-    return 'https://allorigins.me/get?url=' + encodeURIComponent('https://instagram.com/' + user + '/')
+    return 'https://instagram.com/' + user + '/';
   }
 
   setupOptions(args: string[]): any {
