@@ -1,4 +1,5 @@
 import * as stackTrace from 'stack-trace';
+import * as moment from 'moment';
 
 export class Logger implements ILogger {
 
@@ -23,6 +24,7 @@ export class Logger implements ILogger {
   }
 
   private serialiseTrace(trace: any, msg: any) : any {
+    const time =  moment().utc().format('YYYY-MMM-DD HH:mm:ss.SSS Z');
     const filePath = trace.getFileName().split(/\/|\\/);
     const filename = filePath[filePath.length-1];
     const funcName = trace.getFunctionName() || trace.getMethodName();
@@ -30,6 +32,6 @@ export class Logger implements ILogger {
     const lineNumber = trace.getLineNumber();
     const suffix = [funcName, typeName].filter(i => i).join(' ')
 
-    return `[${process.pid} ${filename}:${lineNumber}${suffix ? " " + suffix: ""}]: ${msg}`
+    return `${time} [${process.pid} ${filename}:${lineNumber}${suffix ? " " + suffix: ""}]: ${msg}`
   }
 }

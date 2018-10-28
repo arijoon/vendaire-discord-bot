@@ -72,12 +72,13 @@ export class RandomPic implements ICommand {
               return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
           }
 
-          if (await this._cache.has(filename)) {
-            return this._client.sendMessage(guildId, channelId, "", { files: [await this._cache.get(filename)] });
-          }
+          const { message, options, shouldCache } = await this.makeFileOptions(filename);
 
-          return this._client.sendMessage(guildId, channelId, "", { file: filename })
-            .then(async (res: Message) => {
+          const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
+
+          return !shouldCache
+            ? sentMsg
+            : sentMsg.then(async (res: Message) => {
               const attach: MessageAttachment = res.attachments.values().next().value;
               if (!attach) return res;
 
@@ -85,10 +86,24 @@ export class RandomPic implements ICommand {
               await this._cache.set(filename, url);
 
               return res;
-            })
-        })
+            });
+        });
     }).then(() => imsg.done())
       .catch(err => imsg.done(err, true));
+  }
+
+  async makeFileOptions(filename: string): Promise<{ message: string, shouldCache: boolean, options?: any}> {
+    if (filename.endsWith('.link')) {
+      return { message: await this._filesService.readFile(filename), shouldCache: false };
+    }
+
+    return {
+      message: '', shouldCache: true, options: {
+        files: [await this._cache.has(filename)
+          ? await this._cache.get(filename)
+          : filename]
+      }
+    }
   }
 
   async listFolders(imsg: IMessage, fullPath: string) {

@@ -60,7 +60,7 @@ export class HttpService implements IHttp {
         if (err) reject(err);
         const size = res.headers['content-length'];
         const name = fileNameFromUrl(url);
-        resolve({ stream: request(url), name, size });
+        resolve({ data: request(url), name, size });
       });
     });
   }

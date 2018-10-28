@@ -7,7 +7,7 @@ interface IHttp {
 }
 
 interface IHttpFileResult {
-  stream: any;
+  data: any;
   size: number;
   name: string;
 }

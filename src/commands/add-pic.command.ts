@@ -4,6 +4,7 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
+import { getLastSection, readbleFromString } from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -58,15 +59,18 @@ export class AddPicCommand implements ICommand {
 
       // Check for attachments or links
       const url = await this.getUrlFromCurrentOrFromHistory(imsg);
-      const { stream, size, name } = await this._http.getFile(url);
+      const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
+
+      const { data, size, name } = this.shouldSaveAsLink(url)
+        ? { data: readbleFromString(url), size: url.length, name: `${getLastSection(url)}.link` }
+        : await this._http.getFile(url);
 
       if(size > MaxFileSize) {
         if(!ops.o || !this._permission.isAdmin(imsg.author))
           return imsg.send(`Attachment too big ${size}, max size: ${MaxFileSize} bytes`);
       }
 
-      const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
-      const filename = await this._filesService.saveFile(stream, dir, `_${msg.author.username}_` + name);
+      const filename = await this._filesService.saveFile(data, dir, `_${msg.author.username}_` + name);
 
       return imsg.send(`Successfully added as ${filename} in ${fullFolder}`);
     }).then(_ => {
@@ -94,6 +98,20 @@ export class AddPicCommand implements ICommand {
     const attachment = imsg.Message.attachments.first();
 
     return attachment.url;
+  }
+
+
+  linkableUrls = [
+    /https:\/\/streamable.com/
+  ];
+  private shouldSaveAsLink(url: string) {
+    for (let item of this.linkableUrls) {
+      if (item.test(url)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { createRecursive, getAllFilesRecursive, getAllFoldersRecursive } from '../../helpers';
+import { createRecursive, getAllFilesRecursive, getAllFoldersRecursive, getAllFoldersStatRecursively } from '../../helpers';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import 'mocha';
@@ -12,10 +12,18 @@ describe('Search directory for files recursively', () => {
     expect(files.length).to.equal(5);
   });
 
-  it('it should get all the folders', () => {
+  xit('it should get all the folders', () => {
 
     const path = "E:\\tmp\\";
     const folders = getAllFoldersRecursive(path);
+
+    expect(folders.length).to.equal(5);
+  });
+
+  it('it should get all the folders structures', () => {
+
+    const path = "E:\\tmp\\";
+    const folders = getAllFoldersStatRecursively(path);
 
     expect(folders.length).to.equal(5);
   });
