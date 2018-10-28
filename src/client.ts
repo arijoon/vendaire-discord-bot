@@ -217,10 +217,13 @@ export class Client implements IClient {
       const elapsed = timer.stop();
       const response = cmsg || "";
 
-      if (err)
+      if (err) {
         this._logger.error(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`, err);
-      else
+        const xreaction = '%E2%9D%8C';
+        msg.react(xreaction);
+      } else {
         this._logger.info(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+      }
 
       msg.channel.stopTyping(true);
     }
