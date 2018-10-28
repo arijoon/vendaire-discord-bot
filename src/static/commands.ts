@@ -14,7 +14,7 @@ let commands = {
     randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc'
      ,'tekken', 'todd', 'anime-legacy', 'anime', 'beargrylls', 'indian', 'dafuq'
      ,'umaru', 'boomer', 'zoomer', 'anims', 'animr', 'pepe' // requests
-     ,'sfv', 'blazbluecf', 'kpop', 'games',
+     ,'sfv', 'blazbluecf', 'kpop', 'games', 'movies'
      ,'nsfw' // special case, will post it to the NSFW channel
      ,"trash" // for removed items
     ],
