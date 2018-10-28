@@ -21,6 +21,10 @@ export function createRecursive(fullPath: string) {
   }
 }
 
+/**
+ * Get all files recursively in directory and subdirectories
+ * @param srcPath source path
+ */
 export function getAllFilesRecursive(srcPath: string): string[] {
   const items = fs.readdirSync(srcPath);
   const folders = [];
@@ -42,6 +46,10 @@ export function getAllFilesRecursive(srcPath: string): string[] {
   return files;
 }
 
+/**
+ * Get all folders recursively
+ * @param srcPath the source path
+ */
 export function getAllFoldersRecursive(srcPath: string): string[] {
   const items = fs.readdirSync(srcPath);
   const folders = items.filter(item => fs.statSync(path.join(srcPath, item)).isDirectory());
@@ -51,4 +59,29 @@ export function getAllFoldersRecursive(srcPath: string): string[] {
 
       return total;
   }, folders);
+}
+
+/**
+ * Get a nested structure of folders and files recursively
+ * @param srcPath source path
+ * @param name name of the parent folder
+ */
+export function getAllFoldersStatRecursively(srcPath: string, name?: string): IFolderStat {
+  const items = fs.readdirSync(srcPath);
+  const folders = [];
+  const files = []
+
+  for (const item of items) {
+    if (fs.statSync(path.join(srcPath, item)).isDirectory()) {
+      folders.push(item)
+    } else {
+      files.push(item);
+    }
+  }
+
+  return {
+    name: name,
+    files: files,
+    folders: folders.map(f => getAllFoldersStatRecursively(path.join(srcPath, f), f))
+  };
 }

@@ -4,7 +4,8 @@ import { TYPES } from '../ioc/types';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as moment from 'moment';
-import { createRecursive, getAllFilesRecursive, getAllFoldersRecursive } from '../helpers';
+import { createRecursive, getAllFilesRecursive, getAllFoldersRecursive, getAllFoldersStatRecursively, isString } from '../helpers';
+import { Readable } from 'stream';
 
 @injectable()
 export class FilesService implements IFiles {
@@ -45,6 +46,19 @@ export class FilesService implements IFiles {
     });
   }
 
+  getAllFoldersStat(dir: string, name: string): Promise<IFolderStat> {
+    let fullPath = this._config.pathFromRoot(dir);
+
+    return new Promise<IFolderStat>((resolve, reject) => {
+      try {
+        const result = getAllFoldersStatRecursively(fullPath);
+        resolve(result);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
   getRandomFile(dir: string): Promise<string> {
     return this.getAllFiles(dir).then(f => f.crandom());
   }
@@ -65,7 +79,22 @@ export class FilesService implements IFiles {
       });
   }
 
-  saveFile(data: any, dir: string, name?: string): Promise<string> {
+  readFile(filePath: string, isFromRoot = true): Promise<string> {
+    if (!isFromRoot)
+      filePath = this._config.pathFromRoot(filePath);
+
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  saveFile(data: Readable, dir: string, name?: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const fullPath = this._config.pathFromRoot(dir);
       const [time, formatted] = this.readableTimeStamp();
@@ -78,7 +107,8 @@ export class FilesService implements IFiles {
 
       createRecursive(fullPath)
 
-      data.pipe(fs.createWriteStream(filePath))
+      const writeStream = fs.createWriteStream(filePath);
+      data.pipe(writeStream)
         .on('close', () => resolve(filename))
         .on('error', reject);
     });
