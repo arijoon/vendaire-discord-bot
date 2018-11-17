@@ -93,6 +93,11 @@
           "values": [
             {
               "name": {
+                "value": "kpop"
+              }
+            },
+            {
+              "name": {
                 "value": "suicide"
               }
             },
