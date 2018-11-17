@@ -61,7 +61,9 @@ export class AleksaServer implements IStartable {
     for (let intent of this._intents) {
       this.aleksaApp.intent(intent.name,
         schema[intent.name],
-        await intent.getCallback(config))
+        await intent.getCallback(config));
+
+      this._logger.info(`Attached Intent: ${intent.name}`);
     }
   }
 }

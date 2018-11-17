@@ -29,6 +29,7 @@ container.bind(Services.FourChanApi).toSelf();
 
 // Aleksa
 container.bind<IStartable>(TYPES.AleksaServer).to(Aleksa.AleksaServer).inSingletonScope();
+container.bind(TYPES.AleksaServerSelector).to(Aleksa.ServerSelectorService).inSingletonScope();
 for(let key in AleksaIntents) {
   if(!AleksaIntents.hasOwnProperty(key)) continue;
   container.bind<IIntent>(TYPES.IIntent).to(AleksaIntents[key]).inSingletonScope();
