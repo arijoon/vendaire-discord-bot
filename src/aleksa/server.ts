@@ -23,6 +23,12 @@ export class AleksaServer implements IStartable {
 
   public async start(): Promise<void> {
     const config = this._config.app.aleksa;
+
+    if(!config.isEnabled) {
+      this._logger.info("Alexa server is disabled");
+      return;
+    }
+
     this.app = express();
 
     await this.setupAleksaApp(this.app, config);
