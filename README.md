@@ -87,6 +87,9 @@ Usage: !![commands] [optional arguments]
         translate {text} [options]       translate the text
 ```
 
+## Aleksa usage
+
+This bot has the capability to listen to Aleksa intents. In order to use this feature, look at aleksa config section in secret config and app config. You must also route the intents to the address you specify for this bot's server to run
 
 
 ### Architecture
