@@ -13,6 +13,7 @@ export class PostImageIntent implements IIntent  {
     "miscellaneous": "misc",
     "anna": "misc/anna",
     "sexy": "misc/sexy",
+    "k-pop": "kpop",
     "anything": "randompic",
     "suicide": "kys",
     "laughter": "lol",
