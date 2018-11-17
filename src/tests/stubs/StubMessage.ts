@@ -2,6 +2,7 @@ import { IMessage } from "../../contracts";
 import * as discord from 'discord.js';
 
 export class StubMessage implements IMessage {
+  isBot: boolean;
   Timer: ITimer;
   Message: discord.Message;  
   Content: string;

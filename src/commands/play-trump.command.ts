@@ -24,12 +24,19 @@ export class PlayTrump implements ICommand {
             .getCommandStream(this._command)
             .subscribe(imsg => {
                 const msg = imsg.Message;
-                if (!msg.member.voiceChannel)
+                let voiceChannel;
+                if(imsg.isBot) {
+                  voiceChannel = msg.mentions.members.first().voiceChannel
+                }
+                else if (!msg.member.voiceChannel) {
                     msg.channel.send("You aren't in any voice channels asshole");
+                } else {
+                  voiceChannel = msg.member.voiceChannel;
+                }
 
                 let ops = this.setupOptions(msg.content.split(' ')).argv;
 
-                this._audioPlayer.playRandomFile(msg.member.voiceChannel, ops.q)
+                this._audioPlayer.playRandomFile(voiceChannel, ops.q)
                     .then(_ => imsg.done())
                     .catch(err => {
                         msg.channel.send('Bad query');

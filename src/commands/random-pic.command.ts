@@ -24,6 +24,7 @@ export class RandomPic implements ICommand {
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.IFiles) private _filesService: IFiles,
     @inject(TYPES.IBasicCache) private _cache: IBasicCache,
+    @inject(TYPES.Logger) private _logger: ILogger,
   ) { }
 
   attach(): void {
@@ -53,6 +54,7 @@ export class RandomPic implements ICommand {
       }
 
       const dir = this.extractDirectoryPathFromCommand(command, getMainContent(ops));
+
       const fullPath = path.join(this._config.images["root"], this._command, dir);
 
       if (ops.l) { // list the folders
@@ -61,6 +63,8 @@ export class RandomPic implements ICommand {
 
       return this.selectRandomFile(fullPath)
         .then(async (filename: string) => {
+
+          this._logger.info(`Selected file: ${filename}, from: ${dir}`);
 
           const guildId = imsg.guidId;
           let channelId = imsg.channelId;

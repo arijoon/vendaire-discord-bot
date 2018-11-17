@@ -26,6 +26,13 @@ interface IFiles {
    */
   readFile(filePath: string, isFromRoot?: boolean): Promise<string>;
 
+  /**
+   * Read a file and return a buffer
+   * @param filePath path to the file
+   * @param options options to determine the rea actions
+   */
+  readFileBuffer(filePath: string, options?: IFileReadOptions): Promise<Buffer>;
+
   getRandomFile(dir: string): Promise<string>;
 
   getAllFilesWithName(dir: string, pattern: RegExp): Promise<string[]>;
@@ -39,4 +46,8 @@ interface IFolderStat {
   name: string;
   files: string[];
   folders: IFolderStat[];
+}
+
+interface IFileReadOptions {
+  isAbsolute?: boolean
 }

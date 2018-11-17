@@ -7,6 +7,7 @@ export interface IMessage {
   readonly guidId: string;
   readonly channelId: string;
   readonly author: string;
+  readonly isBot: boolean;
   readonly Message: Message;
   readonly Timer: ITimer;
   readonly Content: string;

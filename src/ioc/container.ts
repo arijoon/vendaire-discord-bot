@@ -1,7 +1,10 @@
+import { IIntent } from 'aleksa/IIntent';
 import { Container } from 'inversify';
 import { TYPES } from './types';
 import { Client } from '../client';
 import * as Services from '../services';
+import * as Aleksa from '../aleksa';
+import * as AleksaIntents from '../aleksa/intents';
 import * as Commands from '../commands';
 import * as Contracts from '../contracts';
 import * as Helpers from '../helpers';
@@ -23,6 +26,13 @@ container.bind<Contracts.IClient>(TYPES.IClient).to(Client).inSingletonScope();
 
 // Apis
 container.bind(Services.FourChanApi).toSelf();
+
+// Aleksa
+container.bind<IStartable>(TYPES.AleksaServer).to(Aleksa.AleksaServer).inSingletonScope();
+for(let key in AleksaIntents) {
+  if(!AleksaIntents.hasOwnProperty(key)) continue;
+  container.bind<IIntent>(TYPES.IIntent).to(AleksaIntents[key]).inSingletonScope();
+}
 
 // Services
 container.bind<Contracts.IAudioPlayer>(TYPES.IAudioPlayer).to(Services.AudioPlayerService).inSingletonScope();

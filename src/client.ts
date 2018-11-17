@@ -16,6 +16,7 @@ import * as discord from 'discord.js';
 export class Client implements IClient {
 
   prefix: string;
+  botPrefix: string;
   _client: discord.Client;
   _isAttached: boolean;
 
@@ -36,6 +37,7 @@ export class Client implements IClient {
     this._isAttached = false;
 
     this.prefix = _config.app.prefix;
+    this.botPrefix = this.prefix+"+";
 
     this._client = new discord.Client();
 
@@ -103,7 +105,11 @@ export class Client implements IClient {
     this.onDiscordMessage(msg);
   }
 
-  public sendMessage(guildId: string, channelId: string, content: string, options?: any): Promise<any> {
+  public sendMessage(guildId: string, channelId: string, content: string, options?: any, botOptions?: any): Promise<any> {
+    if(botOptions && botOptions.isCommand) {
+      content = this.botPrefix + content;
+    }
+
     const channel = this.getChannel(guildId, channelId);
     return channel.send(content, options);
   }
@@ -129,7 +135,7 @@ export class Client implements IClient {
     this._client.on("message", (msg) => {
       if (!msg.content.startsWith(this.prefix)) return;
 
-      if (msg.author.bot) return;
+      if (msg.author.bot && !msg.content.startsWith(this.botPrefix)) return;
 
       if (!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
         msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
@@ -150,6 +156,10 @@ export class Client implements IClient {
 
   private processMessage(msg: Message) {
     let foundCommand: boolean = false;
+
+    if(msg.content.startsWith(this.botPrefix)) {
+      msg.content = msg.content.replace(this.botPrefix, this.prefix);
+    }
 
     // Handle special replay case
     if(msg.content === this.prefix) {

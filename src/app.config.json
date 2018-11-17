@@ -37,5 +37,15 @@
       "pollingInMin": 10,
       "pollingLoadMultiplier": 1.5
     }
+  },
+  "aleksa": {
+    "isEnabled": false,
+    "intentSchema": "assets/aleksa/intentSchema.json",
+    "server": {
+      "port": 443,
+      "address": "0.0.0.0",
+      "key": "assets/aleksa/aleksa-key.pem",
+      "cert": "assets/aleksa/aleksa-cert.pem"
+    }
   }
 }
