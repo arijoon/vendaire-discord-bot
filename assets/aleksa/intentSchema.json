@@ -46,9 +46,122 @@
             "tfw nogf",
             "I'm feeling"
           ]
+        },
+        {
+          "name": "PostImageIntent",
+          "slots": [
+            {
+              "name": "name",
+              "type": "Image_Type"
+            }
+          ],
+          "samples": [
+            "let me have an {name}",
+            "let me have a {name}",
+            "show me {name}",
+            "post {name}"
+          ]
         }
       ],
-      "types": []
+      "types": [
+        {
+          "name": "Image_Type",
+          "values": [
+            {
+              "name": {
+                "value": "suicide"
+              }
+            },
+            {
+              "name": {
+                "value": "anything",
+                "synonyms": [
+                  "random"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "miscellaneous"
+              }
+            },
+            {
+              "name": {
+                "value": "indian"
+              }
+            },
+            {
+              "name": {
+                "value": "todd"
+              }
+            },
+            {
+              "name": {
+                "value": "zoomer"
+              }
+            },
+            {
+              "name": {
+                "value": "boomer"
+              }
+            },
+            {
+              "name": {
+                "value": "anime"
+              }
+            },
+            {
+              "name": {
+                "value": "games"
+              }
+            },
+            {
+              "name": {
+                "value": "bullshit"
+              }
+            },
+            {
+              "name": {
+                "value": "call"
+              }
+            },
+            {
+              "name": {
+                "value": "laughter",
+                "synonyms": [
+                  "funny",
+                  "laugh"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "god"
+              }
+            },
+            {
+              "name": {
+                "value": "memri"
+              }
+            },
+            {
+              "name": {
+                "value": "fap"
+              }
+            },
+            {
+              "name": {
+                "value": "pepe"
+              }
+            },
+            {
+              "name": {
+                "value": "anna"
+              }
+            }
+          ]
+        }
+      ]
     }
   }
 }
