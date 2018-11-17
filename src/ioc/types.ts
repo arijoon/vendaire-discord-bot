@@ -21,7 +21,11 @@ let TYPES = {
     ICommand: Symbol("ICommand"),
 
     // Utils
-    Logger: Symbol("ILogger")
+    Logger: Symbol("ILogger"),
+
+    // Aleksa
+    IIntent: Symbol("IIntent"),
+    AleksaServer: Symbol("Intent")
 };
 
 export { TYPES };

@@ -7,6 +7,8 @@ declare let require: any;
 @injectable()
 export class Config implements IConfig {
 
+  private _isDev: boolean;
+  private _env: string;
   private _root: string;
   private _images: Map<string, string> = new Map<string, string>();
 
@@ -20,12 +22,22 @@ export class Config implements IConfig {
 
     let env = process.env.NODE_ENV || 'production';
     env = env.trim();
+    this._env = env;
+    this._isDev = env !== 'production';
 
     for (let key in this._appConfig['env'][env]) {
       this._appConfig[key] = this._appConfig['env'][env][key];
     }
 
     this._appConfig = this.mergeCollections(process.env, this.mergeDeep(this._appConfig, this._secret), "DiscordBot");
+  }
+
+  get isDev(): boolean {
+    return this._isDev;
+  }
+
+  get env(): string {
+    return this._env;
   }
 
   get root(): string {

@@ -94,6 +94,19 @@ export class FilesService implements IFiles {
     });
   }
 
+  readFileBuffer(filePath: string, options?: IFileReadOptions): Promise<Buffer> {
+    const fullPath = this.getFullPath(filePath, options);
+
+    return new Promise((resolve, reject) => {
+      fs.readFile(fullPath, null, (err, data) => {
+        if (err)
+          reject(err);
+        else
+          resolve(data);
+      });
+    });
+  }
+
   saveFile(data: Readable, dir: string, name?: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const fullPath = this._config.pathFromRoot(dir);
@@ -129,5 +142,12 @@ export class FilesService implements IFiles {
     }
 
     return result;
+  }
+
+  private getFullPath(filePath: string, ops: IFileReadOptions) {
+    if (ops && ops.isAbsolute) {
+      return filePath;
+    }
+    return this._config.pathFromRoot(filePath);
   }
 }

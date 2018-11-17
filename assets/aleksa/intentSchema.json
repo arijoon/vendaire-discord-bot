@@ -1,0 +1,54 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "discord",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": [
+            "tell me those reinder names again",
+            "tell me the reindeer names"
+          ]
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "PlayTrumpIntent",
+          "slots": [],
+          "samples": [
+            "bossman trump",
+            "fucking trump",
+            "hate trump",
+            "love trump",
+            "trump",
+            "play trump"
+          ]
+        },
+        {
+          "name": "TfwIntent",
+          "slots": [],
+          "samples": [
+            "that feel when",
+            "feel is too much",
+            "please top this feel",
+            "I'm feeling the feel",
+            "tha feel",
+            "tfw nogf",
+            "I'm feeling"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}

@@ -1,4 +1,3 @@
-import { Config } from './../services/config.service';
 import { IMessage } from './../contracts';
 import { Message } from 'discord.js';
 
@@ -13,6 +12,7 @@ export class MessageWrapper implements IMessage {
   public readonly author: string;
   public readonly guidId: string;
   public readonly channelId: string;
+  public readonly isBot: boolean;
   public readonly onDone: Promise<{ msg?: string; err?: any; }>;
 
   private _onDoneResolver: (reso: { msg?: string, err?: any}) => void;
@@ -34,6 +34,7 @@ export class MessageWrapper implements IMessage {
     this.channelId = msg.channel.id;
     this.userId = msg.author.id;
     this.author = msg.author.username;
+    this.isBot = msg.author.bot;
 
     this.onDone = new Promise(r => this._onDoneResolver = r);
   }

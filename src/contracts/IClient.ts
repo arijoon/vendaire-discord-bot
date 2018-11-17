@@ -25,7 +25,7 @@ export interface IClient {
      * @param content content of the message
      * @param options discord options to send with the message
      */
-    sendMessage(guildId: string, channelId: string, content: string, options?: any): Promise<any>;
+    sendMessage(guildId: string, channelId: string, content: string, options?: any, botOptions?: any): Promise<any>;
 
     /**
      * get the channel Id of the NSFW channel

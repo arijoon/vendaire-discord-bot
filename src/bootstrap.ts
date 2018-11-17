@@ -27,6 +27,10 @@ client.attachHelp(helps);
 logger.info("Attahed " + commands.length + " command" + (commands.length > 1 ? "s" : ""));
 logger.info(`Attached ${helps.length} helps`)
 
+container.get<IStartable>(TYPES.AleksaServer).start()
+  .then(() => logger.info("Aleksa server started"))
+  .catch((err) => logger.error("Failed to stat aleksa server", err))
+
 function instanceOfHasHelp(object: any): object is IHasHelp {
   return 'getHelp' in object;
 }
