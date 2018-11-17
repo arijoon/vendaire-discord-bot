@@ -74,6 +74,17 @@
             "change channel to {server}",
             "change server to {server}"
           ]
+        },
+        {
+          "name": "QueryServerIntent",
+          "slots": [],
+          "samples": [
+            "which channel",
+            "which chat",
+            "which server",
+            "what is my server",
+            "which server am I in"
+          ]
         }
       ],
       "types": [
