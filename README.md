@@ -89,8 +89,7 @@ Usage: !![commands] [optional arguments]
 
 ## Aleksa usage
 
-This bot has the capability to listen to Aleksa intents. In order to use this feature, look at aleksa config section in secret config and app config. You must also route the intents to the address you specify for this bot's server to run
-
+This bot has the capability to listen to Aleksa intents. In order to use this feature, look at aleksa config section in [secret config][config-secret] and app config. You must also route the intents to the address you specify for this bot's server to run.
 
 ### Architecture
 
@@ -119,3 +118,5 @@ The above class implements `ICommand` and is binded in the `container.ts` . Simp
 
 The entry is in `bootstrap.ts`, so read from there if you want a complete grasp
 The prod entry point is in `cluster.ts`, the clustering system is used to take advantage of multithreading and process all commands truely as parallel as each other without interference
+
+[config-secret]: src/config.secret.json.template
