@@ -61,6 +61,19 @@
             "show me {name}",
             "post {name}"
           ]
+        },
+        {
+          "name": "ChangeServerIntent",
+          "slots": [
+            {
+              "name": "server",
+              "type": "Server_Type"
+            }
+          ],
+          "samples": [
+            "change channel to {server}",
+            "change server to {server}"
+          ]
         }
       ],
       "types": [
@@ -157,6 +170,34 @@
             {
               "name": {
                 "value": "anna"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Server_Type",
+          "values": [
+            {
+              "name": {
+                "value": "funposting",
+                "synonyms": [
+                  "the order funposting"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "jews"
+              }
+            },
+            {
+              "name": {
+                "value": "personal"
+              }
+            },
+            {
+              "name": {
+                "value": "the order"
               }
             }
           ]

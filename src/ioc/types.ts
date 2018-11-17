@@ -25,7 +25,8 @@ let TYPES = {
 
     // Aleksa
     IIntent: Symbol("IIntent"),
-    AleksaServer: Symbol("Intent")
+    AleksaServer: Symbol("Intent"),
+    AleksaServerSelector: Symbol("AleksaServerSelector")
 };
 
 export { TYPES };
