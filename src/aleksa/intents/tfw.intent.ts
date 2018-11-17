@@ -18,7 +18,7 @@ export class TfwIntent implements IIntent  {
     this._logger.info(`Posting to ${name}`);
 
     return async (req, res) => {
-      this._client.sendMessage(guildId, channelId, "tfw", {}, { isCommand: true });
+      this._client.sendMessage(guildId, channelId, `tfw <@${userId}>`, {}, { isCommand: true });
       res.say("I know that feel bro!");
     };
   }
