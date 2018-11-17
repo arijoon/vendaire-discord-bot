@@ -22,3 +22,7 @@ tmp/
 
 # Ignored directories
 assets/images
+
+# Server key files
+assets/aleksa/*.pem
+assets/aleksa/*.cnf
