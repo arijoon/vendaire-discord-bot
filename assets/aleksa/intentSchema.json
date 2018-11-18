@@ -93,6 +93,19 @@
           "values": [
             {
               "name": {
+                "value": "sexy anime"
+              }
+            },
+            {
+              "name": {
+                "value": "what the fuck",
+                "synonyms": [
+                  "the fuck"
+                ]
+              }
+            },
+            {
+              "name": {
                 "value": "kpop"
               }
             },
