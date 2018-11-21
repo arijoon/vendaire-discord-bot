@@ -7,6 +7,7 @@ import { parseIntentSchema } from './intents-utils';
 
 const errorHandler = require("errorhandler"),
   https = require('https'),
+  http = require('http'),
   alexaApp = require('alexa-app');
 
 @injectable()
@@ -34,14 +35,15 @@ export class AleksaServer implements IStartable {
     await this.setupAleksaApp(this.app, config);
     this.app.use(errorHandler());
 
-    const key = await this._filesService.readFileBuffer(config.server.key);
-    const cert = await this._filesService.readFileBuffer(config.server.cert);
+    const key = () => this._filesService.readFileBuffer(config.server.key);
+    const cert = () => this._filesService.readFileBuffer(config.server.cert);
     const port = config.server.port;
     const location = config.server.address || "0.0.0.0";
 
-    const server = https.createServer({
-      key, cert
-    }, this.app);
+    const server = config.server.isSsl 
+    ? https.createServer({ key: await key(), cert: await cert() }, this.app)
+    : http.createServer(this.app)
+ 
 
     this.app.set("port", port || 443);
 
