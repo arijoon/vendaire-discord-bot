@@ -16,7 +16,7 @@ export class QueryServerIntent implements IIntent  {
     return async (_, res) => {
       const server = await this._serverSelector.getServer();
 
-      res.say(`You are in ${server.name}`);
+      res.say(`You are in ${server.name} boss!`);
     };
   }
 }
