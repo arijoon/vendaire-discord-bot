@@ -12,6 +12,7 @@ export class PostImageIntent implements IIntent  {
   private commandsMappins: {[word: string]: string} = {
     "miscellaneous": "misc",
     "what the fuck": "dafuq",
+    "that feel": "tfw",
     "the fuck": "dafuq",
     "anna": "misc/anna",
     "sexy": "misc/sexy",
@@ -37,8 +38,14 @@ export class PostImageIntent implements IIntent  {
       let command: string = (req.slot('name') || "").toLowerCase();
       command = this.commandsMappins[command] || command || "";
 
-      this._client.sendMessage(guildId, channelId, `${command} <@${userId}>`, {}, { isCommand: true });
-      res.say("ok!");
+      this._client.sendMessage(guildId, channelId, `${command}`, {}, { isCommand: true });
+      res.say(this.pickResponse(command));
     };
+  }
+
+  pickResponse(command: String) {
+    return command == "misc/anna"
+    ? "oh yeah!"
+    : ["Sure!", "ok!", "done!", "you got it boss", ""].crandom();
   }
 }

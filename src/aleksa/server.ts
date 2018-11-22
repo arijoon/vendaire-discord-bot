@@ -45,7 +45,7 @@ export class AleksaServer implements IStartable {
     : http.createServer(this.app)
  
 
-    this.app.set("port", port || 443);
+    this.app.set("port", port || 5000);
 
     server.listen(this.app.get("port"), location, () => {
       this._logger.info(
