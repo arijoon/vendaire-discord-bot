@@ -85,12 +85,30 @@
             "what is my server",
             "which server am I in"
           ]
+        },
+        {
+          "name": "ReplayIntent",
+          "slots": [],
+          "samples": [
+            "gimme another",
+            "give me another",
+            "another",
+            "one more",
+            "again",
+            "do it again",
+            "replay"
+          ]
         }
       ],
       "types": [
         {
           "name": "Image_Type",
           "values": [
+            {
+              "name": {
+                "value": "that feel"
+              }
+            },
             {
               "name": {
                 "value": "sexy anime"
