@@ -45,7 +45,7 @@ export class PostImageIntent implements IIntent  {
 
   pickResponse(command: String) {
     return command == "misc/anna"
-    ? ["oh yeah!", "fuck yeah!", "oh mama!", "calm down lad"].crandom()
+    ? ["oh yeah!", "yeah!", "oh, yeah baby!"].crandom()
     : ["Sure!", "ok!", "done!", "you got it boss", ""].crandom();
   }
 }
