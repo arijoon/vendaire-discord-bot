@@ -12,6 +12,7 @@ export class PostImageIntent implements IIntent  {
   private commandsMappins: {[word: string]: string} = {
     "miscellaneous": "misc",
     "what the fuck": "dafuq",
+    "memory": "memri",
     "that feel": "tfw",
     "the fuck": "dafuq",
     "anna": "misc/anna",
