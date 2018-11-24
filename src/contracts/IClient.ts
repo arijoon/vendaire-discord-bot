@@ -16,7 +16,7 @@ export interface IClient {
     /**
      * force process a specific message 
      */
-    processDiscordMessage(guildId: string, channelId: string, messageId: string): Promise<void>;
+    processDiscordMessage(guildId: string, channelId: string, messageId: string, baseMsgId: string): Promise<void>;
 
     /**
      * Send a message to a specified channel
