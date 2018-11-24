@@ -19,8 +19,10 @@ services:
       - DiscordBot_redis_port=6379
       - DiscordBot_cacheTimeout=86400
       - DiscordBot_aleksa_server_port=5000
+      - DiscordBot_server_port=5010
     ports:
       - "5000:5000"
+      - "5010:5010"
     container_name: discord-bot
 
 volumes:
