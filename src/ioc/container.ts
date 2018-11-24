@@ -8,6 +8,10 @@ import * as AleksaIntents from '../aleksa/intents';
 import * as Commands from '../commands';
 import * as Contracts from '../contracts';
 import * as Helpers from '../helpers';
+import { IController } from 'server';
+import { Server } from './../server/server';
+import * as Controllers from './../server/controllers';
+import { IStatsCollector, PrometheusStatsCollector } from '../diagnostics';
 
 
 const consoleLogger = new Helpers.Logger(console);
@@ -27,15 +31,16 @@ container.bind<Contracts.IClient>(TYPES.IClient).to(Client).inSingletonScope();
 // Apis
 container.bind(Services.FourChanApi).toSelf();
 
+// Server
+container.bind<IStartable>(TYPES.Server).to(Server).inSingletonScope();
+addallChildren<IController>(container, Controllers, TYPES.Controller);
+
 // Aleksa
 container.bind<IStartable>(TYPES.AleksaServer).to(Aleksa.AleksaServer).inSingletonScope();
 container.bind(TYPES.AleksaServerSelector).to(Aleksa.ServerSelectorService).inSingletonScope();
-for(let key in AleksaIntents) {
-  if(!AleksaIntents.hasOwnProperty(key)) continue;
-  container.bind<IIntent>(TYPES.IIntent).to(AleksaIntents[key]).inSingletonScope();
-}
+addallChildren<IIntent>(container, AleksaIntents, TYPES.IIntent);
 
-// Services
+// Core Services
 container.bind<Contracts.IAudioPlayer>(TYPES.IAudioPlayer).to(Services.AudioPlayerService).inSingletonScope();
 container.bind<IFiles>(TYPES.IFiles).to(Services.FilesService).inSingletonScope();
 container.bind<IContent>(TYPES.IContent).to(Services.Content).inSingletonScope();
@@ -44,8 +49,11 @@ container.bind<IConfig>(TYPES.IConfig).to(Services.Config).inSingletonScope();
 container.bind<IHttp>(TYPES.IHttp).to(Services.HttpService);
 container.bind<IPermission>(TYPES.IPermission).to(Services.PermissionService);
 container.bind<ICache<string, any>>(TYPES.ICacheString).to(Services.InMemoryCache);
-container.bind<IBasicCache>(TYPES.IBasicCache).to(Services.CacheRedis);
+container.bind<IBasicCache>(TYPES.IBasicCache).to(Services.CacheRedis).inSingletonScope();
 container.bind<IOrderedSetDataAccess>(TYPES.IOrderedSetDataAccess).to(Services.OrderedSetDataAccess);
+
+// Features
+container.bind<IStatsCollector>(TYPES.StatsCollector).to(PrometheusStatsCollector).inSingletonScope();
 
 // Commands
 container.bind<ICommand>(TYPES.ICommand).to(Commands.PlayTrump).inSingletonScope();
@@ -87,3 +95,10 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.SteamUrlCommand).inSingleto
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 
 export { container };
+
+function addallChildren<TBindingType>(container: Container, obj: any, typeKey: symbol) {
+  for (let key in obj) {
+    if (!obj.hasOwnProperty(key)) continue;
+    container.bind<TBindingType>(typeKey).to(obj[key]).inSingletonScope();
+  }
+}

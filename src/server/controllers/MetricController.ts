@@ -1,9 +1,10 @@
-import { IController } from "../IController";
-import { verbs } from "./verbs";
+import { IController } from '../IController';
+import { verbs } from './verbs';
 import { TYPES } from '../../ioc/types';
-import { inject } from "inversify";
-import { IStatsCollector } from "../../diagnostics";
+import { inject, injectable } from 'inversify';
+import { IStatsCollector } from '../../diagnostics';
 
+@injectable()
 export class MetricController implements IController {
   readonly verb: string = verbs.get;
   readonly path: string = '/metrics';

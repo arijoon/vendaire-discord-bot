@@ -9,6 +9,7 @@ import { commands } from './static';
 import { TYPES } from './ioc/types';
 import { IMessage } from './contracts';
 import { TimerQueue } from './components/timer-queue.com';
+import { IStatsCollector } from './diagnostics';
 
 import * as discord from 'discord.js';
 
@@ -31,6 +32,7 @@ export class Client implements IClient {
 
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig,
+    @inject(TYPES.StatsCollector) private _statsCollector: IStatsCollector,
     @inject(TYPES.IPermission) private _permission: IPermission,
     @inject(TYPES.Logger) private _logger: ILogger,
   ) {
@@ -225,17 +227,20 @@ export class Client implements IClient {
       msg.content = originalContent;
 
       const elapsed = timer.stop();
+      const secondsTaken = elapsed / 1000;
       const response = cmsg || "";
 
       if (err) {
-        this._logger.error(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`, err);
+        this._logger.error(`Processed command: ${command} in ${secondsTaken} seconds ${response}`, err);
         const xreaction = '%E2%9D%8C';
         msg.react(xreaction);
       } else {
-        this._logger.info(`Processed command: ${command} in ${elapsed / 1000} seconds ${response}`);
+        this._logger.info(`Processed command: ${command} in ${secondsTaken} seconds ${response}`);
       }
-
       msg.channel.stopTyping(true);
+
+      // Collect stats of the command
+      this._statsCollector.collectResponseTime(secondsTaken, command);
     }
 
     const wrapper = new MessageWrapper(onDone, msg, timer, msg.content, command);
