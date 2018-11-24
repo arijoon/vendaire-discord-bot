@@ -31,6 +31,10 @@ container.get<IStartable>(TYPES.AleksaServer).start()
   .then(() => logger.info("Aleksa server started"))
   .catch((err) => logger.error("Failed to stat aleksa server", err))
 
+container.get<IStartable>(TYPES.Server).start()
+  .then(() => logger.info("Default server started"))
+  .catch((err) => logger.error("Failed to stat default server", err))
+
 function instanceOfHasHelp(object: any): object is IHasHelp {
   return 'getHelp' in object;
 }

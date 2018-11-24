@@ -41,21 +41,23 @@ export class Server implements IStartable {
 
   private addRoutes(router: express.Router) {
     for (let controller of this._controllers) {
+      const action = this.makeController((args) => controller.action(args));
+
       switch (controller.verb.toUpperCase()) {
         case 'GET':
-          router.get(controller.path, this.makeController(controller.action))
+          router.get(controller.path, action);
           break;
         case 'POST':
-          router.post(controller.path, this.makeController(controller.action))
+          router.post(controller.path, action);
           break;
         case 'PUT':
-          router.put(controller.path, this.makeController(controller.action))
+          router.put(controller.path, action);
           break;
       }
     }
   }
 
-  private makeController(promise: (...args: any) => Promise<any>, params?) {
+  private makeController(promise: (...args: any[]) => Promise<any>, params?) {
     return async (req, res, next) => {
       const boundParams = params ? params(req, res, next) : [];
       try {
