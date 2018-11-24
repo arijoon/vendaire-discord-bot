@@ -21,7 +21,7 @@ let commands = {
     randomPic: 'randompic',
 
     // Add pic to the above folder
-    addPic: 'addpic',
+    addPic: 'add',
 
     // Bog related
     quickrundown: 'quickrundown',

@@ -97,14 +97,17 @@ export class Client implements IClient {
     }
   }
 
-  public async processDiscordMessage(guildId: string, channelId: string, messageId: string) {
+  public async processDiscordMessage(guildId: string, channelId: string, messageId: string, baseMsgId?: string) {
     const channel = this.getChannel(guildId, channelId);
     const msg = await channel.fetchMessage(messageId);
+    const baseMsg = baseMsgId
+      ? await channel.fetchMessage(baseMsgId)
+      : undefined;
 
     if(!msg)
       throw new Error(`Message ${messageId} not found`)
     
-    this.onDiscordMessage(msg);
+    this.onDiscordMessage(msg, baseMsg);
   }
 
   public sendMessage(guildId: string, channelId: string, content: string, options?: any, botOptions?: any): Promise<any> {
@@ -148,15 +151,15 @@ export class Client implements IClient {
     });
   }
 
-  private onDiscordMessage(msg: Message) {
+  private onDiscordMessage(msg: Message, baseMsg?: Message) {
     try {
-      this.processMessage(msg);
+      this.processMessage(msg, baseMsg);
     } catch (err) {
       this._logger.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
     }
   }
 
-  private processMessage(msg: Message) {
+  private processMessage(msg: Message, baseMsg?: Message) {
     let foundCommand: boolean = false;
 
     if(msg.content.startsWith(this.botPrefix)) {
@@ -184,7 +187,7 @@ export class Client implements IClient {
 
         msg.content = msg.content.substring(fullCommand.length).trim();
 
-        const message = this.buildMessageWrapper(msg, command, orig);
+        const message = this.buildMessageWrapper(msg, command, orig, baseMsg);
 
         // Check if this is for help
         if(this._helpMappings[command] && message.Message.content.indexOf("--help") >= 0) {
@@ -214,7 +217,7 @@ export class Client implements IClient {
     }
   }
 
-  private buildMessageWrapper(msg: Message, command: string, originalContent: string): IMessage {
+  private buildMessageWrapper(msg: Message, command: string, originalContent: string, baseMsg?: Message): IMessage {
     const timer = new Timer().start();
     msg.channel.startTyping();
 
@@ -233,7 +236,9 @@ export class Client implements IClient {
       if (err) {
         this._logger.error(`Processed command: ${command} in ${secondsTaken} seconds ${response}`, err);
         const xreaction = '%E2%9D%8C';
-        msg.react(xreaction);
+        baseMsg
+          ? baseMsg.react(xreaction)
+          : msg.react(xreaction);
 
         this._statsCollector.addError(command);
       } else {

@@ -22,7 +22,10 @@ export class Replay implements ICommand, IHasHelp {
           const key = this.makeKey(imsg);
           if (await this._cache.has(key)) {
             const message: IMessageDetail = JSON.parse(await this._cache.get(key));
-            await this._client.processDiscordMessage(message.guildId, message.channelId, message.messageId);
+            await this._client.processDiscordMessage(message.guildId,
+              message.channelId,
+              message.messageId,
+              imsg.id);
           }
         }).then(_ => imsg.done())
           .catch(err => imsg.done('', err));
