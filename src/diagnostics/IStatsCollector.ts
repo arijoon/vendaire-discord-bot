@@ -7,6 +7,12 @@ export interface IStatsCollector {
   collectResponseTime(value: number, command: string);
 
   /**
+   * Increment number of errors
+   * @param command command that failed
+   */
+  addError(command: string); 
+
+  /**
    * Return the metrics to picked by a stats collector
    */
   getMetrics() : { type: string, value: any};

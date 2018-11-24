@@ -9,8 +9,10 @@ import { stringify } from "querystring";
 @injectable()
 export class PrometheusStatsCollector implements IStatsCollector {
   hists: {[key: string]: prom.Histogram} = {};
+  counters: {[key: string]: prom.Counter} = {};
   keys = {
-    responseTime: 'response-time'
+    responseTime: 'response-time',
+    error: 'error'
   };
 
   constructor(
@@ -23,12 +25,26 @@ export class PrometheusStatsCollector implements IStatsCollector {
       labelNames: ['command'],
       buckets: timeInSeconds
     });
+
+    this.counters[this.keys.error] = new prom.Counter({
+      name: 'error_count',
+      help: 'number of errors',
+      labelNames: ['command']
+    });
+
+    prom.collectDefaultMetrics({ timeout: 1000, prefix: 'discord_bot' });
    }
 
   collectResponseTime(value: number, command: string) {
     this.hists[this.keys.responseTime]
       .labels(command)
       .observe(value);
+  }
+
+  addError(command: string) {
+    this.counters[this.keys.error]
+      .labels(command)
+      .inc();
   }
   
   getMetrics(): { type: string, value: any } {
