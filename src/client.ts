@@ -234,9 +234,10 @@ export class Client implements IClient {
         this._logger.error(`Processed command: ${command} in ${secondsTaken} seconds ${response}`, err);
         const xreaction = '%E2%9D%8C';
         msg.react(xreaction);
+
+        this._statsCollector.addError(command);
       } else {
         this._logger.info(`Processed command: ${command} in ${secondsTaken} seconds ${response}`);
-        this._statsCollector.addError(command);
       }
       msg.channel.stopTyping(true);
 
