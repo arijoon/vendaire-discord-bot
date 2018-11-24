@@ -102,7 +102,8 @@ export class AddPicCommand implements ICommand {
 
 
   linkableUrls = [
-    /https:\/\/streamable.com/
+    /https:\/\/streamable.com/,
+    /https?:\/\/[a-z\.]*imgur.com/
   ];
   private shouldSaveAsLink(url: string) {
     for (let item of this.linkableUrls) {
