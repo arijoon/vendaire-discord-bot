@@ -236,6 +236,7 @@ export class Client implements IClient {
         msg.react(xreaction);
       } else {
         this._logger.info(`Processed command: ${command} in ${secondsTaken} seconds ${response}`);
+        this._statsCollector.addError(command);
       }
       msg.channel.stopTyping(true);
 
