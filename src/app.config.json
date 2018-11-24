@@ -48,5 +48,9 @@
       "key": "assets/aleksa/aleksa-key.pem",
       "cert": "assets/aleksa/aleksa-cert.pem"
     }
+  },
+  "server": {
+    "port": 5010,
+    "address": "0.0.0.0"
   }
 }
