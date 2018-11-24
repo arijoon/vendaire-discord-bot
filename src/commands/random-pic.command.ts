@@ -61,37 +61,41 @@ export class RandomPic implements ICommand {
         return this.listFolders(imsg, fullPath);
       }
 
-      return this.selectRandomFile(fullPath)
-        .then(async (filename: string) => {
+      return ops.c // whether we should count files or post them
+        ? this.countFiles(fullPath)
+          .then((count) => imsg.send(`This folder and subfolders has ${count} item(s)`))
 
-          this._logger.info(`Selected file: ${filename}, from: ${dir}`);
+        : this.selectRandomFile(fullPath)
+          .then(async (filename: string) => {
 
-          const guildId = imsg.guidId;
-          let channelId = imsg.channelId;
+            this._logger.info(`Selected file: ${filename}, from: ${dir}`);
 
-          if (command.toLowerCase() == 'nsfw') {  // Special case
-            channelId = await this._client.getNsfwChannel(guildId);
+            const guildId = imsg.guidId;
+            let channelId = imsg.channelId;
 
-            if (!channelId)
-              return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
-          }
+            if (command.toLowerCase() == 'nsfw') {  // Special case
+              channelId = await this._client.getNsfwChannel(guildId);
 
-          const { message, options, shouldCache } = await this.makeFileOptions(filename);
+              if (!channelId)
+                return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
+            }
 
-          const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
+            const { message, options, shouldCache } = await this.makeFileOptions(filename);
 
-          return !shouldCache
-            ? sentMsg
-            : sentMsg.then(async (res: Message) => {
-              const attach: MessageAttachment = res.attachments.values().next().value;
-              if (!attach) return res;
+            const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
 
-              const url = attach.url;
-              await this._cache.set(filename, url);
+            return !shouldCache
+              ? sentMsg
+              : sentMsg.then(async (res: Message) => {
+                const attach: MessageAttachment = res.attachments.values().next().value;
+                if (!attach) return res;
 
-              return res;
-            });
-        });
+                const url = attach.url;
+                await this._cache.set(filename, url);
+
+                return res;
+              });
+          });
     }).then(() => imsg.done())
       .catch(err => imsg.done(err, true));
   }
@@ -134,8 +138,13 @@ export class RandomPic implements ICommand {
       });
   }
 
-  formatFolderList(folders: string[], dir: string) {
-    return   }
+  countFiles(fullPath: string): Promise<number> {
+    return this._filesService
+      .getAllFiles(fullPath, { recursive: true })
+      .then(lst => {
+        return lst.length;
+      });
+  }
 
   /**
    * In case of directory commands, it will extract the path: "!!tfw/r hello world" -> "tfw/r"
@@ -172,6 +181,9 @@ export class RandomPic implements ICommand {
       .options('l', {
         alias: 'list',
         describe: 'list all available folders',
+      }).options('c', {
+        alias: 'count',
+        describe: 'count the files',
       }).options('h', {
         alias: 'help',
         describe: 'show this message',
