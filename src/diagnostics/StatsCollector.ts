@@ -2,9 +2,7 @@ import { IStatsCollector } from "./IStatsCollector";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../ioc/types";
 import { timeInSeconds } from "./buckets";
-
 import * as prom from 'prom-client';
-import { stringify } from "querystring";
 
 @injectable()
 export class PrometheusStatsCollector implements IStatsCollector {
