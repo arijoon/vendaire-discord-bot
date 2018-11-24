@@ -5,4 +5,9 @@ export interface IStatsCollector {
    * @param command the command name
    */
   collectResponseTime(value: number, command: string);
+
+  /**
+   * Return the metrics to picked by a stats collector
+   */
+  getMetrics() : { type: string, value: any};
 }

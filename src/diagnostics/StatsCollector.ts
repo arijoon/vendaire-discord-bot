@@ -4,9 +4,10 @@ import { TYPES } from "../ioc/types";
 import { timeInSeconds } from "./buckets";
 
 import * as prom from 'prom-client';
+import { stringify } from "querystring";
 
 @injectable()
-export class StatsCollector implements IStatsCollector {
+export class PrometheusStatsCollector implements IStatsCollector {
   hists: {[key: string]: prom.Histogram} = {};
   keys = {
     responseTime: 'response-time'
@@ -28,5 +29,12 @@ export class StatsCollector implements IStatsCollector {
     this.hists[this.keys.responseTime]
       .labels(command)
       .observe(value);
+  }
+  
+  getMetrics(): { type: string, value: any } {
+    return {
+      type: prom.register.contentType,
+      value: prom.register.metrics()
+    };
   }
 }
