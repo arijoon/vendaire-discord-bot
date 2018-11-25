@@ -21,7 +21,7 @@ export class PlayTrumpIntent implements IIntent  {
     return async (req, res) => {
       const { guildId, channelId, userId, name } = await this._serverSelector.getServer();
       this._logger.info("Received trump intent");
-      this._client.sendMessage(guildId, channelId, `trump`, {}, { isCommand: true });
+      this._client.sendMessage(guildId, channelId, `trump <@${userId}>`, {}, { isCommand: true });
     };
   }
 }
