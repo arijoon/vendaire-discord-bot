@@ -7,7 +7,7 @@ import { IIntent } from 'aleksa/IIntent';
 
 @injectable()
 export class TachankaBotIntent implements IIntent  {
-  name: string = "TachankaBot";
+  name: string = "TachankaBotIntent";
 
   constructor(
     @inject(TYPES.Logger) private _logger: ILogger,
