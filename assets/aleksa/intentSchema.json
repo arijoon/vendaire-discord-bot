@@ -98,12 +98,28 @@
             "do it again",
             "replay"
           ]
+        },
+        {
+          "name": "TachankaBotIntent",
+          "slots": [],
+          "samples": [
+            "make tachanka sing",
+            "tell tachanka sing"
+          ]
         }
       ],
       "types": [
         {
           "name": "Image_Type",
           "values": [
+            {
+              "name": {
+                "value": "sexy",
+                "synonyms": [
+                  "hot"
+                ]
+              }
+            },
             {
               "name": {
                 "value": "that feel"
