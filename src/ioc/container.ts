@@ -1,3 +1,5 @@
+import { SessionManager } from './../services/SessionManager';
+import { AuthGenerator } from './../commands/auth-gen.command';
 import { IControllerV2 } from './../server/IControllerV2';
 import { IIntent } from 'aleksa/IIntent';
 import { Container } from 'inversify';
@@ -55,6 +57,9 @@ container.bind<ICache<string, any>>(TYPES.ICacheString).to(Services.InMemoryCach
 container.bind<IBasicCache>(TYPES.IBasicCache).to(Services.CacheRedis).inSingletonScope();
 container.bind<IOrderedSetDataAccess>(TYPES.IOrderedSetDataAccess).to(Services.OrderedSetDataAccess);
 
+// Auth
+container.bind<ISessionManager>(TYPES.SessionManager).to(Services.SessionManager).inSingletonScope();
+
 // Features
 container.bind<IStatsCollector>(TYPES.StatsCollector).to(PrometheusStatsCollector).inSingletonScope();
 
@@ -94,6 +99,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.DidThanosKillMeComand).inSi
 container.bind<ICommand>(TYPES.ICommand).to(Commands.WorldCupCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.EightBall).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.SteamUrlCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.AuthGenerator).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 

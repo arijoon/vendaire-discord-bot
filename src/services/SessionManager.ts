@@ -1,6 +1,7 @@
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { TYPES } from "../ioc/types";
 
+@injectable()
 export class SessionManager implements ISessionManager {
   sessionDefaultExpiry: number;
 
@@ -39,17 +40,32 @@ export class SessionManager implements ISessionManager {
 
   async useSingle(sessionId: string): Promise<void> {
     const key = makeSingleKey(sessionId);
-    const exists = await this._cache.has(key);
+    const exists = await this._cache.get(key);
 
     if(!exists) {
       throw Error("Invalid sessionId");
     }
 
+    await this._cache.remove(key);
 
+    return JSON.parse(exists);
   }
 
-  isValid(sessionId: string): Promise<{ status: boolean; session: ISession; }> {
-    throw new Error("Method not implemented.");
+  async isValid(sessionId: string): Promise<{ status: boolean; session: ISession; }> {
+    const key = makeSingleKey(sessionId);
+    const json = await this._cache.get(key);
+    try {
+      const session = JSON.parse(json);
+      return {
+        status: true,
+        session
+      };
+    } catch (err) {
+      return {
+        status: false,
+        session: null
+      };
+    }
   }
 
   private genSessionInner(userId: string): ISession {

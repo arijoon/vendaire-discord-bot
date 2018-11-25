@@ -9,4 +9,5 @@ export * from "./fonts.service";
 export * from "./http.service";
 export * from "./OrderedSetDataAccess";
 export * from "./permission.service";
+export * from "./SessionManager";
 export * from "./question.service";

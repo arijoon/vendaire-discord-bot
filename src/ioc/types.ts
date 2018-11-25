@@ -34,7 +34,10 @@ let TYPES = {
     // Server
     Server: Symbol("Server"),
     Controller: Symbol("Controller"),
-    ControllerV2: Symbol("ControllerV2")
+    ControllerV2: Symbol("ControllerV2"),
+
+    // Auth
+    SessionManager: Symbol("SessionManager")
 };
 
 export { TYPES };
