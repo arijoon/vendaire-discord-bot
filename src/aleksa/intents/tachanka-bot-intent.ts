@@ -18,7 +18,7 @@ export class TachankaBotIntent implements IIntent  {
   getCallback(config): (request: any, response: any) => Promise<void> {
     return async (req, res) => {
       const { guildId, channelId, userId, name } = await this._serverSelector.getServer();
-      this._client.sendMessage(guildId, channelId, `>sing for Arijoon`, {}, { isCommand: false });
+      this._client.sendMessage(guildId, channelId, `>sing for <@${userId}>`, {}, { isCommand: false });
     };
   }
 }
