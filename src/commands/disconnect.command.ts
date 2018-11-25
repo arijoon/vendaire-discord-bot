@@ -1,10 +1,8 @@
-import { IAudioPlayer } from './../contracts';
 import { IClient } from './../contracts';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { inject, injectable } from 'inversify';
 import { IDisposable } from 'rx';
-import { VoiceChannel, Message } from 'discord.js';
 
 
 @injectable()

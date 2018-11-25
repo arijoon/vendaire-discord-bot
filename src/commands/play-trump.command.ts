@@ -1,4 +1,4 @@
-import { IAudioPlayer } from './../contracts';
+import { IAudioPlayer, IMessage } from './../contracts';
 import { IClient } from './../contracts';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
@@ -11,52 +11,65 @@ import * as opt from 'optimist';
 @injectable()
 export class PlayTrump implements ICommand {
 
-    _command: string = commands.trump;
-    _subscription: IDisposable;
+  _command: string[] = commands.trump;
+  _subscription: IDisposable;
 
-    constructor(
-        @inject(TYPES.IClient) private _client: IClient,
-        @inject(TYPES.IAudioPlayer) private _audioPlayer: IAudioPlayer
-    ) { }
+  constructor(
+    @inject(TYPES.IClient) private _client: IClient,
+    @inject(TYPES.IAudioPlayer) private _audioPlayer: IAudioPlayer
+  ) { }
 
-    public attach(): void {
-        this._client
-            .getCommandStream(this._command)
-            .subscribe(imsg => {
-                const msg = imsg.Message;
-                let voiceChannel;
-                if(imsg.isBot) {
-                  voiceChannel = msg.mentions.members.first().voiceChannel
-                }
-                else if (!msg.member.voiceChannel) {
-                    msg.channel.send("You aren't in any voice channels asshole");
-                } else {
-                  voiceChannel = msg.member.voiceChannel;
-                }
+  public attach(): void {
+    for(let command of this._command) {
+    this._client
+      .getCommandStream(command)
+      .subscribe((imsg) => this.handler(imsg, command));
+    }
+  }
 
-                let ops = this.setupOptions(msg.content.split(' ')).argv;
-
-                this._audioPlayer.playRandomFile(voiceChannel, ops.q)
-                    .then(_ => imsg.done())
-                    .catch(err => {
-                        msg.channel.send('Bad query');
-                        imsg.done(err, true);
-                    });
-            });
+  handler(imsg: IMessage, command: string) {
+    const msg = imsg.Message;
+    let voiceChannel;
+    if (imsg.isBot) {
+      voiceChannel = msg.mentions.members.first().voiceChannel
+    }
+    else if (!msg.member.voiceChannel) {
+      msg.channel.send("You aren't in any voice channels asshole");
+    } else {
+      voiceChannel = msg.member.voiceChannel;
     }
 
-    setupOptions(args: string[]): any {
-        var argv = opt(args).options('q', {
-            alias: 'query',
-            describe: 'Search for a query in filename',
-            default: null
-        });
+    const argv = this.setupOptions(msg.content.split(' '));
+    const ops = argv.argv;
 
-        return argv;
+    if (ops.h) { // return help
+      return imsg.send(argv.help(), { code: 'md' });
     }
 
+    this._audioPlayer.playRandomFile(voiceChannel, ops.q, command)
+      .then(_ => imsg.done())
+      .catch(err => {
+        msg.channel.send('Bad query');
+        imsg.done(err, true);
+      });
+  }
 
-    public detach(): void {
-        this._subscription.dispose();
-    }
+  setupOptions(args: string[]): any {
+    var argv = opt(args)
+      .options('q', {
+        alias: 'query',
+        describe: 'Search for a query in filename',
+        default: null
+      }).options('h', {
+        alias: 'help',
+        describe: 'Display help message',
+        default: false
+      });
+
+    return argv;
+  }
+
+  public detach(): void {
+    this._subscription.dispose();
+  }
 }
