@@ -10,4 +10,5 @@ interface IBasicCache {
     has(key: string): Promise<boolean>;
     get(key: string): Promise<string>;
     set(key: string, val: string, expiryInSeconds?: number): Promise<void>;
+    remove(key: string): Promise<void>;
 }

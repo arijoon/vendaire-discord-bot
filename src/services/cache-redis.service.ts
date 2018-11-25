@@ -89,6 +89,18 @@ export class CacheRedis implements IBasicCache {
     });
   }
 
+  remove(key: string): Promise<void> {
+    return new Promise((r,x) => {
+      this._client.del(key, (err, res) => {
+        if(err) {
+          x("Failed to remove");
+        } else {
+          r();
+        }
+      });
+    });
+  }
+
   keyEscapeMatcher: RegExp = /\\|\//g;
   escapeKeys(key: string) {
     return key.replace(this.keyEscapeMatcher, ":");
