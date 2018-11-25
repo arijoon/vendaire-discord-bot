@@ -52,5 +52,8 @@
   "server": {
     "port": 5010,
     "address": "0.0.0.0"
+  },
+  "auth": {
+    "sessionTimeout": 3600
   }
 }
