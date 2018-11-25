@@ -81,10 +81,10 @@ export class Server implements IStartable {
   }
 
   private verbMapping = {
-    'GET':    (router: express.Router) => router.get,
-    'POST':   (router: express.Router) => router.post,
-    'PUT':    (router: express.Router) => router.put,
-    'DELETE': (router: express.Router) => router.delete,
+    'GET':    (router: express.Router) => (path, callback) => router.get(path, callback),
+    'POST':   (router: express.Router) => (path, callback) => router.post(path, callback),
+    'PUT':    (router: express.Router) => (path, callback) => router.put(path, callback),
+    'DELETE': (router: express.Router) => (path, callback) => router.delete(path, callback)
   };
 
   private addRoutesV2(router: express.Router, controllers: IControllerV2[]) {
@@ -98,7 +98,11 @@ export class Server implements IStartable {
     router(controller.path, async (req, res, next) => {
       controller.action(req, res)
         .catch(err => {
-          res.status(500) && next(err);
+          const status: number = parseFloat(err);
+          if(status)
+            res.status(status) && next(err);
+          else
+            res.status(500) && next(err);
         });
     });
   }

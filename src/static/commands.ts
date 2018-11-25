@@ -126,7 +126,11 @@ let commands = {
     image: {
         gray: 'imgray',
         meme: 'immeme'
-    }
+    },
+    
+
+    // Authentication
+    authGen: 'auth-gen'
 };
 
 export { commands };

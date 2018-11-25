@@ -90,7 +90,7 @@ export class CacheRedis implements IBasicCache {
   }
 
   remove(key: string): Promise<void> {
-    return new Promise((r,x) => {
+    return new Promise<void>((r,x) => {
       this._client.del(key, (err, res) => {
         if(err) {
           x("Failed to remove");

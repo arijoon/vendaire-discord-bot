@@ -1,4 +1,5 @@
 export * from "./4chan";
+export * from "./auth-gen.command";
 export * from "./add-pic.command";
 export * from "./ban-phrase";
 export * from "./bog.command";
