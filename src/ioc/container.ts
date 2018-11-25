@@ -1,3 +1,4 @@
+import { IControllerV2 } from './../server/IControllerV2';
 import { IIntent } from 'aleksa/IIntent';
 import { Container } from 'inversify';
 import { TYPES } from './types';
@@ -11,6 +12,7 @@ import * as Helpers from '../helpers';
 import { IController } from 'server';
 import { Server } from './../server/server';
 import * as Controllers from './../server/controllers';
+import * as ControllersV2 from './../server/controllers.v2';
 import { IStatsCollector, PrometheusStatsCollector } from '../diagnostics';
 
 
@@ -34,6 +36,7 @@ container.bind(Services.FourChanApi).toSelf();
 // Server
 container.bind<IStartable>(TYPES.Server).to(Server).inSingletonScope();
 addallChildren<IController>(container, Controllers, TYPES.Controller);
+addallChildren<IControllerV2>(container, ControllersV2, TYPES.ControllerV2);
 
 // Aleksa
 container.bind<IStartable>(TYPES.AleksaServer).to(Aleksa.AleksaServer).inSingletonScope();
