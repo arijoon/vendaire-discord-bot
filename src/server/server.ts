@@ -5,6 +5,7 @@ import * as express from 'express';
 import * as  errorHandler from 'errorhandler';
 import * as http from 'http';
 import { IController } from './IController';
+import { IControllerV2 } from './IControllerV2';
 
 @injectable()
 export class Server implements IStartable {
@@ -14,6 +15,7 @@ export class Server implements IStartable {
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.Logger) private _logger: ILogger,
     @multiInject(TYPES.Controller) private _controllers: IController[],
+    @multiInject(TYPES.ControllerV2) private _controllersv2: IControllerV2[],
   ) { }
 
   public async start(): Promise<void> {
@@ -22,8 +24,13 @@ export class Server implements IStartable {
     this.app.use(errorHandler());
 
     const router: express.Router = express.Router();
+    const publicRouter: express.Router = express.Router();
+
+    this.addRoutesV2(publicRouter, this._controllersv2);
     this.addRoutes(router);
+
     this.app.use('/', router);
+    this.app.use('/public', publicRouter);
 
     const port = config.port;
     const location = config.address || '0.0.0.0';
@@ -31,7 +38,6 @@ export class Server implements IStartable {
     const server = http.createServer(this.app)
 
     this.app.set('port', port || 5010);
-
 
     server.listen(this.app.get('port'), location, () => {
       this._logger.info(
@@ -72,5 +78,28 @@ export class Server implements IStartable {
         return res.status(500) && next(error);
       }
     };
+  }
+
+  private verbMapping = {
+    'GET':    (router: express.Router) => router.get,
+    'POST':   (router: express.Router) => router.post,
+    'PUT':    (router: express.Router) => router.put,
+    'DELETE': (router: express.Router) => router.delete,
+  };
+
+  private addRoutesV2(router: express.Router, controllers: IControllerV2[]) {
+    for(let controller of controllers) {
+      const fn: (router: express.Router) => express.IRouterMatcher<express.Router> = this.verbMapping[controller.verb.toUpperCase()];
+      this.makeControllerV2(controller, fn(router));
+    }
+  }
+
+  private makeControllerV2(controller: IControllerV2, router: express.IRouterMatcher<express.Router>) {
+    router(controller.path, async (req, res, next) => {
+      controller.action(req, res)
+        .catch(err => {
+          res.status(500) && next(err);
+        });
+    });
   }
 }

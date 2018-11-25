@@ -33,7 +33,8 @@ let TYPES = {
 
     // Server
     Server: Symbol("Server"),
-    Controller: Symbol("Controller")
+    Controller: Symbol("Controller"),
+    ControllerV2: Symbol("ControllerV2")
 };
 
 export { TYPES };
