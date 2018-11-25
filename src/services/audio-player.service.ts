@@ -4,8 +4,6 @@ import { VoiceChannel, VoiceConnection } from 'discord.js';
 import * as path from 'path';
 import { TYPES } from '../ioc/types';
 
-// declare let require: any;
-
 @injectable()
 export class AudioPlayerService implements IAudioPlayer {
 
@@ -41,19 +39,20 @@ export class AudioPlayerService implements IAudioPlayer {
     })
   }
 
-  playRandomFile(channel: VoiceChannel, query?: string): Promise<void> {
+  playRandomFile(channel: VoiceChannel, query?: string, folderName?: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       if (!channel) {
         reject("no voice channels");
         return;
       }
 
+      const audioPath = path.join(this._audioPath, folderName);
       let filename: string;
 
       if (!query) {
-        filename = (await this._fileService.getAllFiles(this._audioPath)).crandom();
+        filename = (await this._fileService.getAllFiles(audioPath)).crandom();
       } else {
-        const filenames = (await this._fileService.getAllFilesWithName(this._audioPath, new RegExp(query)));
+        const filenames = (await this._fileService.getAllFilesWithName(audioPath, new RegExp(query)));
 
         if (filenames.length < 1) {
           reject("no files matched");
@@ -63,7 +62,7 @@ export class AudioPlayerService implements IAudioPlayer {
         filename = filenames.crandom();
       }
 
-      this.playFile(channel, this._config.pathFromRoot(this._audioPath, filename));
+      this.playFile(channel, this._config.pathFromRoot(audioPath, filename));
 
       resolve();
     });
