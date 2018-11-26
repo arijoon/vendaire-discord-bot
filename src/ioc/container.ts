@@ -1,7 +1,3 @@
-import { SessionManager } from './../services/SessionManager';
-import { AuthGenerator } from './../commands/auth-gen.command';
-import { IControllerV2 } from './../server/IControllerV2';
-import { IIntent } from 'aleksa/IIntent';
 import { Container } from 'inversify';
 import { TYPES } from './types';
 import { Client } from '../client';
@@ -11,8 +7,7 @@ import * as AleksaIntents from '../aleksa/intents';
 import * as Commands from '../commands';
 import * as Contracts from '../contracts';
 import * as Helpers from '../helpers';
-import { IController } from 'server';
-import { Server } from './../server/server';
+import * as Server from '../server';
 import * as Controllers from './../server/controllers';
 import * as ControllersV2 from './../server/controllers.v2';
 import { IStatsCollector, PrometheusStatsCollector } from '../diagnostics';
@@ -36,14 +31,15 @@ container.bind<Contracts.IClient>(TYPES.IClient).to(Client).inSingletonScope();
 container.bind(Services.FourChanApi).toSelf();
 
 // Server
-container.bind<IStartable>(TYPES.Server).to(Server).inSingletonScope();
-addallChildren<IController>(container, Controllers, TYPES.Controller);
-addallChildren<IControllerV2>(container, ControllersV2, TYPES.ControllerV2);
+container.bind<IStartable>(TYPES.Server).to(Server.Server).inSingletonScope();
+container.bind(TYPES.MiddleWares).to(Server.MiddleWares).inSingletonScope();
+addallChildren<Server.IController>(container, Controllers, TYPES.Controller);
+addallChildren<Server.IControllerV2>(container, ControllersV2, TYPES.ControllerV2);
 
 // Aleksa
 container.bind<IStartable>(TYPES.AleksaServer).to(Aleksa.AleksaServer).inSingletonScope();
 container.bind(TYPES.AleksaServerSelector).to(Aleksa.ServerSelectorService).inSingletonScope();
-addallChildren<IIntent>(container, AleksaIntents, TYPES.IIntent);
+addallChildren<Aleksa.IIntent>(container, AleksaIntents, TYPES.IIntent);
 
 // Core Services
 container.bind<Contracts.IAudioPlayer>(TYPES.IAudioPlayer).to(Services.AudioPlayerService).inSingletonScope();

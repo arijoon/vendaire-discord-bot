@@ -15,7 +15,6 @@ import * as discord from 'discord.js';
 
 @injectable()
 export class Client implements IClient {
-
   prefix: string;
   botPrefix: string;
   _client: discord.Client;
@@ -124,6 +123,11 @@ export class Client implements IClient {
     const channel = channels.filter((channel: discord.TextChannel) => channel.nsfw).first();
 
     return Promise.resolve(channel && channel.id);
+  }
+
+  async getUserName(userId: string): Promise<string> {
+    const user = await this._client.fetchUser(userId);
+    return user.username;
   }
 
   private getChannel(guildId: string, channelId: string) {

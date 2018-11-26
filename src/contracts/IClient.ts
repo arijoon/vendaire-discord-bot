@@ -32,4 +32,10 @@ export interface IClient {
      * @param guildId Id of the guild
      */
     getNsfwChannel(guildId: string): Promise<string>;
+
+    /**
+     * Get the discord username
+     * @param userId the snowfalke id
+     */
+    getUserName(userId: string): Promise<string>;
 }

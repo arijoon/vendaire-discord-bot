@@ -1,11 +1,14 @@
 import { inject, injectable, multiInject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import * as express from 'express';
+import * as cookieParser from 'cookie-parser';
 
 import * as  errorHandler from 'errorhandler';
 import * as http from 'http';
 import { IController } from './IController';
 import { IControllerV2 } from './IControllerV2';
+import { MiddleWares } from './middlewares';
+import { constants } from './constants';
 
 @injectable()
 export class Server implements IStartable {
@@ -14,6 +17,7 @@ export class Server implements IStartable {
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.Logger) private _logger: ILogger,
+    @inject(TYPES.MiddleWares) private _middlewres: MiddleWares,
     @multiInject(TYPES.Controller) private _controllers: IController[],
     @multiInject(TYPES.ControllerV2) private _controllersv2: IControllerV2[],
   ) { }
@@ -25,10 +29,13 @@ export class Server implements IStartable {
 
     const router: express.Router = express.Router();
     const publicRouter: express.Router = express.Router();
+    publicRouter.use(this._middlewres.authentication([constants.loginApi]));
+    publicRouter.use(this._middlewres.logger());
 
     this.addRoutesV2(publicRouter, this._controllersv2);
     this.addRoutes(router);
 
+    this.app.use(cookieParser());
     this.app.use('/', router);
     this.app.use('/public', publicRouter);
 
@@ -98,11 +105,13 @@ export class Server implements IStartable {
     router(controller.path, async (req, res, next) => {
       controller.action(req, res)
         .catch(err => {
-          const status: number = parseFloat(err);
+          const status: number = parseFloat(err && err.message);
           if(status)
-            res.status(status) && next(err);
-          else
-            res.status(500) && next(err);
+            res.status(status) && next("Error");
+          else {
+            this._logger.error(err);
+            res.status(500) && next("Error");
+          }
         });
     });
   }

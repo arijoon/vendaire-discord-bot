@@ -14,7 +14,6 @@ export class SessionManager implements ISessionManager {
   }
 
   async genSession(userId: string): Promise<ISession> {
-    const now = Date.now();
     const session: ISession = this.genSessionInner(userId);
 
     const json = JSON.stringify(session);
@@ -34,11 +33,10 @@ export class SessionManager implements ISessionManager {
     const key = makeSingleKey(session.id);
     await this._cache.set(key, json, this.sessionDefaultExpiry);
 
-
     return session;
   }
 
-  async useSingle(sessionId: string): Promise<void> {
+  async useSingle(sessionId: string): Promise<ISessionSingle> {
     const key = makeSingleKey(sessionId);
     const exists = await this._cache.get(key);
 
@@ -52,12 +50,13 @@ export class SessionManager implements ISessionManager {
   }
 
   async isValid(sessionId: string): Promise<{ status: boolean; session: ISession; }> {
-    const key = makeSingleKey(sessionId);
-    const json = await this._cache.get(key);
+    const key = makeKey(sessionId);
+
     try {
+      const json = await this._cache.get(key);
       const session = JSON.parse(json);
       return {
-        status: true,
+        status: !!session,
         session
       };
     } catch (err) {
@@ -74,7 +73,7 @@ export class SessionManager implements ISessionManager {
       user: userId,
       id: genSessionId(),
       timestamp: now,
-      expiry: now + this.sessionDefaultExpiry
+      expiry: now + (this.sessionDefaultExpiry*1000)
     };
   }
 }

@@ -33,6 +33,7 @@ let TYPES = {
 
     // Server
     Server: Symbol("Server"),
+    MiddleWares: Symbol("MiddleWares"),
     Controller: Symbol("Controller"),
     ControllerV2: Symbol("ControllerV2"),
 

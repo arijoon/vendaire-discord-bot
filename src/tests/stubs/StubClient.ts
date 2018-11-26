@@ -47,4 +47,8 @@ export class StubClient implements IClient {
       });
     });
   }
+
+  getUserName(userId: string): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
 }

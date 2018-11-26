@@ -15,7 +15,7 @@ interface ISessionManager {
    * Discard a singleSession
    * @param sessionId sessionId for a single session to use and discard
    */
-  useSingle(sessionId: string): Promise<void>;
+  useSingle(sessionId: string): Promise<ISessionSingle>;
 
   /**
    * Validates a sessionId, if singleSession it'll be expired
