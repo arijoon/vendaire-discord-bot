@@ -12,6 +12,7 @@ services:
     build: .
     volumes:
       - /home/pi/prod/discord/assets:/app/assets
+      - /home/pi/prod/discord-ui:/discord-ui
     restart: always
     environment:
       - NODE_ENV=production
@@ -20,6 +21,7 @@ services:
       - DiscordBot_cacheTimeout=86400
       - DiscordBot_aleksa_server_port=5000
       - DiscordBot_server_port=5010
+      - DiscordBot_server_static=../discord-ui
     ports:
       - "5000:5000"
       - "5010:5010"
