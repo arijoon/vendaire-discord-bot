@@ -45,14 +45,15 @@ export class AuthorizeCommand implements ICommand {
     }
 
     const permVal = PERMS[perm];
+    const user = users[0];
 
     if(ops.d) {
-      await this._perm.removePerm(permVal, imsg.userId);
-      return imsg.send(`${mention(imsg.userId)} has lost ${perm} rights, so long dickhead!`);
+      await this._perm.removePerm(permVal, user);
+      return imsg.send(`${mention(user)} has lost ${perm} rights, so long dickhead!`);
     } 
 
-    await this._perm.addPerm(permVal, imsg.userId);
-    return imsg.send(`${mention(imsg.userId)} has been granted ${perm} rights, use it wisely!`);
+    await this._perm.addPerm(permVal, user);
+    return imsg.send(`${mention(user)} has been granted ${perm} rights, use it wisely!`);
   }
 
   setupOptions(args: string[]): any {
