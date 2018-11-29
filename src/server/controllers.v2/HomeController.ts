@@ -7,17 +7,22 @@ import { getSession } from '../http-utils';
 
 @injectable()
 export class HomeController implements IControllerV2 {
-  verb: string = verbs.get;
-  path: string = "/home";
-
   constructor(
     @inject(TYPES.Logger) private _logger: ILogger
   ) { }
 
-  async action(req: e.Request, res: e.Response): Promise<any> {
-    const session: ISession = getSession(req);
-    this._logger.info(`user id is ${session.user}, expires in ${new Date(session.expiry)}`)
+  get actions(){
+    return [
+      {
+        verb: verbs.get,
+        path: "/home",
+        action: async (req: e.Request, res: e.Response): Promise<any> => {
+          const session: ISession = getSession(req);
+          this._logger.info(`user id is ${session.user}, expires in ${new Date(session.expiry)}`)
 
-    res.send(session);
+          res.send(session);
+        }
+      }
+    ]
   }
 }

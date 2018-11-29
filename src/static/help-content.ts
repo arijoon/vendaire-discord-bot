@@ -1,4 +1,4 @@
-import { Indentation } from './../helpers';
+import { Indentation } from '../helpers/indentation.helper';
 import { commands } from './commands';
 
 let indent = new Indentation();

@@ -51,7 +51,11 @@
   },
   "server": {
     "port": 5010,
-    "address": "0.0.0.0"
+    "address": "0.0.0.0",
+    "domain": "localhost",
+    "qualifiedDomain": "http://localhost",
+    "static": "../vandaire-ui/build",
+    "publicPath": "public"
   },
   "auth": {
     "sessionTimeout": 3600

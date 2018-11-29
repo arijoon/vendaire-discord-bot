@@ -4,7 +4,7 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
-import { getLastSection, readbleFromString } from '../helpers';
+import { getLastSection, readbleFromString, checkFolder } from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -47,6 +47,8 @@ export class AddPicCommand implements ICommand {
       }
 
       const fullFolder = ops.f || (ops._ && ops._.length > 0 ? ops._[0].trim() : null);
+      checkFolder(fullFolder);
+
       const folder = this.extractParentFolder(fullFolder);
       if(!folder) {
         return imsg.send("You must specify the folder with -f flag");

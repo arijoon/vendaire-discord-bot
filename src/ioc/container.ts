@@ -96,6 +96,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.WorldCupCommand).inSingleto
 container.bind<ICommand>(TYPES.ICommand).to(Commands.EightBall).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.SteamUrlCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.AuthGenerator).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.AuthorizeCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 

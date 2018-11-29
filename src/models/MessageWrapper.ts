@@ -67,4 +67,12 @@ export class MessageWrapper implements IMessage {
         return msgs.map(m => new MessageWrapper(() => undefined, m, this.Timer, m.content, this.Command));
       });
   }
+
+  async getMentions(): Promise<string[]> {
+    return this.Message.mentions.users.map(u => u.id);
+  }
+
+  replyDm(content?: string, options?: any): Promise<Message | Message[]> {
+    return this.Message.author.send(content, options);
+  }
 }

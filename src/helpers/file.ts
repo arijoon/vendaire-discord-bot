@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { commands } from '../static';
 
 /**
  * Recursively creates the directory structure if not exists
@@ -18,6 +19,16 @@ export function createRecursive(fullPath: string) {
 
       return newVal;
     }, initDir);
+  }
+}
+
+/**
+ * In case of dangerous input, it'll throw an exception
+ * @param fullPath the path to sanatize
+ */
+export function checkFolder(fullPath: string) {
+  if(fullPath.indexOf('..') > -1) {
+    throw new Error("Dangerous user input, aborting");
   }
 }
 
@@ -85,3 +96,14 @@ export function getAllFoldersStatRecursively(srcPath: string, name?: string): IF
     folders: folders.map(f => getAllFoldersStatRecursively(path.join(srcPath, f), f))
   };
 }
+
+/**
+ * Get the full dir from images root path
+ * @param _config configuration
+ * @param subpaths additional subpaths
+ */
+export function fromImageRoot(_config: IConfig, ...subpaths) {
+    return path.join(_config.images["root"], commands.randomPic, ...subpaths);
+}
+
+

@@ -19,6 +19,13 @@ export interface IMessage {
   /** Send a message to the same channel */
   send(content?: string, options?: any): Promise<Message | Message[]>;
 
+  replyDm(content?: string, options?: any): Promise<Message | Message[]>;
+
+  /**
+   * Returns an array of mentions
+   */
+  getMentions(): Promise<string[]>;
+
   /**
    * Get a set of messages as string
    * @param options fetch messageOption

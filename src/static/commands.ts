@@ -130,6 +130,7 @@ let commands = {
     
 
     // Authentication
+    authorize: 'authorize',
     authGen: 'auth-gen'
 };
 

@@ -46,4 +46,12 @@ export class StubMessage implements IMessage {
   fetchFullMessages(options?: any): Promise<IMessage[]> {
     throw new Error("Method not implemented.");
   }
+
+  replyDm(content?: string, options?: any): Promise<discord.Message | discord.Message[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  getMentions(): Promise<string[]> {
+    throw new Error("Method not implemented.");
+  }
 }

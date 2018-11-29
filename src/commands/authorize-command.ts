@@ -1,23 +1,22 @@
-import { PERMS } from './../static';
 import { IClient } from './../contracts';
 import { TYPES } from '../ioc/types';
-import { commands } from '../static';
+import { commands, PERMS } from '../static';
 import { inject, injectable } from 'inversify';
 import { IDisposable } from 'rx';
 import { IMessage } from '../contracts';
 import * as  opt from 'optimist';
+import { getMainContent, mention } from '../helpers';
 
 @injectable()
-export class AuthGenerator implements ICommand {
+export class AuthorizeCommand implements ICommand {
 
-  _command: string = commands.authGen;
+  _command: string = commands.authorize;
   _subscriptions: IDisposable[];
 
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.IPermission) private _perm: IPermission,
-    @inject(TYPES.SessionManager) private _sessionManager: ISessionManager,
   ) { }
 
   public attach(): void {
@@ -34,22 +33,37 @@ export class AuthGenerator implements ICommand {
     const argv = this.setupOptions(imsg.Content.trim().split(' '));
     const ops = argv.argv;
 
-    if(!(await this._perm.hasPerm(PERMS.UPLOAD, imsg.userId))) {
-      return imsg.send("You are not authorized to do this!");
+    const perm = getMainContent(ops);
+    const users = await imsg.getMentions();
+
+    if(!this._perm.isAdmin(imsg.author)) {
+      return imsg.send("FUCK OFF!");
     }
 
-    if (ops.h) { // return help
+    if (ops.h || !perm || !PERMS[perm] || users.length < 1) { // return help
       return imsg.send(argv.help(), { code: 'md' });
     }
 
-    const { port, qualifiedDomain, publicPath } = this._config.app.server;
-    const session = await this._sessionManager.genSingleSession(imsg.userId);
-    await imsg.replyDm(`${qualifiedDomain}:${port}/${publicPath}/login?id=${session.id}`);
+    const permVal = PERMS[perm];
+
+    if(ops.d) {
+      await this._perm.removePerm(permVal, imsg.userId);
+      return imsg.send(`${mention(imsg.userId)} has lost ${perm} rights, so long dickhead!`);
+    } 
+
+    await this._perm.addPerm(permVal, imsg.userId);
+    return imsg.send(`${mention(imsg.userId)} has been granted ${perm} rights, use it wisely!`);
   }
 
   setupOptions(args: string[]): any {
     var argv = opt(args)
-      .usage("Post a random picture from available folders/subfolders")
+      .usage(`Authorize the mentioned user for the role: authorize UPLOAD Arijoon\nAvailable perms: ${
+        Object.keys(PERMS).join(", ")
+      }`)
+      .options('d', {
+        alias: 'delete',
+        describe: 'remove the permission',
+      })
       .options('h', {
         alias: 'help',
         describe: 'show this message',
