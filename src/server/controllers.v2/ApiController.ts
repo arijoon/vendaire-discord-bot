@@ -9,7 +9,7 @@ import { getSession } from '../http-utils';
 import * as path from 'path';
 import * as multer from 'multer';
 import { commands } from '../../static';
-import { readbleFromBuffer, fromImageRoot } from '../../helpers';
+import { readbleFromBuffer, fromImageRoot, checkFolder } from '../../helpers';
 
 const prefix = "/api";
 
@@ -59,6 +59,8 @@ export class ApiController implements IControllerV2 {
           const files = (<any>req).files
           const folderName = req.body.folderName;
 
+          checkFolder(folderName);
+
           if(!(folderName && files && files.length > 0)) {
             throw new Error("400");
           }
@@ -66,7 +68,7 @@ export class ApiController implements IControllerV2 {
           const result = [];
           for(let file of files) {
             const readable = readbleFromBuffer(file.buffer);
-            const dir = fromImageRoot(this._config, "misc");
+            const dir = fromImageRoot(this._config, folderName);
             const filename = await this._filesService.saveFile(readable, dir, `_${username}_` + file.originalname);
             result.push(filename);
           }
