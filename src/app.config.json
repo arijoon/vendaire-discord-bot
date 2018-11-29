@@ -53,7 +53,7 @@
     "port": 5010,
     "address": "0.0.0.0",
     "domain": "localhost",
-    "qualifiedDomain": "http://localhost",
+    "qualifiedDomain": "http://localhost:5010",
     "static": "../vandaire-ui/build",
     "publicPath": "public"
   },

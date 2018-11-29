@@ -44,7 +44,7 @@ export class AuthGenerator implements ICommand {
 
     const { port, qualifiedDomain, publicPath } = this._config.app.server;
     const session = await this._sessionManager.genSingleSession(imsg.userId);
-    await imsg.replyDm(`${qualifiedDomain}:${port}/${publicPath}/login?id=${session.id}`);
+    await imsg.replyDm(`${qualifiedDomain}/${publicPath}/login?id=${session.id}`);
   }
 
   setupOptions(args: string[]): any {
