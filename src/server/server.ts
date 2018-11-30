@@ -114,12 +114,11 @@ export class Server implements IStartable {
             const status: number = parseFloat(err && err.message);
             if (status) {
               res.status(status);
-              res.send();
             } else {
               this._logger.error("Server Error", err);
               res.status(500);
-              res.send();
             }
+            res.send();
           });
       }]);
     }
