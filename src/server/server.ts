@@ -112,11 +112,13 @@ export class Server implements IStartable {
         route.action(req, res)
           .catch(err => {
             const status: number = parseFloat(err && err.message);
-            if (status)
-              res.status(status) && next("Error");
-            else {
-              this._logger.error(err);
-              res.status(500) && next("Error");
+            if (status) {
+              res.status(status);
+              res.send();
+            } else {
+              this._logger.error("Server Error", err);
+              res.status(500);
+              res.send();
             }
           });
       }]);

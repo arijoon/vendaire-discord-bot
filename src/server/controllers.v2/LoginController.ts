@@ -10,6 +10,7 @@ import { constants } from '../constants';
 export class LoginController implements IControllerV2 {
   constructor(
     @inject(TYPES.SessionManager) private _sessionManager: ISessionManager,
+    @inject(TYPES.Logger) private _logger: ILogger,
     @inject(TYPES.IConfig) private _config: IConfig
   ) { }
 
@@ -30,7 +31,9 @@ export class LoginController implements IControllerV2 {
               res.cookie(constants.sessionKey, newSession.id, { domain: this._config.app.server.domain});
               // res.send("Session valid, singed in");
               res.redirect('./');
-            }).catch(_ => unauthorized());
+            }).catch(err => {
+                this._logger.error("Failed to login", err);
+             unauthorized()});
         }
       }
     ]
