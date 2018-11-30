@@ -32,7 +32,6 @@ export class SessionManager implements ISessionManager {
     const json = JSON.stringify(session);
     const key = makeSingleKey(session.id);
     await this._cache.set(key, json, this.sessionDefaultExpiry);
-    this._logger.info(`Generated single sessoon ${session.id}, timeout:${this.sessionDefaultExpiry}`);
 
     return session;
   }

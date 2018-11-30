@@ -18,7 +18,6 @@ export class MiddleWares {
     return async (req: e.Request, res: e.Response, next) => {
       (<any>req).session = null;
 
-      this._logger.info(`Requested ${req.path}`)
       if(exclusions && exclusions.indexOf(req.path) > -1) {
         return next();
       }
