@@ -19,6 +19,9 @@ export interface IMessage {
   /** Send a message to the same channel */
   send(content?: string, options?: any): Promise<Message | Message[]>;
 
+  /** Send a message to the nsfw channel of same server */
+  sendNsfw(content?: string, options?: any): Promise<Message | Message[]>;
+
   replyDm(content?: string, options?: any): Promise<Message | Message[]>;
 
   /**

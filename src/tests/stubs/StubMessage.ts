@@ -39,6 +39,10 @@ export class StubMessage implements IMessage {
     return Promise.resolve<discord.Message>({} as discord.Message );
   }
 
+  sendNsfw(content?: string, options?: any): Promise<discord.Message | discord.Message[]> {
+    throw new Error("Method not implemented.");
+  }
+
   fetchMessages(options?: any): Promise<string[]> {
     throw new Error("Method not implemented.");
   }

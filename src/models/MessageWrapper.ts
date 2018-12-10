@@ -1,5 +1,5 @@
 import { IMessage } from './../contracts';
-import { Message } from 'discord.js';
+import { Message, TextChannel } from 'discord.js';
 
 export class MessageWrapper implements IMessage {
   Message: Message;
@@ -50,6 +50,13 @@ export class MessageWrapper implements IMessage {
     }
 
     return this.Message.channel.send(content, options);
+  }
+
+  sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
+    const channels = this.Message.guild.channels;
+    const channel = channels.filter((channel: TextChannel) => channel.nsfw).first() as TextChannel;
+
+    return channel.send(content, options);
   }
 
   fetchMessages(options?: any): Promise<string[]> {

@@ -18,12 +18,17 @@ export class FourChanApi {
         this.baseUrl = _config.api["4chan"];
     }
 
-    boards(): Promise<any> {
+    boards(): Promise<IBoard[]> {
         let uri = [this.baseUrl, "boards.json"].join("/");
         let options = this.getRequestOptions(uri);
 
-        return rp(options).then(res => res.boards);
-
+      return rp(options).then(res => {
+        return res.boards.map(board => ({
+          title: board.title,
+          name: board.board,
+          isWorkSafe: !!board.ws_board
+        }))
+      });
     }
 
     board(board) {
@@ -68,4 +73,10 @@ export class FourChanApi {
         };
     }
 
+}
+
+export interface IBoard {
+  isWorkSafe: boolean;
+  title: string;
+  name: string;
 }

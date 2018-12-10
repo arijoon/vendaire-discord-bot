@@ -4,6 +4,7 @@ export * from "./file";
 export * from "./indentation.helper";
 export * from "./logger";
 export * from "./message-utils.helper";
+export * from "./objects";
 export * from "./options";
 export * from "./searcher";
 export * from "./streams";
