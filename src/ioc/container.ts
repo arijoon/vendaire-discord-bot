@@ -52,6 +52,7 @@ container.bind<IPermission>(TYPES.IPermission).to(Services.PermissionService);
 container.bind<ICache<string, any>>(TYPES.ICacheString).to(Services.InMemoryCache);
 container.bind<IBasicCache>(TYPES.IBasicCache).to(Services.CacheRedis).inSingletonScope();
 container.bind<IOrderedSetDataAccess>(TYPES.IOrderedSetDataAccess).to(Services.OrderedSetDataAccess);
+container.bind<Services.ReadThroughCacheFactory>(TYPES.ReadThroughCacheFactory).to(Services.ReadThroughCacheFactory).inSingletonScope();
 
 // Auth
 container.bind<ISessionManager>(TYPES.SessionManager).to(Services.SessionManager).inSingletonScope();

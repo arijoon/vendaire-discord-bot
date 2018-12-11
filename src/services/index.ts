@@ -10,4 +10,5 @@ export * from "./http.service";
 export * from "./OrderedSetDataAccess";
 export * from "./permission.service";
 export * from "./SessionManager";
+export * from "./ReadThroughCacheFactory";
 export * from "./question.service";

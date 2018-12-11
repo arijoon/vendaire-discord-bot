@@ -9,7 +9,9 @@ import { Message } from 'discord.js';
 
 import * as opt from 'optimist';
 import * as _ from 'lodash';
-import { fromArray, getMainContent, mapFromArray } from '../helpers';
+import {  getMainContent, mapFromArray } from '../helpers';
+
+const defaultBoard = "fit";
 
 @injectable()
 export class FourChan implements ICommand {
@@ -18,6 +20,7 @@ export class FourChan implements ICommand {
   _postedMessages: Message[] = [];
   _subscriptions: IDisposable[] = [];
   _boards: {[name: string]: IBoard};
+  _apis: { [board: string]: FourChanApi } = {};
 
   _bannedBoards: any = { 'hc': true, 'd': true, 'h': true }
 
@@ -44,11 +47,12 @@ export class FourChan implements ICommand {
           return;
         }
 
-        const b = ops.b || getMainContent(ops) || "fit";
+        const b = ops.b || getMainContent(ops) || defaultBoard;
         ops.b = b;
 
         try { // unstable 4chan module
-          let board = this._chanApi.board(ops.b);
+          this._apis[ops.b] = this._apis[ops.b] ||this._chanApi.board(ops.b);
+          const board = this._apis[ops.b];
 
           if (!ops.b || !board) {
             imsg.done()

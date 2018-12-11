@@ -1,3 +1,4 @@
+import { ReadThroughCacheFactory } from './../services/ReadThroughCacheFactory';
 let TYPES = {
     // Core
     Container: Symbol("Container"),
@@ -15,6 +16,7 @@ let TYPES = {
     IPermission: Symbol("IPermission"),
     IMessageUtils: Symbol("IMessageUtils"),
     IOrderedSetDataAccess: Symbol("IOrderedSetDataAccess"),
+    ReadThroughCacheFactory: Symbol("ReadThroughCacheFactory"),
 
     // Apis
     FourChanApi: Symbol("FourChanApi"),
