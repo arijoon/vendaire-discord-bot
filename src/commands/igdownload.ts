@@ -12,6 +12,8 @@ export class IgDownload implements ICommand {
   _command: string = commands.igdownload;
   _subscriptions: IDisposable[] = [];
 
+  _fileNameFinder = /[\w\d_]+\.\w{3}\?/;
+
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
     @inject(TYPES.IHttp) private _httpClient: IHttp,
@@ -71,12 +73,13 @@ export class IgDownload implements ICommand {
           }).then((res: string[]) => {
             if (res.length > 10) {
               for (let i = 0; i < res.length / 10; i++) {
-                msg.channel.send('', { files: res.slice(i * 10, Math.min(i * 10 + 10, res.length)), split: true });
+                const files = res.slice(i * 10, Math.min(i * 10 + 10, res.length));
+                msg.channel.send('', { files: this.formatFiles(files) , split: true });
               }
 
               return msg.channel.send("Sending all");
             } else {
-              return msg.channel.send('', { files: res, split: true });
+              return msg.channel.send('', { files: this.formatFiles(res), split: true });
             }
           }).then(() => {
             imsg.done();
@@ -84,6 +87,16 @@ export class IgDownload implements ICommand {
             imsg.done(err, true);
           });
       }));
+  }
+
+  formatFiles(files) {
+    return files.map(f => {
+      const match = f.match(this._fileNameFinder);
+      return {
+        attachment: f,
+        name: (match && match[0]) || f
+      };
+    });
   }
 
   getUrl(user: string) {
