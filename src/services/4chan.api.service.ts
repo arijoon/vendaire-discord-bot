@@ -101,9 +101,10 @@ export class FourChanApi {
     return {
       json: true,
       uri: uri,
-      headers: {
-        'if-modified-since': (new Date()).toUTCString()
-      }
+      // In order to use this, your must invalidate cache based on this request
+      // headers: {
+      //   'if-modified-since': (new Date()).toUTCString()
+      // }
     };
   }
 }
