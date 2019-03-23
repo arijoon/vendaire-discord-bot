@@ -74,7 +74,7 @@ let commands = {
     clean: 'clean',
 
     // Trump audio
-    trump : ["trump", "hillary", "tachanka", "pafrican"],
+    trump : ["trump", "hillary", "tachanka", "pafrican", "pussy"],
 
     // Movie search
     imdb: 'imdb',
