@@ -40,13 +40,6 @@ export class StyleImageCommand implements ICommand {
         return imsg.send(argv.help(), { code: 'md' });
       }
 
-      const style = await this._http.getFile(ops.s);
-      const content = await this._http.getFile(ops.c);
-
-      if (style.size > MaxFileSize || content.size > MaxFileSize) {
-        return imsg.send(`Either content or style are bigger than ${MaxFileSize / 106496}MB`);
-      }
-
       const endpoint = this._config.app.api.imageStyle;
 
       const resultFilename = await this._http.get(`${endpoint}/style`, undefined,
