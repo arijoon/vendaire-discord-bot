@@ -32,6 +32,7 @@ export * from "./roll.command";
 export * from "./search";
 export * from "./space-out.command";
 export * from "./steamurl";
+export * from "./style-image.command";
 export * from "./suggest";
 export * from "./translate";
 export * from "./urban.command";

@@ -39,10 +39,14 @@ export class HttpService implements IHttp {
         return rp(options);
     }
 
-    get(url: string, headers?: any): Promise<any> {
+    get(url: string, headers?: any, queries?: any): Promise<any> {
         let options: any = {
             url: url,
             json: false
+        }
+
+        if (queries) {
+          options.qs = queries;
         }
 
         if(headers) {

@@ -17,7 +17,8 @@
   "api": {
     "random-question": "http://jservice.io/api/random",
     "4chan": "http://a.4cdn.org",
-    "wcup": "http://worldcup.sfg.io"
+    "wcup": "http://worldcup.sfg.io",
+    "imageStyle": "http://localhost:5000"
   },
   "assets": {
     "root": "assets",

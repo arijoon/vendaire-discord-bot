@@ -125,9 +125,9 @@ let commands = {
     // Image processing
     image: {
         gray: 'imgray',
-        meme: 'immeme'
+        meme: 'immeme',
+        style: 'imstyle'
     },
-    
 
     // Authentication
     authorize: 'authorize',
