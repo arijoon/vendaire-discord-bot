@@ -6,8 +6,6 @@ import { commands } from '../static';
 
 import * as opt from 'optimist';
 
-const MaxFileSize: number = 1024 * 1024 * 5; // 5MB
-
 @injectable()
 export class StyleImageCommand implements ICommand {
 
