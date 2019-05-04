@@ -1,3 +1,4 @@
+export * from "./add-image.intent";
 export * from "./change-server.intent";
 export * from "./play-trump.intent";
 export * from "./post-image.intent";

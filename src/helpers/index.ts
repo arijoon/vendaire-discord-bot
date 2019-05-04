@@ -10,4 +10,5 @@ export * from "./searcher";
 export * from "./streams";
 export * from "./timer.helper";
 export * from "./types";
+export * from "./wait";
 export * from "./url";

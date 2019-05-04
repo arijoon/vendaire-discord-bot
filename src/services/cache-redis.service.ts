@@ -79,13 +79,18 @@ export class CacheRedis implements IBasicCache {
 
     key = this.escapeKeys(key);
     return new Promise<void>((r, x) => {
-      this._client.set(key, val, 'EX', Math.floor(expiryInSeconds) || this._cacheTimeoutInSeconds, (err, res) => {
+      const cb = (err, res) => {
         if (err) {
           console.error(err);
         }
 
         r();
-      })
+      };
+
+      if (expiryInSeconds === 0)
+        this._client.set(key, val, cb)
+      else
+        this._client.set(key, val, 'EX', Math.floor(expiryInSeconds) || this._cacheTimeoutInSeconds, cb)
     });
   }
 

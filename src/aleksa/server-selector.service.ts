@@ -26,7 +26,8 @@ export class ServerSelectorService {
 
       this._logger.info(`Changing server to ${name}`);
 
-      this._cache.set(cacheKey, JSON.stringify(selection));
+      // Ensure never expired
+      this._cache.set(cacheKey, JSON.stringify(selection), 0);
   }
 
   /**

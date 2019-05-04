@@ -106,6 +106,19 @@
             "make tachanka sing",
             "tell tachanka sing"
           ]
+        },
+        {
+          "name": "AddImageIntent",
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "add Anna's latest skip {number}",
+            "add Anna's latest"
+          ]
         }
       ],
       "types": [
