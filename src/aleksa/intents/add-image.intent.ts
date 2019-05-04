@@ -9,7 +9,7 @@ import { timeout } from '../../helpers';
 @injectable()
 export class AddImageIntent implements IIntent  {
   name: string = "AddImageIntent";
-  respones: ["that's what I like", "dat ass", "she does it again"];
+  responses = ["that's what I like", "dat ass", "she does it again"];
 
   constructor(
     @inject(TYPES.Logger) private _logger: ILogger,
@@ -33,7 +33,7 @@ export class AddImageIntent implements IIntent  {
         await timeout(wait);
       }
 
-      res.say(`${this.respones.crandom()}`);
+      res.say(`${this.responses.crandom()}`);
     };
   }
 }
