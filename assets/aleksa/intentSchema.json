@@ -116,9 +116,13 @@
             }
           ],
           "samples": [
-            "add Anna's latest skip {number}",
-            "add Anna's latest"
+            "add anna latest skip {number}",
+            "add anna latest"
           ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
         }
       ],
       "types": [
