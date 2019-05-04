@@ -19,7 +19,7 @@ export class AddImageIntent implements IIntent  {
 
   getCallback(_): (request: any, response: any) => Promise<void> {
     return async (req, res) => {
-      const skipCount: string = req.slot('number')
+      const skipCount: string = req.slot('number');
 
       const { guildId, channelId } = await this._serverSelector.getServer();
       const wait = 2000;
