@@ -22,16 +22,16 @@ export class AddImageIntent implements IIntent  {
       const skipCount: string = req.slot('number');
 
       const { guildId, channelId } = await this._serverSelector.getServer();
-      const wait = 2000;
+      const wait = 3000;
       const commands: string[] = [
-        `!!igdownload annanystrom ${skipCount ? `-s ${skipCount}` : ""}`,
-        "!!add misc/anna"
+        `igdownload annanystrom ${skipCount ? `-s ${skipCount}` : ""}`,
+        "add misc/anna"
       ];
 
-      commands.forEach(async (command) => {
+      for (const command of commands) {
         await this._client.sendMessage(guildId, channelId, command, {}, { isCommand: true });
         await timeout(wait);
-      });
+      }
 
       res.say(`${this.respones.crandom()}`);
     };
