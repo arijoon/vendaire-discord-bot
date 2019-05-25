@@ -31,7 +31,7 @@ let commands = {
     qs: 'qs',
 
     // Is something randomizer
-    is: [ 'is', 'are', 'does', 'will', 'would', 'has', 'have'],
+    is: [ 'is', 'are', 'does', 'will', 'would', 'has'],
 
     // Did thanos kill me
     didthanoskillme: 'didthanoskillme',
@@ -74,7 +74,7 @@ let commands = {
     clean: 'clean',
 
     // Trump audio
-    trump : ["trump", "hillary", "tachanka", "pafrican", "pussy"],
+    trump : ["trump", "hillary", "tachanka", "pafrican", "pussy", "haveatthemboys"],
 
     // Movie search
     imdb: 'imdb',
