@@ -43,7 +43,7 @@ export function getAllFilesRecursive(srcPath: string): string[] {
 
   for (const item of items) {
     if (isValidDirectory(srcPath, item)) {
-      folders.push(item)
+      !item.startsWith(".") && folders.push(item);
     } else {
       files.push(item);
     }
@@ -63,7 +63,7 @@ export function getAllFilesRecursive(srcPath: string): string[] {
  */
 export function getAllFoldersRecursive(srcPath: string): string[] {
   const items = fs.readdirSync(srcPath);
-  const folders = items.filter(item => isValidDirectory(srcPath, item));
+  const folders = items.filter(item => isValidDirectory(srcPath, item) && !item.startsWith("."));
   return folders.reduce((total, current) => {
     total.push.apply(total, getAllFoldersRecursive(path.join(srcPath, current))
       .map(item => path.join(current, item)));
@@ -84,7 +84,7 @@ export function getAllFoldersStatRecursively(srcPath: string, name?: string): IF
 
   for (const item of items) {
     if (isValidDirectory(srcPath, item)) {
-      folders.push(item)
+      !item.startsWith(".") && folders.push(item);
     } else {
       files.push(item);
     }
@@ -107,7 +107,7 @@ export function fromImageRoot(_config: IConfig, ...subpaths) {
 }
 
 function isValidDirectory(srcPath, item) {
-  return fs.statSync(path.join(srcPath, item)).isDirectory() && !item.startsWith(".");
+  return fs.statSync(path.join(srcPath, item)).isDirectory();
 }
 
 
