@@ -40,6 +40,7 @@ interface IFiles {
 
 interface IFileQueryOptions {
   recursive?: boolean;
+  include?: RegExp;
 }
 
 interface IFolderStat {

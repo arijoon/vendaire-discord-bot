@@ -19,7 +19,13 @@ export class FilesService implements IFiles {
 
     return new Promise<string[]>((resolve, reject) => {
       if (options && options.recursive) {
-        resolve(getAllFilesRecursive(fullPath));
+        let files = getAllFilesRecursive(fullPath);
+        
+        if (options.include) {
+          files = files.filter(f => f.match(options.include));
+        }
+
+        resolve(files);
       } else {
         //LEGACY: Maintain for backwards compatibilit
         fs.readdir(fullPath, (err, items) => {

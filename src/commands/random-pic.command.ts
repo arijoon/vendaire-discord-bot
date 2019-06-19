@@ -19,6 +19,9 @@ export class RandomPic implements ICommand {
   _commands: string[] = commands.randomPics;
   _command: string = commands.randomPic;
 
+  _filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg',
+    'png', 'bmp', 'link', 'gif'].join("|")})$`)
+
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
     @inject(TYPES.IConfig) private _config: IConfig,
@@ -132,7 +135,7 @@ export class RandomPic implements ICommand {
 
   selectRandomFile(fullPath: string): Promise<string> {
     return this._filesService
-      .getAllFiles(fullPath, { recursive: true })
+      .getAllFiles(fullPath, { recursive: true, include: this._filePatterns })
       .then(lst => {
         return this._config.pathFromRoot(fullPath, lst.crandom());
       });
@@ -140,7 +143,7 @@ export class RandomPic implements ICommand {
 
   countFiles(fullPath: string): Promise<number> {
     return this._filesService
-      .getAllFiles(fullPath, { recursive: true })
+      .getAllFiles(fullPath, { recursive: true, include: this._filePatterns })
       .then(lst => {
         return lst.length;
       });
