@@ -42,7 +42,7 @@ export function getAllFilesRecursive(srcPath: string): string[] {
   const files = []
 
   for (const item of items) {
-    if (fs.statSync(path.join(srcPath, item)).isDirectory()) {
+    if (isValidDirectory(srcPath, item)) {
       folders.push(item)
     } else {
       files.push(item);
@@ -63,7 +63,7 @@ export function getAllFilesRecursive(srcPath: string): string[] {
  */
 export function getAllFoldersRecursive(srcPath: string): string[] {
   const items = fs.readdirSync(srcPath);
-  const folders = items.filter(item => fs.statSync(path.join(srcPath, item)).isDirectory());
+  const folders = items.filter(item => isValidDirectory(srcPath, item));
   return folders.reduce((total, current) => {
     total.push.apply(total, getAllFoldersRecursive(path.join(srcPath, current))
       .map(item => path.join(current, item)));
@@ -83,7 +83,7 @@ export function getAllFoldersStatRecursively(srcPath: string, name?: string): IF
   const files = []
 
   for (const item of items) {
-    if (fs.statSync(path.join(srcPath, item)).isDirectory()) {
+    if (isValidDirectory(srcPath, item)) {
       folders.push(item)
     } else {
       files.push(item);
@@ -104,6 +104,10 @@ export function getAllFoldersStatRecursively(srcPath: string, name?: string): IF
  */
 export function fromImageRoot(_config: IConfig, ...subpaths) {
     return path.join(_config.images["root"], commands.randomPic, ...subpaths);
+}
+
+function isValidDirectory(srcPath, item) {
+  return fs.statSync(path.join(srcPath, item)).isDirectory() && !item.startsWith(".");
 }
 
 
