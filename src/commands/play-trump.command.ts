@@ -9,7 +9,7 @@ import { VoiceChannel, Message } from 'discord.js';
 import * as opt from 'optimist';
 
 @injectable()
-export class PlayTrump implements ICommand {
+export class PlayTrump implements ICommand, IHasHelp {
 
   _command: string[] = commands.trump;
   _subscription: IDisposable;
@@ -71,5 +71,13 @@ export class PlayTrump implements ICommand {
 
   public detach(): void {
     this._subscription.dispose();
+  }
+
+  public getHelp(): IHelp[] {
+    return this._command.map(c => ({
+      Key: c,
+      Message: `Play a ${c} in your current voicechat`,
+      Usage: c 
+    }));
   }
 }
