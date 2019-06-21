@@ -5,7 +5,7 @@ import { commands } from '../static';
 import { TYPES } from '../ioc/types';
 import { Message } from 'discord.js';
 
-import { YouTube } from 'youtube-node';
+import * as youtube_node from 'youtube-node';
 
 @injectable()
 export class YoutubeSearch implements ICommand {
@@ -17,6 +17,7 @@ export class YoutubeSearch implements ICommand {
         @inject(TYPES.IClient) private _client: IClient,
         @inject(TYPES.IConfig) private _config: IConfig
     ){
+        const YouTube: any = youtube_node;
         this._yt = new YouTube();
         this._yt.setKey(_config.app.youtube.key)
     }
