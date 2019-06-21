@@ -1,8 +1,8 @@
 sudo: required
 dist: trusty
 language: node_js
-node_js:
-- '10'
+node_js: '10'
+cache: npm
 env:
   matrix:
   - CXX=g++-4.8
