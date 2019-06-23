@@ -20,7 +20,7 @@ export class RandomPic implements ICommand {
   _command: string = commands.randomPic;
 
   _filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg',
-    'png', 'bmp', 'link', 'gif'].join("|")})$`)
+    'png', 'bmp', 'link', 'gif', 'webm'].join("|")})$`)
 
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
