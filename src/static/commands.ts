@@ -131,7 +131,10 @@ let commands = {
 
     // Authentication
     authorize: 'authorize',
-    authGen: 'auth-gen'
+    authGen: 'auth-gen',
+
+    // Random password generator
+    randompass: 'randompass'
 };
 
 export { commands };

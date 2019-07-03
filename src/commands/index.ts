@@ -24,6 +24,7 @@ export * from "./my-anime-list.command";
 export * from "./play-trump.command";
 export * from "./question.command";
 export * from "./random-pic.command";
+export * from "./random-pass.command";
 export * from "./rate.command";
 export * from "./regional.command";
 export * from "./remind.command";
