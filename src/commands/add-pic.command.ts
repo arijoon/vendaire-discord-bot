@@ -72,7 +72,8 @@ export class AddPicCommand implements ICommand {
           return imsg.send(`Attachment too big ${size}, max size: ${MaxFileSize} bytes`);
       }
 
-      const filename = await this._filesService.saveFile(data, dir, `_${msg.author.username}_` + name);
+      const uname = msg.author.username.replace(/[^\x00-\x7F]/g, "A");
+      const filename = await this._filesService.saveFile(data, dir, `_${uname}_` + name);
 
       return imsg.send(`Successfully added as ${filename} in ${fullFolder}`);
     }).then(_ => {
