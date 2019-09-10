@@ -45,12 +45,13 @@ export class IgDownload implements ICommand {
               .entry_data.ProfilePage[0]
               .graphql.user.edge_owner_to_timeline_media.edges
           }).then(results => {
-            return results.map(item => ({
+            return results
+            .filter(item => item.node)
+            .map(item => ({
               raw: item.node,
               image: item.node.display_url,
               dimensions: item.node.dimensions,
               likes: item.node.edge_liked_by.count,
-              caption: item.node.edge_media_to_caption.edges[0].node.text,
               comments: item.node.edge_media_to_comment.count,
               video: item.node.is_video,
               code: item.node.shortcode,
