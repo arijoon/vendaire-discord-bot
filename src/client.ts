@@ -7,8 +7,9 @@ import { IClient, ISearcher } from './contracts';
 import { swearWords } from './static';
 import { commands } from './static';
 import { TYPES } from './ioc/types';
-import { IMessage } from './contracts';
+import { IMessage, IPipe } from './contracts';
 import { TimerQueue } from './components/timer-queue.com';
+import { PipeManager } from './components/pipes/pipe-manager';
 import { IStatsCollector } from './diagnostics';
 
 import * as discord from 'discord.js';
@@ -28,6 +29,7 @@ export class Client implements IClient {
   _userRequests: Set<string>;
 
   _commandSearch: ISearcher;
+  _pipesManager: PipeManager;
 
   constructor(
     @inject(TYPES.IConfig) private _config: IConfig,
@@ -41,6 +43,7 @@ export class Client implements IClient {
     this.botPrefix = this.prefix+"+";
 
     this._client = new discord.Client();
+    this._pipesManager = new PipeManager();
 
     this._mappings = new Map<string, ISubject<IMessage>>();
 
@@ -187,11 +190,13 @@ export class Client implements IClient {
 
         this._logger.info(`Received command: ${command}`);
 
+        
         let orig = msg.content;
+        const [content, pipeArgs] = this.breakCommandAndPipes(orig)
+        const pipes = this._pipesManager.makePipes(pipeArgs);
+        msg.content = content.substring(fullCommand.length).trim();
 
-        msg.content = msg.content.substring(fullCommand.length).trim();
-
-        const message = this.buildMessageWrapper(msg, command, orig, baseMsg);
+        const message = this.buildMessageWrapper(msg, command, orig, pipes, baseMsg);
 
         // Check if this is for help
         if(this._helpMappings[command] && message.Message.content.indexOf("--help") >= 0) {
@@ -221,7 +226,7 @@ export class Client implements IClient {
     }
   }
 
-  private buildMessageWrapper(msg: Message, command: string, originalContent: string, baseMsg?: Message): IMessage {
+  private buildMessageWrapper(msg: Message, command: string, originalContent: string, pipes: IPipe<string, string>[], baseMsg?: Message): IMessage {
     const timer = new Timer().start();
     msg.channel.startTyping();
 
@@ -254,7 +259,7 @@ export class Client implements IClient {
       this._statsCollector.collectResponseTime(secondsTaken, command);
     }
 
-    const wrapper = new MessageWrapper(onDone, msg, timer, msg.content, command);
+    const wrapper = new MessageWrapper(onDone, msg, timer, msg.content, command, pipes);
 
     return wrapper;
   }
@@ -293,6 +298,16 @@ export class Client implements IClient {
     const commands = Array.from(this._mappings.keys());
     this._commandSearch = makeSearcher(
       commands.map(c => ({ key: c})), options);
+  }
+
+  private breakCommandAndPipes(content: string): [string, string[]] {
+    const parts = content.split('|');
+
+    if (parts.length > 1) {
+      return [parts[0], parts.slice(1)];
+    }
+
+    return [parts[0], []];
   }
 }
 

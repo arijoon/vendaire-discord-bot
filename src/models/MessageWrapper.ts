@@ -1,4 +1,4 @@
-import { IMessage } from './../contracts';
+import { IMessage, IPipe } from './../contracts';
 import { Message, TextChannel } from 'discord.js';
 
 export class MessageWrapper implements IMessage {
@@ -13,6 +13,7 @@ export class MessageWrapper implements IMessage {
   public readonly guidId: string;
   public readonly channelId: string;
   public readonly isBot: boolean;
+  public readonly pipes: IPipe<string, string>[];
   public readonly onDone: Promise<{ msg?: string; err?: any; }>;
 
   private _onDoneResolver: (reso: { msg?: string, err?: any}) => void;
@@ -22,12 +23,14 @@ export class MessageWrapper implements IMessage {
     msg: Message,
     timer: ITimer,
     content: string,
-    command: string
+    command: string,
+    pipes?: IPipe<string, string>[]
   ) {
     this.Message = msg;
     this.Timer = timer;
     this.Content = content;
     this.Command = command;
+    this.pipes = pipes;
 
     this.id = msg.id;
     this.guidId = msg.guild.id;
@@ -44,19 +47,19 @@ export class MessageWrapper implements IMessage {
     this._onDoneResolver({msg, err});
   }
 
-  send(content?: string, options?: any): Promise<Message | Message[]> {
+  async send(content?: string, options?: any): Promise<Message | Message[]> {
     if(options && !content) {
       return this.Message.channel.send(options);
     }
 
-    return this.Message.channel.send(content, options);
+    return this.Message.channel.send(await this.processPipes(content), options);
   }
 
-  sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
+  async sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
     const channels = this.Message.guild.channels;
     const channel = channels.filter((channel: TextChannel) => channel.nsfw).first() as TextChannel;
 
-    return channel.send(content, options);
+    return channel.send(await this.processPipes(content), options);
   }
 
   fetchMessages(options?: any): Promise<string[]> {
@@ -81,5 +84,15 @@ export class MessageWrapper implements IMessage {
 
   replyDm(content?: string, options?: any): Promise<Message | Message[]> {
     return this.Message.author.send(content, options);
+  }
+
+  private async processPipes(content: string): Promise<string> {
+    if (this.pipes) {
+      for(let p of this.pipes) {
+        content = await p.process(content);
+      }
+    }
+
+    return content
   }
 }
