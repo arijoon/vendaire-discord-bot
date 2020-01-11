@@ -155,7 +155,7 @@ export class RandomPic implements ICommand {
   private extractDirectoryPathFromCommand(command: string, content: string): string {
     let dir = command;
     if (content && content.startsWith(pathSeperator)) {
-      dir += content.split(' ')[0];
+      dir += content.split(/\s/)[0];
     }
 
     return dir;
