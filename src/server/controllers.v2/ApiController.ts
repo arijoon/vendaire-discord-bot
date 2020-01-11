@@ -65,6 +65,8 @@ export class ApiController implements IControllerV2 {
             throw new Error("400");
           }
 
+          this._logger.info(`Uploading ${files.length} images to ${folderName}`);
+
           const result = [];
           for(let file of files) {
             const readable = readbleFromBuffer(file.buffer);
