@@ -89,7 +89,9 @@ export class AddPicCommand implements ICommand {
 
         if (hashSearch && hashSearch.length > 0) {
           result += "\n\n**Duplicate Item**:";
-          result += hashSearch.map(h => `\n${h.path}/${h.filename}`).join("");
+          result += hashSearch
+          .filter(h => !(h.path === fullFolder && h.filename === filename)) // filter the current one
+          .map(h => `\n${h.path}/${h.filename}`).join("");
         }
       }
       catch(e) {
