@@ -1,15 +1,24 @@
 import { injectable } from 'inversify';
 import * as rp from 'request-promise';
 import * as request from 'request';
-import * as http from 'http';
-import URI from 'urijs';
-import { Transform } from 'stream';
 
 const tough = require('tough-cookie');
 
 @injectable()
 export class HttpService implements IHttp {
     _parentUrl = /(https?:\/\/(www\.)?\w+\.\w+\/?)/
+
+    post(url: string, data, options = {}): Promise<any> {
+      const opts: any = {
+        json: true,
+        ...options,
+        method: 'POST',
+        uri: url,
+        body: data,
+      };
+
+      return rp(opts);
+    }
 
     getJson(url: string, headers?: any, cookies?: any): Promise<any> {
         let options: any = {
@@ -67,6 +76,15 @@ export class HttpService implements IHttp {
         resolve({ data: request(url), name, size });
       });
     });
+  }
+
+  path(url, params) {
+    for (let key in params) {
+      if (!params.hasOwnProperty(key)) continue;
+      url = url.replace(':' + key, encodeURIComponent(params[key]))
+    }
+
+    return url;
   }
 
   fileNameFromUrl(url: string) {

@@ -4,6 +4,7 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
+import { FileServerApi } from '../services';
 import { getLastSection, readbleFromString, checkFolder } from '../helpers';
 
 import * as path from 'path';
@@ -21,9 +22,11 @@ export class AddPicCommand implements ICommand {
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
     @inject(TYPES.IConfig) private _config: IConfig,
+    @inject(TYPES.Logger) private _logger: ILogger,
     @inject(TYPES.IHttp) private _http: IHttp,
     @inject(TYPES.IFiles) private _filesService: IFiles,
     @inject(TYPES.IPermission) private _permission: IPermission,
+    @inject(FileServerApi) private _fileServer: FileServerApi,
   ) { }
 
   attach(): void {
@@ -74,8 +77,26 @@ export class AddPicCommand implements ICommand {
 
       const uname = msg.author.username.replace(/[^\x00-\x7F]/g, "A");
       const filename = await this._filesService.saveFile(data, dir, `_${uname}_` + name);
+      let result = `Successfully added as ${filename} in ${fullFolder}`;
 
-      return imsg.send(`Successfully added as ${filename} in ${fullFolder}`);
+      try {
+        const { data: { hash }} = await this._fileServer
+        .newFile({ filename, folder: fullFolder, path: `${fullFolder}/${filename}`});
+
+        result += `, hash: ${hash}`;
+
+        const {data: hashSearch } = await this._fileServer.searchHash(hash);
+
+        if (hashSearch && hashSearch.length > 0) {
+          result += "\n**Duplicate Item**:";
+          result += hashSearch.map(h => `\n${h.path}/${h.filename}`);
+        }
+      }
+      catch(e) {
+        this._logger.error("Failed to get hash info", e)
+      }
+
+      return imsg.send(result, { code: 'md' });
     }).then(_ => {
       imsg.done();
     }).catch(err => {

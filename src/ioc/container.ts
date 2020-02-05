@@ -29,6 +29,7 @@ container.bind<Contracts.IClient>(TYPES.IClient).to(Client).inSingletonScope();
 
 // Apis
 container.bind(Services.FourChanApi).toSelf();
+container.bind(Services.FileServerApi).toSelf();
 
 // Server
 container.bind<IStartable>(TYPES.Server).to(Server.Server).inSingletonScope();

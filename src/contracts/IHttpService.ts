@@ -4,6 +4,15 @@ interface IHttp {
 
     /** Returns a stream that can be piped */
     getFile(url: string): Promise<IHttpFileResult>;
+
+    post(url: string, data, options?): Promise<any>; 
+
+    /**
+     * replaces parts of url with parameters, e.g. /rooms/:roomId, must have roomId as a key in params
+     * @param {*} url 
+     * @param {*} params dictionary of parameters to replace
+     */
+    path(url, params);
 }
 
 interface IHttpFileResult {
