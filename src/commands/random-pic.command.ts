@@ -9,6 +9,7 @@ import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
 import { pathSeperator } from './add-pic.command';
 import { getMainContent } from '../helpers';
+import { FileServerApi } from '../services';
 
 const RandomRange: number = 1/20;
 const RandomRangeMin: number = 5;
@@ -28,6 +29,7 @@ export class RandomPic implements ICommand {
     @inject(TYPES.IFiles) private _filesService: IFiles,
     @inject(TYPES.IBasicCache) private _cache: IBasicCache,
     @inject(TYPES.Logger) private _logger: ILogger,
+    @inject(FileServerApi) private _fileServer: FileServerApi,
   ) { }
 
   attach(): void {
@@ -64,41 +66,45 @@ export class RandomPic implements ICommand {
         return this.listFolders(imsg, fullPath);
       }
 
-      return ops.c // whether we should count files or post them
-        ? this.countFiles(fullPath)
+      if (ops.c) // whether we should count files or post them
+        return this.countFiles(fullPath)
           .then((count) => imsg.send(`This folder and subfolders has ${count} item(s)`))
+      
+      if (ops.s) // get statistics
+        return this.getStatsMesasge(dir)
+        .then((result) => imsg.send(result, { code: 'md' }));
 
-        : this.selectRandomFile(fullPath)
-          .then(async (filename: string) => {
+      return this.selectRandomFile(fullPath)
+        .then(async (filename: string) => {
 
-            this._logger.info(`Selected file: ${filename}, from: ${dir}`);
+          this._logger.info(`Selected file: ${filename}, from: ${dir}`);
 
-            const guildId = imsg.guidId;
-            let channelId = imsg.channelId;
+          const guildId = imsg.guidId;
+          let channelId = imsg.channelId;
 
-            if (command.toLowerCase() == 'nsfw') {  // Special case
-              channelId = await this._client.getNsfwChannel(guildId);
+          if (command.toLowerCase() == 'nsfw') {  // Special case
+            channelId = await this._client.getNsfwChannel(guildId);
 
-              if (!channelId)
-                return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
-            }
+            if (!channelId)
+              return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
+          }
 
-            const { message, options, shouldCache } = await this.makeFileOptions(filename);
+          const { message, options, shouldCache } = await this.makeFileOptions(filename);
 
-            const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
+          const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
 
-            return !shouldCache
-              ? sentMsg
-              : sentMsg.then(async (res: Message) => {
-                const attach: MessageAttachment = res.attachments.values().next().value;
-                if (!attach) return res;
+          return !shouldCache
+            ? sentMsg
+            : sentMsg.then(async (res: Message) => {
+              const attach: MessageAttachment = res.attachments.values().next().value;
+              if (!attach) return res;
 
-                const url = attach.url;
-                await this._cache.set(filename, url);
+              const url = attach.url;
+              await this._cache.set(filename, url);
 
-                return res;
-              });
-          });
+              return res;
+            });
+        });
     }).then(() => imsg.done())
       .catch(err => imsg.done(err, true));
   }
@@ -149,6 +155,15 @@ export class RandomPic implements ICommand {
       });
   }
 
+  async getStatsMesasge(dir: string): Promise<any> {
+    const { data: stats} = await this._fileServer.stats(dir);
+
+    let result = `Count: ${stats.count}\nTop Contributors:\n`;
+    result += stats.user_contrib.map(u => `\n${u.username}: ${u.count}`).join("")
+
+    return result;
+  }
+
   /**
    * In case of directory commands, it will extract the path: "!!tfw/r hello world" -> "tfw/r"
    */
@@ -187,6 +202,9 @@ export class RandomPic implements ICommand {
       }).options('c', {
         alias: 'count',
         describe: 'count the files',
+      }).options('s', {
+        alias: 'stats',
+        describe: 'show stats',
       }).options('h', {
         alias: 'help',
         describe: 'show this message',

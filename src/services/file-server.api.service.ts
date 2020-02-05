@@ -30,7 +30,7 @@ export class FileServerApi {
   }
 
   stats(path) {
-    const url = this.url("/items/state");
+    const url = this.url("/items/stats");
 
     return this.post(url, {path})
   }

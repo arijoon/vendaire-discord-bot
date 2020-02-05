@@ -88,8 +88,8 @@ export class AddPicCommand implements ICommand {
         const {data: hashSearch } = await this._fileServer.searchHash(hash);
 
         if (hashSearch && hashSearch.length > 0) {
-          result += "\n**Duplicate Item**:";
-          result += hashSearch.map(h => `\n${h.path}/${h.filename}`);
+          result += "\n\n**Duplicate Item**:";
+          result += hashSearch.map(h => `\n${h.path}/${h.filename}`).join("");
         }
       }
       catch(e) {
