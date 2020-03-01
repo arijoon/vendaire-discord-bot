@@ -168,9 +168,12 @@ export class RandomPic implements ICommand {
   }
 
   async getStatsMesasge(dir: string): Promise<any> {
+    // Remove the root image from path
+    dir = dir.replace(new RegExp(`${this._command}/?`), "")
+      
     const { data: stats} = await this._fileServer.stats(dir);
 
-    let result = `Count: ${stats.count}\nTop Contributors:\n`;
+    let result = `Top Contributors (${stats.count}):`;
     result += stats.user_contrib.map(u => `\n${u.username}: ${u.count}`).join("")
 
     return result;
