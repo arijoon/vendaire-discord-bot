@@ -18,6 +18,7 @@ const RandomRangeMin: number = 5;
 export class RandomPic implements ICommand {
 
   _commands: string[] = commands.randomPics;
+  _commandAliases = commands.randomPicsAlias;
   _command: string = commands.randomPic;
 
   _filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg',
@@ -42,10 +43,20 @@ export class RandomPic implements ICommand {
         .subscribe(imsg => this.subscription(imsg, command));
     }
 
+    // Map aliases
+    for (let alias in this._commandAliases) {
+      if (!this._commandAliases.hasOwnProperty(alias)) continue;
+      this._client.getCommandStream(alias)
+      .subscribe(imsg => this.aliasSub(imsg, alias, this._commandAliases[alias]))
+    }
     // Random folder
     this._client
       .getCommandStream(this._command)
       .subscribe(imsg => this.subscription(imsg, this._commands.crandom()));
+  }
+
+  async aliasSub(imsg: IMessage, alias: string, command: string) {
+    return await this.subscription(imsg, command);
   }
 
   async subscription(imsg: IMessage, command: string) {
@@ -169,7 +180,8 @@ export class RandomPic implements ICommand {
    */
   private extractDirectoryPathFromCommand(command: string, content: string): string {
     let dir = command;
-    if (content && content.startsWith(pathSeperator)) {
+    if (content && 
+      (content.startsWith(pathSeperator) || command.endsWith(pathSeperator))) {
       dir += content.split(/\s/)[0];
     }
 

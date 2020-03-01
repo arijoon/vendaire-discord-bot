@@ -1,5 +1,6 @@
 let commands = {
 
+
     // Glboal Prefix 
     prefix: "!!",
     
@@ -11,6 +12,7 @@ let commands = {
     
     // Post random Pics
     // Dependencies: rate, addpic
+    randomPicsAlias: { 'a/': 'anime/', 'm/': 'misc/' },
     randomPics: [ 'tfw', 'god', 'bog', 'exposed', 'tsu', 'lol', 'fap', 'call', 'bullshit', 'memri', 'yousmart', 'ungabunga', 'kys', 'misc'
      ,'tekken', 'todd', 'anime-legacy', 'anime', 'beargrylls', 'indian', 'dafuq'
      ,'umaru', 'boomer', 'zoomer', 'pepe', 'bst' // requests
