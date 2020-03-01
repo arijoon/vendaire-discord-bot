@@ -52,7 +52,7 @@ export class RandomPic implements ICommand {
     // Random folder
     this._client
       .getCommandStream(this._command)
-      .subscribe(imsg => this.subscription(imsg, this._commands.crandom()));
+      .subscribe(imsg => this.subscription(imsg, this._command));
   }
 
   async aliasSub(imsg: IMessage, alias: string, command: string) {
@@ -70,8 +70,9 @@ export class RandomPic implements ICommand {
       }
 
       const dir = this.extractDirectoryPathFromCommand(command, getMainContent(ops));
+      const parent = this._command === command ? "" : this._command;
 
-      const fullPath = path.join(this._config.images["root"], this._command, dir);
+      const fullPath = path.join(this._config.images["root"], parent, dir);
 
       if (ops.l) { // list the folders
         return this.listFolders(imsg, fullPath);
