@@ -62,8 +62,10 @@ export class DeleteCommand implements ICommand {
         .join("");
       }
 
-      const { data: { count } } = await this._fileServer.delete({ hash, user: uname});
-      result += `\n\nDeleted ${count} item(s)`
+      if (!ops.d) {
+        const { data: { count } } = await this._fileServer.delete({ hash, user: uname});
+        result += `\n\nDeleted ${count} item(s)`
+      }
 
       return imsg.send(result, { code: 'md' });
     }).then(_ => {
@@ -77,6 +79,10 @@ export class DeleteCommand implements ICommand {
   setupOptions(args: string[]): any {
     var argv = opt(args)
       .usage('Delete an item using it\'s hash key')
+      .options('d', {
+        alias: 'dry',
+        describe: 'Dry run, only show items that could be deleted',
+      })
       .options('h', {
         alias: 'help',
         describe: 'show this message',
