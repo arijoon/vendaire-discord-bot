@@ -60,6 +60,10 @@ export class Config implements IConfig {
     return this._secret['admin'];
   }
 
+  get adminId(): string {
+    return this._secret['adminId'];
+  }
+
   get app(): any {
     return this._appConfig;
   }

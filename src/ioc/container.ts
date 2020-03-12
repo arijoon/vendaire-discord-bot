@@ -91,6 +91,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.RollCommand).inSingletonSco
 container.bind<ICommand>(TYPES.ICommand).to(Commands.FlipCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.WhichCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.AddPicCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.DeleteCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.Replay).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.RemindCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.DidThanosKillMeComand).inSingletonScope();

@@ -13,6 +13,12 @@ export class PermissionService implements IPermission {
     return username.toLowerCase().trim() == this._config.admin;
   }
 
+  verifyAdmin(username: string, userId: string): void {
+    if (this.isAdmin(username)) {
+      if (userId !== this._config.adminId) throw new Error(`Admin ABUSE ${userId}`)
+    }
+  }
+
   async hasPerm(perm: string, userId: string): Promise<boolean> {
     const key = this.makeKey(userId);
 

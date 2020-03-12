@@ -1,6 +1,7 @@
 interface IConfig {
   root: string;
   admin: string;
+  adminId: string;
   images: Map<string, string>;
   api: Map<string, string>;
   content: any;

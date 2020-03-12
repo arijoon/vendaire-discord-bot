@@ -6,6 +6,7 @@ export * from "./authorize-command";
 export * from "./ban-phrase";
 export * from "./bog.command";
 export * from "./count-usage.";
+export * from "./delete-pic.command";
 export * from "./didthanoskillme.command";
 export * from "./disconnect.command";
 export * from "./eight-ball.command";

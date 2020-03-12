@@ -9,6 +9,11 @@ interface IPermission {
   isAdmin(username: string): boolean
 
   /**
+   * Verifies if admin username is not being abused
+   */
+  verifyAdmin(username: string, userId: string): void
+
+  /**
    * Checks if userid has the perm key
    * @param perm Permission key
    * @param userId userId

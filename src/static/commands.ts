@@ -24,6 +24,7 @@ let commands = {
 
     // Add pic to the above folder
     addPic: 'add',
+    deletePic: 'delete',
 
     // Bog related
     quickrundown: 'quickrundown',

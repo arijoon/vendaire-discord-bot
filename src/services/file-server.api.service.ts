@@ -35,6 +35,12 @@ export class FileServerApi {
     return this.post(url, {path})
   }
 
+  delete(args) {
+    const url = this.url("/items/delete");
+
+    return this.post(url, args)
+  }
+
   private url(url) {
     return `${this.baseUrl}/api${url}`
   }
