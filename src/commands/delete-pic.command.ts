@@ -52,19 +52,19 @@ export class DeleteCommand implements ICommand {
 
       const uname = msg.author.username.replace(/[^\x00-\x7F]/g, "A");
 
-      let result = "";
+      let result = "Nothing found";
       let {data: hashSearch } = await this._fileServer.searchHash(hash);
 
       if (hashSearch && hashSearch.length > 0) {
-        result += "\n\n**Found Result**:";
+        result = "\n\n**Found Result**:";
         result += hashSearch.map(h => `\n${h.path}/${h.filename}`)
         .map(h => h.indexOf(uname) < 0 ? `${h} \t X` : h) // Mark result by other users
         .join("");
-      }
 
-      if (!ops.d) {
-        const { data: { count } } = await this._fileServer.delete({ hash, user: uname});
-        result += `\n\nDeleted ${count} item(s)`
+        if (!ops.d) {
+          const { data: { count } } = await this._fileServer.delete({ hash, user: uname});
+          result += `\n\nDeleted ${count} item(s)`
+        }
       }
 
       return imsg.send(result, { code: 'md' });
