@@ -4,9 +4,9 @@
 interface IPermission {
   /**
    * Determines if username is admin
-   * @param username username
+   * @param userId user's discord ID
    */
-  isAdmin(username: string): boolean
+  isAdmin(userId: string): boolean
 
   /**
    * Verifies if admin username is not being abused

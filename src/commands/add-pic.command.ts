@@ -71,7 +71,7 @@ export class AddPicCommand implements ICommand {
         : await this._http.getFile(url);
 
       if(size > MaxFileSize) {
-        if(!ops.o || !this._permission.isAdmin(imsg.author))
+        if(!ops.o || !this._permission.isAdmin(imsg.userId))
           return imsg.send(`Attachment too big ${size}, max size: ${MaxFileSize} bytes`);
       }
 
@@ -173,7 +173,7 @@ export class AddPicCommand implements ICommand {
         describe: 'specify the folder, can have subfolders, e.g. tfw/r',
       }).options('o', {
         alias: 'override-size',
-        describe: `override the size limit (you ${this._permission.isAdmin(imsg.author) ? 'can' : '**cannot**'} do this)`,
+        describe: `override the size limit (you ${this._permission.isAdmin(imsg.userId) ? 'can' : '**cannot**'} do this)`,
         default: false
       }).options('h', {
         alias: 'help',

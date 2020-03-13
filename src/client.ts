@@ -149,7 +149,7 @@ export class Client implements IClient {
 
       if (msg.author.bot && !msg.content.startsWith(this.botPrefix)) return;
 
-      if (!this._permission.isAdmin(msg.author.username) && this.isAtRequestLimit(msg.author.id)) {
+      if (!this._permission.isAdmin(msg.author.id) && this.isAtRequestLimit(msg.author.id)) {
         msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
         return;
       }

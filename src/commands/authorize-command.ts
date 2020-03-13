@@ -36,7 +36,7 @@ export class AuthorizeCommand implements ICommand {
     const perm = getMainContent(ops);
     const users = await imsg.getMentions();
 
-    if(!this._perm.isAdmin(imsg.author)) {
+    if(!this._perm.isAdmin(imsg.userId)) {
       return imsg.send("FUCK OFF!");
     }
 

@@ -9,14 +9,16 @@ export class PermissionService implements IPermission {
     @inject(TYPES.IBasicCache) private _cache: IBasicCache
   ) { }
 
-  isAdmin(username: string): boolean {
-    return username.toLowerCase().trim() == this._config.admin;
+  isAdmin(userId: string): boolean {
+    return userId === this._config.adminId;
   }
 
   verifyAdmin(username: string, userId: string): void {
-    if (this.isAdmin(username)) {
-      if (userId !== this._config.adminId) throw new Error(`Admin ABUSE ${userId}`)
-    }
+    if (username.toLowerCase().trim() === this._config.admin
+      && !this.isAdmin(userId)) {
+
+      throw new Error(`Admin ABUSE ${userId}`)
+      }
   }
 
   async hasPerm(perm: string, userId: string): Promise<boolean> {

@@ -87,7 +87,7 @@ export class CountUsage implements ICommand, IHasHelp {
         let msg = imsg.Message;
         const content = msg.content;
 
-        if (!this._permission.isAdmin(msg.author.username)) {
+        if (!this._permission.isAdmin(imsg.userId)) {
           msg.channel.send('You cannot bulk delete');
           imsg.done();
           return;
