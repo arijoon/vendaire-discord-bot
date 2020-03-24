@@ -1,6 +1,7 @@
 export * from "./common-regex";
 export * from "./discord";
 export * from "./file";
+export * from "./hash";
 export * from "./indentation.helper";
 export * from "./logger";
 export * from "./message-utils.helper";

@@ -5,7 +5,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
-import { getLastSection, readbleFromString, checkFolder } from '../helpers';
+import { getLastSection, readbleFromString, checkFolder, hash, duplicateStream } from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -76,21 +76,33 @@ export class AddPicCommand implements ICommand {
       }
 
       const uname = msg.author.username.replace(/[^\x00-\x7F]/g, "A");
-      const filename = await this._filesService.saveFile(data, dir, `_${uname}_` + name);
-      let result = `Successfully added as ${filename} in ${fullFolder}`;
+      const [ hashStream, fileStream] = duplicateStream(data);
+      const hashStr = await hash(hashStream);
+      let result = "";
 
       try {
-        const { data: { hash }} = await this._fileServer
-        .newFile({ filename, folder: fullFolder, path: `${fullFolder}/${filename}`});
 
-        result += `, hash: ${hash}`;
+        let { data: hashSearch } = await this._fileServer.searchHash(hashStr);
 
-        let {data: hashSearch } = await this._fileServer.searchHash(hash);
+        const hasDuplicates = hashSearch && hashSearch.length > 0;
 
-        hashSearch = hashSearch
-          .filter(h => !(h.path === fullFolder && h.filename === filename)) // filter the current one
+        if (!hasDuplicates || ops.d) {
+          const filename = await this._filesService.saveFile(fileStream, dir, `_${uname}_` + name);
 
-        if (hashSearch && hashSearch.length > 0) {
+          result = `Successfully added as ${filename} in ${fullFolder}, hash: ${hashStr}`;
+
+          const { data: { hash } } = await this._fileServer
+            .newFile({ filename, folder: fullFolder, path: `${fullFolder}/${filename}` });
+
+          if (hash !== hashStr) {
+            result += "\n Unmatching hashes, something has gone wrong!!"
+            this._logger.error("Unmatching hashes", {fullFolder, filename, hash, hashStr})
+          }
+        } else {
+          result += "No Image added, use -d flag to add duplicates"
+        }
+
+        if (hasDuplicates) {
           result += "\n\n**Duplicate Item**:";
           result += hashSearch.map(h => `\n${h.path}/${h.filename}`).join("");
         }
@@ -174,6 +186,10 @@ export class AddPicCommand implements ICommand {
       }).options('o', {
         alias: 'override-size',
         describe: `override the size limit (you ${this._permission.isAdmin(imsg.userId) ? 'can' : '**cannot**'} do this)`,
+        default: false
+      }).options('d', {
+        alias: 'add-duplicate',
+        describe: `add the file even if it is a duplicate`,
         default: false
       }).options('h', {
         alias: 'help',
