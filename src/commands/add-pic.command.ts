@@ -1,11 +1,11 @@
-import { commonRegex, getAll } from './../helpers/common-regex';
 import { IMessage } from '../contracts';
 import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
-import { getLastSection, readbleFromString, checkFolder, hash, duplicateStream } from '../helpers';
+import { getLastSection, readbleFromString, checkFolder, hash,
+   duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink } from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -63,10 +63,10 @@ export class AddPicCommand implements ICommand {
       }
 
       // Check for attachments or links
-      const url = await this.getUrlFromCurrentOrFromHistory(imsg);
+      const url = await getUrlFromCurrentOrFromHistory(imsg);
       const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
 
-      const { data, size, name } = this.shouldSaveAsLink(url)
+      const { data, size, name } = shouldSaveAsLink(url)
         ? { data: readbleFromString(url), size: url.length, name: `${getLastSection(url)}.link` }
         : await this._http.getFile(url);
 
@@ -119,58 +119,6 @@ export class AddPicCommand implements ICommand {
       imsg.done(err, true);
     });
 
-  }
-
-  /**
-   * If message has any urls, extract that, otherwise get the attachments
-   */
-  private getUrl(imsg: IMessage) {
-    const urls = getAll(imsg.Content, commonRegex.allLinks);
-
-    if(urls && urls.length > 0) {
-      return urls[0];
-    }
-
-    if (imsg.Message.attachments.size < 1) {
-      throw new Error("No Attachments or links found");
-    }
-    const attachment = imsg.Message.attachments.first();
-
-    return attachment.url;
-  }
-
-
-  linkableUrls = [
-    /https:\/\/streamable.com/,
-    /https?:\/\/[a-z\.]*imgur.com/
-  ];
-  private shouldSaveAsLink(url: string) {
-    for (let item of this.linkableUrls) {
-      if (item.test(url)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Get url from current message or previous 10
-   */
-  private async getUrlFromCurrentOrFromHistory(imsg: IMessage) {
-    try {
-      return this.getUrl(imsg);
-    } catch (_) {
-      // Current message has none, search in history:
-      const msgs = await imsg.fetchFullMessages({ limit: 10 });
-
-      for (let msg of msgs) {
-        try { //TODO very ugly, refactor asap
-          return this.getUrl(msg);
-        } catch (_) { }
-      }
-    }
-    throw new Error("No Attachments or links found");
   }
 
   private extractParentFolder(folder: string) {

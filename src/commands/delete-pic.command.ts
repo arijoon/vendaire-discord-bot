@@ -4,11 +4,9 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
-import { getMainContent } from '../helpers';
+import { getMainContent, isHashString } from '../helpers';
 
 import * as opt from 'optimist';
-
-const hashLength = 32;
 
 @injectable()
 export class DeleteCommand implements ICommand {
@@ -44,7 +42,7 @@ export class DeleteCommand implements ICommand {
 
       const hash = getMainContent(ops);
 
-      if (hash.length != hashLength) {
+      if (!isHashString(hash)) {
         return imsg.send(`Invalid hash ${hash}`);
       }
 

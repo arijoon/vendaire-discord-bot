@@ -15,6 +15,7 @@ export * from "./games/rps";
 export * from "./help.command";
 export * from "./igdownload";
 export * from "./igimage";
+export * from "./image-search.command";
 export * from "./image/common.image";
 export * from "./image/gray.im";
 export * from "./image/meme.im";

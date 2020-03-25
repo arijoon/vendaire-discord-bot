@@ -102,6 +102,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.AuthGenerator).inSingletonS
 container.bind<ICommand>(TYPES.ICommand).to(Commands.AuthorizeCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.StyleImageCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.RandomPassCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.ImageSearchCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 
