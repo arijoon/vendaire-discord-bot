@@ -25,7 +25,7 @@ export function nameToJpg(filename) {
 
 export async function optimize(filePath: string, logger: ILogger, size: number = 3000) {
   filePath = await toJpg(filePath);
-  const {stdout, stderr} = await exec(`jpegoptim --preserve --strip-all --verbose --size=${size} "${filePath}`);
+  const {stdout, stderr} = await exec(`jpegoptim --preserve --strip-all --verbose --size=${size} "${filePath}"`);
 
   logger.info(stdout);
   if (stderr)
