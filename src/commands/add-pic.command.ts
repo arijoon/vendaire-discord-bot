@@ -12,7 +12,7 @@ import * as opt from 'optimist';
 
 export const pathSeperator = '/';
 const MaxFileSize: number = 1024 * 1024 * 5; // 5MB
-const MaxOptimizationSize: number = 1024 * 1024 * 25; // 30MB
+const MaxOptimizationSize: number = 1024 * 1024 * 25; // 25MB
 
 @injectable()
 export class AddPicCommand implements ICommand {
