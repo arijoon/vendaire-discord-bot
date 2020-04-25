@@ -5,7 +5,7 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
 import { getLastSection, readbleFromString, checkFolder, hash,
-   duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink } from '../helpers';
+   duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink, optimize, nameToJpg } from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -66,9 +66,19 @@ export class AddPicCommand implements ICommand {
       const url = await getUrlFromCurrentOrFromHistory(imsg);
       const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
 
-      const { data, size, name } = shouldSaveAsLink(url)
+      let { data, size, name } = shouldSaveAsLink(url)
         ? { data: readbleFromString(url), size: url.length, name: `${getLastSection(url)}.link` }
         : await this._http.getFile(url);
+
+      let tmpFile: string = null
+      if (ops.p) {
+        // attempt optimization
+        const ceil = ops.size;
+        tmpFile = await optimize(await this._filesService.writeTmpFile(data, name), this._logger);
+        name = nameToJpg(name);
+        data = await this._filesService.readStream(tmpFile);
+        size = ceil;
+      }
 
       if(size > MaxFileSize) {
         if(!ops.o || !this._permission.isAdmin(imsg.userId))
@@ -110,6 +120,9 @@ export class AddPicCommand implements ICommand {
       catch(e) {
         this._logger.error("Failed to get hash info", e)
       }
+      finally {
+        await this._filesService.removeTmpFile(tmpFile);
+      }
 
       return imsg.send(result, { code: 'md' });
     }).then(_ => {
@@ -139,6 +152,14 @@ export class AddPicCommand implements ICommand {
         alias: 'add-duplicate',
         describe: `add the file even if it is a duplicate`,
         default: false
+      }).options('p', {
+        alias: 'optimize',
+        describe: `Convert to JPG and ceil the filesize at 1000KB`,
+        default: false
+      }).options('s', {
+        alias: 'size',
+        describe: `Set optimization file size ceil in KB`,
+        default: 1000
       }).options('h', {
         alias: 'help',
         describe: 'show this message',

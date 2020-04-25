@@ -14,6 +14,7 @@
         "outDir": "build",
         "rootDir": "src",
         "baseUrl": "src",
+        "allowSyntheticDefaultImports": true,
         "allowUnreachableCode": true
     },
     "compileOnSave": false,

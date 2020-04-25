@@ -32,7 +32,8 @@
     "content": {
       "root": "assets/content",
       "quickrundown": "quickrundown.txt"
-    }
+    },
+    "tmp": "assets/tmp"
   },
   "commands": {
     "remind": {

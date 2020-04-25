@@ -1,4 +1,7 @@
-FROM nodejs-base
+FROM resin/raspberry-pi-alpine:latest
+
+RUN apk add --update make g++ gcc python ffmpeg autoconf libtool nodejs git automake nodejs-npm
+RUN apk add --update imagemagick jpegoptim
 
 WORKDIR /app
 COPY package*.json ./

@@ -4,7 +4,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 
-import * as imdb from 'imdb-api';
+import imdb from 'imdb-api';
 import * as opt from 'optimist';
 import { RichEmbed, Message } from 'discord.js';
 import { colors } from '../static';
@@ -59,7 +59,7 @@ export class ImdbCommand implements ICommand {
                     let req: any = { name: content };
                     if (year) req.year = year;
 
-                    res = imdb.getReq(req)
+                    res = imdb.get(req, { apiKey: "fake"})
                         .then(res => {
                             let response = `Rated **${res.rating}** from *${res.votes}* votes\n${res.imdburl}`;
                             this._cache.set(fullContent, response);

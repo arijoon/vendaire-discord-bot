@@ -11,7 +11,8 @@ import { Readable } from 'stream';
 export class FilesService implements IFiles {
 
   constructor(
-    @inject(TYPES.IConfig) private _config: IConfig
+    @inject(TYPES.IConfig) private _config: IConfig,
+    @inject(TYPES.Logger) private _logger: ILogger
   ) { }
 
   getAllFiles(dir: string, options?: IFileQueryOptions): Promise<string[]> {
@@ -100,6 +101,20 @@ export class FilesService implements IFiles {
     });
   }
 
+  readStream(filePath: string): Promise<Readable> {
+    return new Promise((resolve, reject) => {
+      const readble: Readable = fs.createReadStream(filePath);
+
+      readble.on('open', () => {
+        resolve(readble);
+      });
+
+      readble.on('error', (err) => {
+        reject(err);
+      });
+    })
+  }
+
   readFileBuffer(filePath: string, options?: IFileReadOptions): Promise<Buffer> {
     const fullPath = this.getFullPath(filePath, options);
 
@@ -110,6 +125,34 @@ export class FilesService implements IFiles {
         else
           resolve(data);
       });
+    });
+  }
+
+  async removeTmpFile(filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!filePath) {
+        resolve();
+        return;
+      }
+
+      fs.unlink(filePath, (err) => {
+        if (err) reject(err);
+        else {
+          resolve();
+          this._logger.info(`Removed temporary file ${filePath}`)
+        }
+      })
+    })
+  }
+
+  async writeTmpFile(data: Readable, ext: string): Promise<string> {
+    const dir = this._config.app.assets.tmp;
+    const filename = `${this.randomGenerator(8)}_${ext}`
+
+    return this.saveFile(data, dir, filename)
+    .then(name => {
+      this._logger.info(`Created temporary file ${name}`)
+      return path.join(this._config.pathFromRoot(dir), name);
     });
   }
 
