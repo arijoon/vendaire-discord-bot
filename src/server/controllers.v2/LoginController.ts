@@ -24,7 +24,7 @@ export class LoginController implements IControllerV2 {
             unauthorized();
           }
 
-          return this._sessionManager.useSingle(req.query.id)
+          return this._sessionManager.useSingle(req.query.id as string)
             .then(async (sess: ISession) => {
               const newSession = await this._sessionManager.genSession(sess.user);
 
