@@ -12,6 +12,7 @@ import * as opt from 'optimist';
 
 export const pathSeperator = '/';
 const MaxFileSize: number = 1024 * 1024 * 5; // 5MB
+const MaxOptimizationSize: number = 1024 * 1024 * 25; // 30MB
 
 @injectable()
 export class AddPicCommand implements ICommand {
@@ -71,7 +72,7 @@ export class AddPicCommand implements ICommand {
         : await this._http.getFile(url);
 
       let tmpFile: string = null
-      if (ops.p) {
+      if (ops.p && size < MaxOptimizationSize) {
         // attempt optimization
         const ceil = ops.size;
         tmpFile = await optimize(await this._filesService.writeTmpFile(data, name), this._logger);
