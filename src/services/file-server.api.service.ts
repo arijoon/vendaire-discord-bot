@@ -18,6 +18,11 @@ export class FileServerApi {
     return this.get(url, {hash})
   }
 
+  searchFolder(query) {
+    const url = this.url("/items/path-search/:query");
+    return this.get(url, {query})
+  }
+
   reHash(path) {
     const url = this.url("/items/hash_dir");
     return this.post(url, {path});
@@ -47,7 +52,6 @@ export class FileServerApi {
 
   private post(url, payload) {
     return this._http.post(url, payload, { headers: this.headers()})
-    // .then(this.parse)
   }
 
   private get(url, params?) {

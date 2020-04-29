@@ -21,6 +21,7 @@ let commands = {
      ,"trash" // for removed items
     ],
     randomPic: 'randompic',
+    folderSearch: 'fsearch',
 
     // Add pic to the above folder
     addPic: 'add',
@@ -35,7 +36,7 @@ let commands = {
     qs: 'qs',
 
     // Is something randomizer
-    is: [ 'is', 'are', 'does', 'will', 'would', 'has'],
+    is: [ 'is', 'are', 'does', 'will', 'would', 'has', 'should'],
 
     // Did thanos kill me
     didthanoskillme: 'didthanoskillme',

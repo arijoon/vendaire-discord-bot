@@ -11,6 +11,7 @@ export * from "./didthanoskillme.command";
 export * from "./disconnect.command";
 export * from "./eight-ball.command";
 export * from "./flip.command";
+export * from "./folder-search";
 export * from "./games/rps";
 export * from "./help.command";
 export * from "./igdownload";
