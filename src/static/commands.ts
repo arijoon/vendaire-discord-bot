@@ -80,7 +80,8 @@ let commands = {
 
     // Trump audio
     trump : ["trump", "hillary", "tachanka", "pafrican", "pussy",
-     "haveatthemboys", "shitpostingfucks", "ohnonono", "sam", "reddit"],
+     "haveatthemboys", "shitpostingfucks", "ohnonono", "sam", "reddit",
+     "leftthechat"],
 
     // Movie search
     imdb: 'imdb',
