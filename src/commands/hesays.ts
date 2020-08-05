@@ -12,7 +12,7 @@ const filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg', 'png'].join("|")})
 const quoteColor = '#789922';
 const bgColor = '#ffffff';
 const fontSize = 48;
-const font = `${fontSize}px serif`;
+const font = `${fontSize}px`;
 
 @injectable()
 export class HeSays implements ICommand, IHasHelp {
