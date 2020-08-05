@@ -27,7 +27,8 @@ export class HeSays implements ICommand, IHasHelp {
     @inject(TYPES.Logger) private _logger: ILogger,
   ) {
 
-    const fontPath = this._config.pathFromRoot("assets", "fonts", "impact.ttf",);
+    // Move to font service
+    const fontPath = this._config.pathFromRoot(this._config.app.assets, "fonts", "impact.ttf",);
     registerFont(fontPath, { family: "Impact" });
   }
 
