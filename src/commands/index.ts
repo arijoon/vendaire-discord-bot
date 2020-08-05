@@ -14,6 +14,7 @@ export * from "./flip.command";
 export * from "./folder-search";
 export * from "./games/rps";
 export * from "./help.command";
+export * from "./hesays";
 export * from "./igdownload";
 export * from "./igimage";
 export * from "./image-search.command";

@@ -141,7 +141,9 @@ let commands = {
     authGen: 'auth-gen',
 
     // Random password generator
-    randompass: 'randompass'
+    randompass: 'randompass',
+
+    hesays: 'hesays'
 };
 
 export { commands };

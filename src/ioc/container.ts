@@ -104,6 +104,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.StyleImageCommand).inSingle
 container.bind<ICommand>(TYPES.ICommand).to(Commands.RandomPassCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.ImageSearchCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.FolderSearch).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.HeSays).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 

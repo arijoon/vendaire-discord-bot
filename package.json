@@ -25,6 +25,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.1.0",
     "alexa-app": "^4.2.3",
+    "canvas": "^2.6.1",
     "cheerio": "^0.22.0",
     "cli-table": "^0.3.1",
     "cookie-parser": "^1.4.3",
