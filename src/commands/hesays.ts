@@ -12,7 +12,8 @@ const filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg', 'png'].join("|")})
 const quoteColor = '#789922';
 const bgColor = '#ffffff';
 const fontSize = 48;
-const font = `${fontSize}px "Antic Sans"`;
+const font = `${fontSize}px "Impact"`;
+
 
 @injectable()
 export class HeSays implements ICommand, IHasHelp {
@@ -24,7 +25,11 @@ export class HeSays implements ICommand, IHasHelp {
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.IFiles) private _filesService: IFiles,
     @inject(TYPES.Logger) private _logger: ILogger,
-  ) { }
+  ) {
+
+    const fontPath = this._config.pathFromRoot("assets", "fonts", "impact.ttf",);
+    registerFont(fontPath, { family: "Impact" });
+  }
 
   attach(): void {
     makeSubscription(this._client.getCommandStream(this._command),
@@ -35,9 +40,6 @@ export class HeSays implements ICommand, IHasHelp {
 
     const content = imsg.Content;
     const imagePath = await this.selectRandomFile();
-
-    const fontPath = this._config.pathFromRoot("assets", "fonts", "AnticSans.otf",);
-    registerFont(fontPath, { family: "Antic Sans" });
 
     const canvas = createCanvas(200, 200);
 
@@ -102,7 +104,7 @@ export class HeSays implements ICommand, IHasHelp {
         line = testLine;
       }
     }
-    const xm = this.centerText(context, text, maxWidth);
+    const xm = this.centerText(context, line, maxWidth);
     context.fillText(line, xm, y);
   }
 
