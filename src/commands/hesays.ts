@@ -5,14 +5,14 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { makeSubscription } from '../helpers/command';
 import * as path from 'path';
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas, registerFont, loadImage } from 'canvas';
 
 const filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg', 'png'].join("|")})$`)
 
 const quoteColor = '#789922';
 const bgColor = '#ffffff';
 const fontSize = 48;
-const font = `${fontSize}px`;
+const font = `${fontSize}px "Antic Sans"`;
 
 @injectable()
 export class HeSays implements ICommand, IHasHelp {
@@ -35,6 +35,9 @@ export class HeSays implements ICommand, IHasHelp {
 
     const content = imsg.Content;
     const imagePath = await this.selectRandomFile();
+
+    const fontPath = this._config.pathFromRoot("assets", "fonts", "AnticSans.otf",);
+    registerFont(fontPath, { family: "Antic Sans" });
 
     const canvas = createCanvas(200, 200);
 
