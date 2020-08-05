@@ -1,6 +1,5 @@
 let commands = {
 
-
     // Glboal Prefix 
     prefix: "!!",
     
