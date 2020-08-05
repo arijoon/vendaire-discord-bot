@@ -1,7 +1,7 @@
 FROM resin/raspberry-pi-alpine:latest
 
 RUN apk add --update make g++ gcc python ffmpeg autoconf libtool nodejs git automake
-RUN apk add --update imagemagick jpegoptim yarn cairo-dev pango-dev jpeg-dev giflib-dev
+RUN apk add --update imagemagick jpegoptim yarn cairo-dev pango-dev jpeg-dev giflib-dev freetype-dev libjpeg-turbo-dev
 
 
 WORKDIR /app
