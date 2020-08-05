@@ -58,7 +58,7 @@ export class HeSays implements ICommand, IHasHelp {
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
 
-    return imsg.send('', { files: [canvas.toBuffer('image/jpeg')] });
+    return imsg.send('', { files: [canvas.toBuffer()] });
   }
 
   countLines(context, text, maxWidth) {
@@ -109,7 +109,7 @@ export class HeSays implements ICommand, IHasHelp {
   }
 
   selectRandomFile(): Promise<string> {
-    const fullPath = path.join(this._config.images["root"], 'randompic', this._command);
+    const fullPath = path.join(this._config.images["root"], 'randompic', 'pichesays');
 
     return this._filesService
       .getAllFiles(fullPath, { recursive: true, include: filePatterns })

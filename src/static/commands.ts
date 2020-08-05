@@ -18,7 +18,7 @@ let commands = {
      ,'sfv', 'blazbluecf', 'kpop', 'games', 'movies'
      ,'nsfw' // special case, will post it to the NSFW channel
      ,"trash" // for removed items
-     ,'hesays' // for hesays command
+     ,'pichesays' // for hesays command
     ],
     randomPic: 'randompic',
     folderSearch: 'fsearch',
