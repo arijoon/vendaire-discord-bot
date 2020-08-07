@@ -6,6 +6,7 @@ import { commands } from '../static';
 import { makeSubscription } from '../helpers/command';
 import * as path from 'path';
 import { createCanvas, registerFont, loadImage } from 'canvas';
+import { calculateSize } from '../helpers';
 
 const filePatterns: RegExp = new RegExp(`\.(${['jpeg', 'jpg', 'png'].join("|")})$`)
 
@@ -13,7 +14,7 @@ const quoteColor = '#789922';
 const bgColor = '#ffffff';
 const fontSize = 48;
 const font = `${fontSize}px "Impact"`;
-
+const maxHeight = 720;
 
 @injectable()
 export class HeSays implements ICommand, IHasHelp {
@@ -28,7 +29,7 @@ export class HeSays implements ICommand, IHasHelp {
   ) {
 
     // Move to font service
-    const fontPath = this._config.pathFromRoot(this._config.app.assets, "fonts", "impact.ttf",);
+    const fontPath = this._config.pathFromRoot(this._config.app.assets.root, "fonts", "impact.ttf",);
     registerFont(fontPath, { family: "Impact" });
   }
 
@@ -37,7 +38,7 @@ export class HeSays implements ICommand, IHasHelp {
       this.subscription.bind(this))
   }
 
-  private async subscription(imsg: IMessage) {
+  private async subscription(imsg: IMessage): Promise<any> {
 
     const content = imsg.Content;
     const imagePath = await this.selectRandomFile();
@@ -45,26 +46,27 @@ export class HeSays implements ICommand, IHasHelp {
     const canvas = createCanvas(200, 200);
 
     const img = await loadImage(imagePath);
-    canvas.width = img.width;
-    canvas.height = img.height;
+    const [width, height] = calculateSize(img.width, img.height, maxHeight);
+    canvas.width = width;
+    canvas.height = height;
 
     const ctx = canvas.getContext('2d');
 
     ctx.font = font;
-    let lines = this.countLines(ctx, content, img.width);
-    canvas.height = canvas.height + (lines + 2) * fontSize
+    let lines = this.countLines(ctx, content, width);
+    canvas.height = canvas.height + (lines + 1) * fontSize + 15
 
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.font = font;
     ctx.fillStyle = quoteColor;
-    this.wrapText(ctx, content, 0, img.height + 72, img.width, fontSize);
+    this.wrapText(ctx, content, 0, height + fontSize, width, fontSize);
 
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(img, 0, 0, width, height);
 
-    return imsg.send('', { files: [canvas.toBuffer()] });
+    return imsg.send('', { files: [canvas.toBuffer('image/jpeg')] });
   }
 
   countLines(context, text, maxWidth) {
@@ -77,7 +79,7 @@ export class HeSays implements ICommand, IHasHelp {
       let metrics = context.measureText(line);
       if (metrics.width > maxWidth) {
         linesN++;
-        line = '';
+        line = words[i]; // last word pushed to the next line
       }
     }
 

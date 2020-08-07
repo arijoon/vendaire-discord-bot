@@ -33,3 +33,19 @@ export async function optimize(filePath: string, logger: ILogger, size: number =
 
   return filePath;
 }
+
+/**
+ * Calculates a new set of sizes based on a maximum height
+ * @param width width
+ * @param height height
+ * @param maxHeight maximum height
+ * @returns [newWidth, newHeight]
+ */
+export function calculateSize(width, height, maxHeight): [number, number] {
+  if (height <= maxHeight)
+    return [width, height];
+
+  const newWidth = width / (height/maxHeight);
+
+  return [newWidth, maxHeight];
+}
