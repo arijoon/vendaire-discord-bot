@@ -130,7 +130,7 @@ export class AddPicCommand implements ICommand {
       imsg.done();
     }).catch(err => {
       imsg.send("ooops, something went wrong", { reply: imsg.Message, code: err });
-      imsg.done(err, true);
+      imsg.done('', err);
     });
 
   }

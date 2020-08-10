@@ -14,7 +14,7 @@ export function makeSubscription(stream: IObservable<IMessage>
         callback(imsg).then(_ => {
           imsg.done();
         }).catch(err => {
-          imsg.done(err, true);
+          imsg.done('', err);
         });
       }
     );

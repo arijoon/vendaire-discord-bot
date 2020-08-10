@@ -68,11 +68,10 @@ export class HttpService implements IHttp {
   getFile(url: string): Promise<IHttpFileResult> {
 
     return new Promise<any>((resolve, reject) => {
-      const fileNameFromUrl = this.fileNameFromUrl;
-      request.head(url, function (err, res, _) {
+      request.head(url, (err, res, _) => {
         if (err) reject(err);
         const size = res.headers['content-length'];
-        const name = fileNameFromUrl(url);
+        const name = this.fileNameFromUrl(url, res.headers);
         resolve({ data: request(url), name, size });
       });
     });
@@ -87,8 +86,26 @@ export class HttpService implements IHttp {
     return url;
   }
 
-  fileNameFromUrl(url: string) {
+  fileNameFromUrl(url: string, headers) {
     const components = url.split('/');
-    return components[components.length - 1];
+    const filename = components[components.length - 1]
+      .split('?')[0];
+
+    return filename.includes('.') 
+    ? filename 
+    : `${filename}.${this.extensionFromContentType(headers)}`;
+
+  }
+
+  extensionFromContentType(headers) {
+    const contentType = headers['content-type'];
+    const subType: string = contentType.split('/')[1];
+
+    if (subType.includes('-')) {
+      const parts = subType.split('-')
+      return parts[parts.length - 1];
+    } 
+
+    return subType;
   }
 }
