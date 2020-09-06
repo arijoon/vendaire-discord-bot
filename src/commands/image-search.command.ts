@@ -41,7 +41,7 @@ export class ImageSearchCommand implements ICommand, IHasHelp {
 
     Promise.resolve().then(async _ => {
 
-      const content = msg.content.trim();
+      const content = imsg.Content.trim();
 
       let argv = this.setupOptions(content.split(' '));
       let ops = argv.argv

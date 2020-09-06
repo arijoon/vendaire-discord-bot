@@ -23,7 +23,7 @@ export class WhichCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const content = msg.content.trim();
+                const content = imsg.Content.trim();
 
                 new Promise((resolve, reject) => {
                     if (!content) {

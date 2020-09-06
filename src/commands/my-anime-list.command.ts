@@ -25,7 +25,7 @@ export class MyAnimeListCommand implements ICommand {
             .subscribe(imsg => {
                 const msg = imsg.Message;
 
-                let result = commonRegex.link.exec(msg.content);
+                let result = commonRegex.link.exec(imsg.Content);
 
                 if(result.length < 1) {
                     imsg.done();

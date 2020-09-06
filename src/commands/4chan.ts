@@ -36,7 +36,7 @@ export class FourChan implements ICommand {
       .subscribe(async imsg => {
         let msg = imsg.Message;
 
-        const content = msg.content.trim();
+        const content = imsg.Content.trim();
 
         let argv = this.setupOptions(content.split(' '));
         let ops = argv.argv

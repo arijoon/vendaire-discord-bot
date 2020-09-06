@@ -21,7 +21,7 @@ export class RegionalCommand implements ICommand {
             .subscribe(imsg => {
                 const msg = imsg.Message;
 
-                const spacedOut = msg.content
+                const spacedOut = imsg.Content
                     .trim()
                     .toLowerCase()
                     .split('')

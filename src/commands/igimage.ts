@@ -25,7 +25,7 @@ export class IgImageCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const content = msg.content.trim();
+                const content = imsg.Content.trim();
 
                 let link = commonRegex.link.exec(content);
 

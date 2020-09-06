@@ -25,7 +25,7 @@ export class IgDownload implements ICommand {
       .subscribe(imsg => {
         let msg = imsg.Message;
 
-        const content = msg.content.trim();
+        const content = imsg.Content.trim();
 
         let argv = this.setupOptions(content.split(' '));
         let ops = argv.argv

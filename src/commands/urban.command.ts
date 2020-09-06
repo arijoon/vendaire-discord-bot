@@ -27,7 +27,7 @@ export class UrbanDicCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const content = msg.content.trim();
+                const content = imsg.Content.trim();
 
                 // TODO add options to show tags and stuff
                 // let argv = this.setupOptions(content.split(' '));

@@ -27,7 +27,7 @@ export class IsCommand implements ICommand {
                 .subscribe(imsg => {
                     const msg = imsg.Message;
 
-                    const match = this._regex.exec(msg.content);
+                    const match = this._regex.exec(imsg.Content);
                     if (!match) return;
 
                     const noun = match[1];

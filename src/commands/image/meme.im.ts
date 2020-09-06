@@ -29,13 +29,14 @@ export class ImMeme implements ICommand {
 
     private process(imsg: IMessage) {
         const msg = imsg.Message;
+        const content = imsg.Content;
 
         CommonImage.fetchLastImage(imsg).then(image => {
             return new Promise<any>((resolve, reject) => {
 
                 jimp.loadFont(jimp.FONT_SANS_32_WHITE).then(function (font) {
 
-                    image.print(font, 10, 10, msg.content);
+                    image.print(font, 10, 10, content);
 
                     image.getBuffer(jimp.MIME_JPEG, (err, res) => {
                         if (err) { reject(err); return; }

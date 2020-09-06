@@ -192,11 +192,11 @@ export class Client implements IClient {
 
         
         let orig = msg.content;
-        const [content, pipeArgs] = this.breakCommandAndPipes(orig)
+        const [content, pipeArgs] = this.breakCommandAndPipes(msg.content)
         const pipes = this._pipesManager.makePipes(pipeArgs);
-        msg.content = content.substring(fullCommand.length).trim();
+        const trimmedContent = content.substring(fullCommand.length).trim();
 
-        const message = this.buildMessageWrapper(msg, command, orig, pipes, baseMsg);
+        const message = this.buildMessageWrapper(msg, command, trimmedContent, pipes, baseMsg);
 
         // Check if this is for help
         if(this._helpMappings[command] && message.Message.content.indexOf("--help") >= 0) {
@@ -226,7 +226,7 @@ export class Client implements IClient {
     }
   }
 
-  private buildMessageWrapper(msg: Message, command: string, originalContent: string, pipes: IPipe<string, string>[], baseMsg?: Message): IMessage {
+  private buildMessageWrapper(msg: Message, command: string, content: string, pipes: IPipe<string, string>[], baseMsg?: Message): IMessage {
     const timer = new Timer().start();
     msg.channel.startTyping();
 
@@ -236,7 +236,8 @@ export class Client implements IClient {
 
     const onDone = (cmsg?: string, err?: any, del?: boolean) => {
 
-      msg.content = originalContent;
+      // Maintain for legacy command support
+      // msg.content = originalContent;
 
       const elapsed = timer.stop();
       const secondsTaken = elapsed / 1000;
@@ -259,7 +260,7 @@ export class Client implements IClient {
       this._statsCollector.collectResponseTime(secondsTaken, command);
     }
 
-    const wrapper = new MessageWrapper(onDone, msg, timer, msg.content, command, pipes);
+    const wrapper = new MessageWrapper(onDone, msg, timer, content, command, pipes);
 
     return wrapper;
   }

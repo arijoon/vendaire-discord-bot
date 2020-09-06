@@ -39,7 +39,7 @@ export class PlayTrump implements ICommand, IHasHelp {
       voiceChannel = msg.member.voiceChannel;
     }
 
-    const argv = this.setupOptions(msg.content.split(' '));
+    const argv = this.setupOptions(imsg.Content.split(' '));
     const ops = argv.argv;
 
     if (ops.h) { // return help

@@ -41,7 +41,7 @@ export class AddPicCommand implements ICommand {
 
     Promise.resolve().then(async _ => {
 
-      const content = msg.content.trim();
+      const content = imsg.Content.trim();
 
       let argv = this.setupOptions(content.split(' '), imsg);
       let ops = argv.argv

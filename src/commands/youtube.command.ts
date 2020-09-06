@@ -27,7 +27,7 @@ export class YoutubeSearch implements ICommand {
             .getCommandStream(this._command)
             .subscribe(imsg => {
                 const msg = imsg.Message;
-                const q = msg.content;
+                const q = imsg.Content;
 
                 this.search(q, msg)
                     .then(res => {

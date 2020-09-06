@@ -30,7 +30,7 @@ export class TranslateCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const fullContent = msg.content.trim();
+                const fullContent = imsg.Content.trim();
 
                 let options = this.setupOptions(fullContent.split(' ')).argv
                 let content = options._;

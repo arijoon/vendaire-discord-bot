@@ -38,11 +38,11 @@ export class RateCommand implements ICommand {
         let result: string;
         let options: any = {};
 
-        if (commonRegex.link.test(msg.content.trim())) {
-          options.file = commonRegex.link.exec(msg.content)[0];
+        if (commonRegex.link.test(imsg.Content.trim())) {
+          options.file = commonRegex.link.exec(imsg.Content)[0];
           result = `This is ${roll}/10 `
         } else {
-          result = `${msg.content} is ${roll}/10 `
+          result = `${imsg.Content} is ${roll}/10 `
         }
 
         if (this._chances[roll])

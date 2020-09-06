@@ -27,7 +27,7 @@ export class CountUsage implements ICommand, IHasHelp {
       .subscribe(imsg => {
         let msg = imsg.Message;
 
-        const content = msg.content;
+        const content = imsg.Content;
 
         let numR = this._numReg.exec(content);
         let phraseR = this._phraseReg.exec(content);
@@ -85,7 +85,7 @@ export class CountUsage implements ICommand, IHasHelp {
       .getCommandStream(this._cleanCommand)
       .subscribe(imsg => {
         let msg = imsg.Message;
-        const content = msg.content;
+        const content = imsg.Content;
 
         if (!this._permission.isAdmin(imsg.userId)) {
           msg.channel.send('You cannot bulk delete');

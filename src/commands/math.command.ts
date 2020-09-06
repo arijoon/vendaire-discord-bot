@@ -24,9 +24,9 @@ export class MathCommand implements ICommand {
 
                 let result: string;
                 try {
-                    result = math.eval(msg.content);
+                    result = math.eval(imsg.Content);
                 } catch(ex) {
-                    result = `${msg.content} is not a valid mathematical expression`;
+                    result = `${imsg.Content} is not a valid mathematical expression`;
                 }
 
                 msg.channel.send(result)
