@@ -89,7 +89,6 @@ export class HeSays implements ICommand, IHasHelp {
   wrapText(context, text, x, y, maxWidth, lineHeight) {
     const words = text.split(' ');
     let line = '';
-    context.fillStyle = 'white';
 
     for (let n = 0; n < words.length; n++) {
       const testLine = line + words[n] + ' ';
@@ -97,11 +96,9 @@ export class HeSays implements ICommand, IHasHelp {
       const testWidth = metrics.width;
       if (testWidth > maxWidth && n > 0) {
         context.font = font;
-        context.strokeStyle = 'black';
-        context.lineWidth = 10;
+        context.fillStyle = quoteColor;
 
         let xm = this.centerText(context, line, maxWidth);
-        context.strokeText(line, xm, y)
         context.fillText(line, xm, y);
         line = words[n] + ' ';
         y += lineHeight;
@@ -111,7 +108,6 @@ export class HeSays implements ICommand, IHasHelp {
       }
     }
     const xm = this.centerText(context, line, maxWidth);
-    context.strokeText(line, xm, y)
     context.fillText(line, xm, y);
   }
 
