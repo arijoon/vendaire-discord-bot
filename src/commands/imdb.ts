@@ -27,7 +27,7 @@ export class ImdbCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const fullContent = imsg.Content.trim();
+                const fullContent = imsg.Content;
 
                 let argv = this.setupOptions(fullContent.split(' '));
                 let options = argv.argv;

@@ -31,7 +31,7 @@ export class DeleteCommand implements ICommand {
 
     Promise.resolve().then(async _ => {
 
-      const content = imsg.Content.trim()
+      const content = imsg.Content
 
       let argv = this.setupOptions(content.split(' '));
       let ops = argv.argv

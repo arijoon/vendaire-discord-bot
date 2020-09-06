@@ -30,7 +30,7 @@ export class AuthorizeCommand implements ICommand {
   }
 
   async handle(imsg: IMessage) {
-    const argv = this.setupOptions(imsg.Content.trim().split(' '));
+    const argv = this.setupOptions(imsg.Content.split(' '));
     const ops = argv.argv;
 
     const perm = getMainContent(ops);

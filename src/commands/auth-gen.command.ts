@@ -31,7 +31,7 @@ export class AuthGenerator implements ICommand {
   }
 
   async handle(imsg: IMessage) {
-    const argv = this.setupOptions(imsg.Content.trim().split(' '));
+    const argv = this.setupOptions(imsg.Content.split(' '));
     const ops = argv.argv;
 
     if(!(await this._perm.hasPerm(PERMS.UPLOAD, imsg.userId))) {

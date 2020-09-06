@@ -23,7 +23,7 @@ export class FlipCommand implements ICommand {
             .subscribe(imsg => {
                 let msg = imsg.Message;
 
-                const content = imsg.Content.trim();
+                const content = imsg.Content;
 
                 new Promise((resolve, reject) => {
                     let result = "HEADS";

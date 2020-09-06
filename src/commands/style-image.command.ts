@@ -29,7 +29,7 @@ export class StyleImageCommand implements ICommand {
 
     Promise.resolve().then(async _ => {
 
-      const c = imsg.Content.trim();
+      const c = imsg.Content;
 
       let argv = this.setupOptions(c.split(' '), imsg);
       let ops = argv.argv

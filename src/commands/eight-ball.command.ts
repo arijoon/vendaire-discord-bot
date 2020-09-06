@@ -45,7 +45,7 @@ export class EightBall implements ICommand {
   subscription(imsg: IMessage) {
     Promise.resolve()
       .then(() => {
-        if(!imsg.Content.trim()) {
+        if(!imsg.Content) {
           return imsg.send(`Well ask me something you ${swearWords.crandom()}`);
         }
 

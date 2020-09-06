@@ -48,7 +48,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   private subscription(imsg: IMessage) {
     Promise.resolve().then(async _ => {
 
-      const content = imsg.Content.trim();
+      const content = imsg.Content;
 
       switch(content) {
         case 'matches':

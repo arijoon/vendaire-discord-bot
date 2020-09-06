@@ -22,7 +22,7 @@ export class RollCommand implements ICommand {
       .subscribe(imsg => {
         let msg = imsg.Message;
 
-        const content = imsg.Content.trim();
+        const content = imsg.Content;
         if (!content) {
           imsg.done();
           return;

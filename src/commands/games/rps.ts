@@ -33,7 +33,7 @@ export class RockPaperSiccors implements ICommand, IHasHelp {
       .subscribe(imsg => {
         let msg = imsg.Message;
 
-        const content = imsg.Content.trim();
+        const content = imsg.Content;
         if (!content) {
           imsg.send("gotta specify the action boy");
           imsg.done();

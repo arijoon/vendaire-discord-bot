@@ -62,7 +62,7 @@ export class RandomPic implements ICommand {
   async subscription(imsg: IMessage, command: string) {
     Promise.resolve().then(async () => {
 
-      let argv = this.setupOptions(imsg.Content.trim().split(' '));
+      let argv = this.setupOptions(imsg.Content.split(' '));
       let ops = argv.argv;
 
       if (ops.h) { // return help
