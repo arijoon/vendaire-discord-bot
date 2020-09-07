@@ -4,7 +4,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
-import { getMainContent, isHashString } from '../helpers';
+import { getMainContent, isHashString, hashName } from '../helpers';
 
 import * as opt from 'optimist';
 
@@ -17,6 +17,7 @@ export class DeleteCommand implements ICommand {
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
     @inject(TYPES.IPermission) private _permission: IPermission,
+    @inject(TYPES.Logger) private _logger: ILogger,
     @inject(FileServerApi) private _fileServer: FileServerApi,
   ) { }
 
@@ -48,7 +49,7 @@ export class DeleteCommand implements ICommand {
 
       this._permission.verifyAdmin(imsg.author, imsg.userId);
 
-      const uname = msg.author.username.replace(/[^\x00-\x7F]/g, "A");
+      const uname = hashName(imsg.author);
 
       let result = "Nothing found";
       let {data: hashSearch } = await this._fileServer.searchHash(hash);
@@ -62,6 +63,7 @@ export class DeleteCommand implements ICommand {
         if (!ops.d) {
           const { data: { count } } = await this._fileServer.delete({ hash, user: uname});
           result += `\n\nDeleted ${count} item(s)`
+          this._logger.info(`${uname} DELETE` + result);
         }
       }
 

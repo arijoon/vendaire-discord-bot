@@ -101,6 +101,7 @@ export class AddPicCommand implements ICommand {
           const filename = await this._filesService.saveFile(fileStream, dir, `_${uname}_` + name);
 
           result = `Successfully added as ${filename} in ${fullFolder}, hash: ${hashStr}`;
+          this._logger.info(`${uname} - ${result}`)
 
           const { data: { hash } } = await this._fileServer
             .newFile({ filename, folder: fullFolder, path: `${fullFolder}/${filename}` });
