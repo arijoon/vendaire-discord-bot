@@ -22,7 +22,7 @@ export class HashName implements ICommand, IHasHelp {
   }
 
   private async subscription(imsg: IMessage): Promise<any> {
-    const target = imsg.Content;
+    const target = imsg.Content || imsg.author;
 
     const result = hashName(target);
 
