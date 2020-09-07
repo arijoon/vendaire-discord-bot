@@ -5,7 +5,7 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
 import { getLastSection, readbleFromString, checkFolder, hash,
-   duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink, optimize, nameToJpg } from '../helpers';
+   duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink, optimize, nameToJpg, hashName } from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -86,7 +86,7 @@ export class AddPicCommand implements ICommand {
           return imsg.send(`Attachment too big ${size}, max size: ${MaxFileSize} bytes`);
       }
 
-      const uname = msg.author.username.replace(/[^\x00-\x7F]/g, "A");
+      const uname = hashName(imsg.author);
       const [ hashStream, fileStream] = duplicateStream(data);
       const hashStr = await hash(hashStream);
       let result = "";

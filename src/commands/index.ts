@@ -13,6 +13,7 @@ export * from "./eight-ball.command";
 export * from "./flip.command";
 export * from "./folder-search";
 export * from "./games/rps";
+export * from "./hashname";
 export * from "./help.command";
 export * from "./hesays";
 export * from "./igdownload";

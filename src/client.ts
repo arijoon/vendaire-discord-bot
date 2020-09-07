@@ -236,9 +236,6 @@ export class Client implements IClient {
 
     const onDone = (cmsg?: string, err?: any, del?: boolean) => {
 
-      // Maintain for legacy command support
-      // msg.content = originalContent;
-
       const elapsed = timer.stop();
       const secondsTaken = elapsed / 1000;
       const response = cmsg || "";

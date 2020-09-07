@@ -58,6 +58,9 @@ let commands = {
 
     // Evaluate mathematical expression
     math: 'math',
+
+    //hash usernames
+    namehash: 'namehash',
     
     // My anime list by popular demand 
     myanimelist: 'myanimelist',
