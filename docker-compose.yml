@@ -12,7 +12,7 @@ services:
     build: 
       context: .
       args:
-      - EXTRA_PATH=/app/assets/vendor/ffmpeg-armhf
+        EXTRA_PATH: /app/assets/vendor/ffmpeg-armhf
     volumes:
       - /home/pi/prod/discord/assets:/app/assets
       - /home/pi/prod/discord-ui:/discord-ui
