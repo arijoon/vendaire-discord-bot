@@ -9,6 +9,7 @@ WORKDIR /app
 COPY package*.json yarn.lock ./
 
 RUN yarn install
+ENV PATH ${EXTRA_PATH}:${PATH}
 COPY . .
 RUN npm run compile:fromclean
 
