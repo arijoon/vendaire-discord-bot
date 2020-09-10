@@ -9,7 +9,10 @@ services:
   discord-bot:
     depends_on:
       - redis
-    build: .
+    build: 
+      context: .
+      args:
+      - EXTRA_PATH=/app/assets/vendor/ffmpeg-armhf
     volumes:
       - /home/pi/prod/discord/assets:/app/assets
       - /home/pi/prod/discord-ui:/discord-ui
@@ -22,7 +25,6 @@ services:
       - DiscordBot_aleksa_server_port=5000
       - DiscordBot_server_port=5010
       - DiscordBot_server_static=../discord-ui
-      - EXTRA_PATH=/app/assets/vendor/ffmpeg-armhf
     ports:
       - "5000:5000"
       - "5010:5010"
