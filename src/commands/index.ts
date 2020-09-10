@@ -5,6 +5,7 @@ export * from "./auth-gen.command";
 export * from "./authorize-command";
 export * from "./ban-phrase";
 export * from "./bog.command";
+export * from "./catchyou";
 export * from "./count-usage.";
 export * from "./delete-pic.command";
 export * from "./didthanoskillme.command";

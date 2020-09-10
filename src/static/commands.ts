@@ -31,6 +31,8 @@ let commands = {
     // Bog related
     quickrundown: 'quickrundown',
     bog: 'bog',
+
+    catchyou: 'catchyou',
     
     // Game questions
     qs: 'qs',

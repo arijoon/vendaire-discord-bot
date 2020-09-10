@@ -9,6 +9,7 @@ export * from "./message-utils.helper";
 export * from "./objects";
 export * from "./options";
 export * from "./searcher";
+export * from "./security";
 export * from "./streams";
 export * from "./timer.helper";
 export * from "./types";
