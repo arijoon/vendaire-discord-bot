@@ -67,7 +67,7 @@ export class CatchYou implements ICommand, IHasHelp {
     return imsg.send('', { files: [
       {
         attachment: resultFile,
-        name: "catchyou.mp4"
+        name: "catchyou.webm"
       }
     ]});
   }
