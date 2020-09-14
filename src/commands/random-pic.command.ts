@@ -8,7 +8,7 @@ import * as opt from 'optimist';
 import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
 import { pathSeperator } from './add-pic.command';
-import { getMainContent } from '../helpers';
+import { getMainContent, fromImageRoot } from '../helpers';
 import { FileServerApi } from '../services';
 
 const RandomRange: number = 1/20;
@@ -67,6 +67,10 @@ export class RandomPic implements ICommand {
 
       if (ops.h) { // return help
         return imsg.send(argv.help(), { code: 'md' });
+      }
+
+      if (ops.p) { // full path return image
+        return this.postImage(imsg, ops.p);
       }
 
       const dir = this.extractDirectoryPathFromCommand(command, getMainContent(ops));
@@ -133,6 +137,12 @@ export class RandomPic implements ICommand {
           : filename]
       }
     }
+  }
+
+  async postImage(imsg, imagePath) {
+    const fullPath = fromImageRoot(this._config, imagePath);
+
+    return imsg.send('', { files: [fullPath ]});
   }
 
   async listFolders(imsg: IMessage, fullPath: string) {
@@ -221,6 +231,9 @@ export class RandomPic implements ICommand {
       }).options('s', {
         alias: 'stats',
         describe: 'show stats',
+      }).options('p', {
+        alias: 'path',
+        describe: 'full path of image file to post',
       }).options('h', {
         alias: 'help',
         describe: 'show this message',

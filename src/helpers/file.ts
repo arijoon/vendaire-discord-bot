@@ -102,8 +102,13 @@ export function getAllFoldersStatRecursively(srcPath: string, name?: string): IF
  * @param _config configuration
  * @param subpaths additional subpaths
  */
-export function fromImageRoot(_config: IConfig, ...subpaths) {
-    return path.join(_config.images["root"], commands.randomPic, ...subpaths);
+export function fromImageRoot(_config: IConfig, ...subpaths: string[]) {
+  subpaths = subpaths.map(sanitizePath);
+  return path.join(_config.images["root"], commands.randomPic, ...subpaths);
+}
+
+function sanitizePath(path: string) {
+  return path.replace(/\.\.[\/\\]?/g, "");
 }
 
 function isValidDirectory(srcPath, item) {
