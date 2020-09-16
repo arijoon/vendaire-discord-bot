@@ -28,6 +28,7 @@ export function withDependencies(dependencies: IDependency[], cache: IBasicCache
       if (await cache.has(key))
         return Promise.resolve()
 
+      // Poll and cache result for 5 minutes
       return d.poll()
         .then(() => cache.set(key, "", 60 * 5))
         .catch(() => {
@@ -36,7 +37,7 @@ export function withDependencies(dependencies: IDependency[], cache: IBasicCache
     }))
       .then(() => callback(imsg))
 
-      cb.catch((err) => imsg.send(`Dependent service ${err} unavailable`))
+      cb.catch((err) => imsg.send(`Dependant service ${err} is unavailable`))
 
       return cb;
   }
