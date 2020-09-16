@@ -23,6 +23,9 @@ let commands = {
     randomPic: 'randompic',
     folderSearch: 'fsearch',
 
+    // Text Generation
+    textgen: 'textgen',
+
     // Add pic to the above folder
     addPic: 'add',
     deletePic: 'delete',

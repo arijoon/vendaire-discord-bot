@@ -41,6 +41,7 @@ export * from "./space-out.command";
 export * from "./steamurl";
 export * from "./style-image.command";
 export * from "./suggest";
+export * from "./text-gen";
 export * from "./translate";
 export * from "./urban.command";
 export * from "./wcup/api-contracts";

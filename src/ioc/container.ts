@@ -30,6 +30,7 @@ container.bind<Contracts.IClient>(TYPES.IClient).to(Client).inSingletonScope();
 // Apis
 container.bind(Services.FourChanApi).toSelf();
 container.bind(Services.FileServerApi).toSelf();
+container.bind(Services.TextGenApi).toSelf();
 
 // Server
 container.bind<IStartable>(TYPES.Server).to(Server.Server).inSingletonScope();
@@ -107,6 +108,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.FolderSearch).inSingletonSc
 container.bind<ICommand>(TYPES.ICommand).to(Commands.HeSays).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.HashName).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.CatchYou).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.TextGen).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 

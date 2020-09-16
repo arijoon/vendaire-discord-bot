@@ -12,4 +12,5 @@ export * from "./OrderedSetDataAccess";
 export * from "./permission.service";
 export * from "./SessionManager";
 export * from "./ReadThroughCacheFactory";
+export * from "./text-gen-server.api.services";
 export * from "./question.service";
