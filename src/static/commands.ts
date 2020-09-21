@@ -26,6 +26,9 @@ let commands = {
     // Text Generation
     textgen: 'textgen',
 
+    // Binary converter
+    binaryConverter: [ 'b2d', 'd2b' ],
+
     // Add pic to the above folder
     addPic: 'add',
     deletePic: 'delete',

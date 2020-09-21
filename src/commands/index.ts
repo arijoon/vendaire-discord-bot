@@ -4,6 +4,7 @@ export * from "./add-pic.command";
 export * from "./auth-gen.command";
 export * from "./authorize-command";
 export * from "./ban-phrase";
+export * from "./binaryConverter";
 export * from "./bog.command";
 export * from "./catchyou";
 export * from "./count-usage.";
