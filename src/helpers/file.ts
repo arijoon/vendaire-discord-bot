@@ -107,6 +107,15 @@ export function fromImageRoot(_config: IConfig, ...subpaths: string[]) {
   return path.join(_config.images["root"], commands.randomPic, ...subpaths);
 }
 
+/**
+ * Get the filename from a path
+ */
+export function filenameFromPath(path) {
+  const parts = path.split(/[\\\/]+/g);
+  
+  return parts[parts.length - 1];
+}
+
 function sanitizePath(path: string) {
   return path.replace(/\.\.[\/\\]?/g, "");
 }

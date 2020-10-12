@@ -8,7 +8,7 @@ import * as opt from 'optimist';
 import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
 import { pathSeperator } from './add-pic.command';
-import { getMainContent, fromImageRoot } from '../helpers';
+import { getMainContent, fromImageRoot, filenameFromPath } from '../helpers';
 import { FileServerApi } from '../services';
 
 const RandomRange: number = 1/20;
@@ -105,7 +105,7 @@ export class RandomPic implements ICommand {
               return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
           }
 
-          const { message, options, shouldCache } = await this.makeFileOptions(filename);
+          const { message, options, shouldCache } = await this.makeFileOptions(filename, ops.b);
 
           const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
 
@@ -125,16 +125,21 @@ export class RandomPic implements ICommand {
       .catch(err => imsg.done(err, true));
   }
 
-  async makeFileOptions(filename: string): Promise<{ message: string, shouldCache: boolean, options?: any}> {
+  async makeFileOptions(filename: string, isSpoiler: boolean = false): Promise<{ message: string, shouldCache: boolean, options?: any}> {
     if (filename.endsWith('.link')) {
       return { message: await this._filesService.readFile(filename), shouldCache: false };
     }
 
+    const name = `${isSpoiler ? "SPOILER_" : ""}${filenameFromPath(filename)}`;
+
     return {
       message: '', shouldCache: true, options: {
-        files: [await this._cache.has(filename)
+        files: [{
+          attachment: await this._cache.has(filename)
           ? await this._cache.get(filename)
-          : filename]
+          : filename,
+          name: name
+        }]
       }
     }
   }
@@ -228,6 +233,10 @@ export class RandomPic implements ICommand {
       }).options('c', {
         alias: 'count',
         describe: 'count the files',
+      }).options('b', {
+        alias: 'spoiler',
+        describe: 'image will be spoilered',
+        default: false
       }).options('s', {
         alias: 'stats',
         describe: 'show stats',
