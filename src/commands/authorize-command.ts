@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 import { IDisposable } from 'rx';
 import { IMessage } from '../contracts';
 import * as  opt from 'optimist';
-import { getMainContent, mention } from '../helpers';
+import { getFirstMainContent, mention } from '../helpers';
 
 @injectable()
 export class AuthorizeCommand implements ICommand {
@@ -33,7 +33,7 @@ export class AuthorizeCommand implements ICommand {
     const argv = this.setupOptions(imsg.Content.split(' '));
     const ops = argv.argv;
 
-    const perm = getMainContent(ops);
+    const perm = getFirstMainContent(ops);
     const users = await imsg.getMentions();
 
     if(!this._perm.isAdmin(imsg.userId)) {

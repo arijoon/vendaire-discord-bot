@@ -42,7 +42,7 @@ export class PermissionService implements IPermission {
 
     perms[perm] = true;
 
-    await this._cache.set(key, JSON.stringify(perms));
+    await this._cache.set(key, JSON.stringify(perms), 0); // never expire
   }
 
   async removePerm(perm: string, userId: string): Promise<void> {
