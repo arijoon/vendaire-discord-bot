@@ -92,7 +92,7 @@ let commands = {
     // Trump audio
     trump : ["trump", "hillary", "tachanka", "pafrican", "pussy",
      "haveatthemboys", "shitpostingfucks", "ohnonono", "sam", "reddit",
-     "leftthechat"],
+     "leftthechat", "blackmesa"],
 
     // Movie search
     imdb: 'imdb',
