@@ -34,16 +34,29 @@ export class FileServerApi {
     return this.post(url, {filename, path, folder});
   }
 
-  stats(path) {
+  randomFile(paths: string[]) {
+    const url = this.url("/items/rand-search/:query");
+    const args = this.transformPaths(paths)
+    return this.get(url, { query: this.transformPaths(paths) })
+  }
+
+  stats(paths: string[]) {
     const url = this.url("/items/stats");
 
-    return this.post(url, {path})
+    return this.post(url, { path: this.transformPaths(paths) })
   }
 
   delete(args) {
     const url = this.url("/items/delete");
 
     return this.post(url, args)
+  }
+
+  private transformPaths(paths: string[]): string {
+    return paths
+      .filter(p => p)
+      .map(p => p.trim())
+      .join(",")
   }
 
   private url(url) {

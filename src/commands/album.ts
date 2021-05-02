@@ -3,7 +3,6 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
-import { FileServerApi } from '../services';
 import {
   readbleFromString, checkFolder, stat, fromImageRoot,
 } from '../helpers';
@@ -22,8 +21,6 @@ export class AlbumCommand implements ICommand, IHasHelp {
     @inject(TYPES.IConfig) private _config: IConfig,
     @inject(TYPES.Logger) private _logger: ILogger,
     @inject(TYPES.IFiles) private _filesService: IFiles,
-    @inject(TYPES.IPermission) private _permission: IPermission,
-    @inject(FileServerApi) private _fileServer: FileServerApi,
   ) { }
 
   getHelp(): IHelp[] {
@@ -84,16 +81,17 @@ export class AlbumCommand implements ICommand, IHasHelp {
 
       const newFolders = ops.o
         ? fromFolders
-        : uniq([...currentFolders, fromFolders])
+        : uniq([...currentFolders, ...fromFolders])
 
+      const fileContent = newFolders.join(',')
       await this._filesService.saveFile(
-        readbleFromString(newFolders.join(',')),
+        readbleFromString(fileContent),
         fromImageRoot(this._config, toFolder),
         '.album',
         false
       )
 
-      return imsg.send(`Album setup under \`${toFolder}\` with \`${ops.s}\``)
+      return imsg.send(`Album setup under \`${toFolder}\` with \`${fileContent}\``)
     }).catch(err => {
       return imsg.send("Unable to make album", { reply: imsg.Message, code: err });
     });
@@ -111,6 +109,10 @@ export class AlbumCommand implements ICommand, IHasHelp {
       }).options('o', {
         alias: 'overwrite',
         describe: 'overwrite the existing list with the new one',
+        default: false
+      }).options('a', {
+        alias: 'add',
+        describe: 'add to the existing list of folders',
         default: false
       }).options('h', {
         alias: 'help',

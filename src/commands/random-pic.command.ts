@@ -61,7 +61,6 @@ export class RandomPic implements ICommand {
 
   async subscription(imsg: IMessage, command: string) {
     Promise.resolve().then(async () => {
-
       let argv = this.setupOptions(imsg.Content.split(' '));
       let ops = argv.argv;
 
@@ -77,6 +76,8 @@ export class RandomPic implements ICommand {
       const parent = this._command === command ? "" : this._command;
 
       const fullPath = path.join(this._config.images["root"], parent, dir);
+      const albums = await this.parseAlbumFile(dir)
+      const dirs = [dir, ...albums]
 
       if (ops.l) { // list the folders
         return this.listFolders(imsg, fullPath);
@@ -87,11 +88,11 @@ export class RandomPic implements ICommand {
           .then((count) => imsg.send(`This folder and subfolders has ${count} item(s)`))
       
       if (ops.s) // get statistics
-        return this.getStatsMesasge(dir)
+        return this.getStatsMesasge(dirs)
         .then((result) => imsg.send(result, { code: 'md' }));
 
-      return this.selectRandomFile(fullPath)
-        .then(async (filename: string) => {
+      return this.selectRandomFile(dirs)
+        .then(async ({ filename, dir }) => {
 
           this._logger.info(`Selected file: ${filename}, from: ${dir}`);
 
@@ -123,6 +124,14 @@ export class RandomPic implements ICommand {
         });
     }).then(() => imsg.done())
       .catch(err => imsg.done(err, true));
+  }
+
+  async parseAlbumFile(dir: string): Promise<string[]> {
+    const albums = await this._filesService.readFile(fromImageRoot(this._config, dir, '.album'))
+      .catch(() => undefined)
+    return albums
+      ? albums.split(",").filter(a => a)
+      : []
   }
 
   async makeFileOptions(filename: string, isSpoiler: boolean = false): Promise<{ message: string, shouldCache: boolean, options?: any}> {
@@ -166,12 +175,10 @@ export class RandomPic implements ICommand {
     return imsg.send(message, { code: 'md', split: true });
   }
 
-  selectRandomFile(fullPath: string): Promise<string> {
-    return this._filesService
-      .getAllFiles(fullPath, { recursive: true, include: this._filePatterns })
-      .then(lst => {
-        return this._config.pathFromRoot(fullPath, lst.crandom());
-      });
+  async selectRandomFile(paths: string[]): Promise<{ filename: string, dir: string }> {
+    const { data: [item] } = await this._fileServer.randomFile(paths)
+
+    return { filename: fromImageRoot(this._config, item.path, item.filename), dir: item.path }
   }
 
   countFiles(fullPath: string): Promise<number> {
@@ -182,11 +189,11 @@ export class RandomPic implements ICommand {
       });
   }
 
-  async getStatsMesasge(dir: string): Promise<any> {
+  async getStatsMesasge(dirs: string[]): Promise<any> {
     // Remove the root image from path
-    dir = dir.replace(new RegExp(`${this._command}/?`), "")
+    dirs = dirs.map(d => d.replace(new RegExp(`${this._command}/?`), ""))
       
-    const { data: stats} = await this._fileServer.stats(dir);
+    const { data: stats} = await this._fileServer.stats(dirs);
 
     let result = `Top Contributors (${stats.count}):`;
     result += stats.user_contrib.map(u => `\n${u.username}: ${u.count}`).join("")
@@ -232,14 +239,14 @@ export class RandomPic implements ICommand {
         describe: 'list all available folders',
       }).options('c', {
         alias: 'count',
-        describe: 'count the files',
+        describe: 'count the files, does not include album content',
       }).options('b', {
         alias: 'spoiler',
         describe: 'image will be spoilered',
         default: false
       }).options('s', {
         alias: 'stats',
-        describe: 'show stats',
+        describe: 'show stats, includes immidiate album content',
       }).options('p', {
         alias: 'path',
         describe: 'full path of image file to post',
