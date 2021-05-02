@@ -17,7 +17,7 @@ interface IFiles {
   /** Saves and returns the filename, data must have pipe, if string it'll write the data into a file 
    * @param data, must be a Readable stream
   */
-  saveFile(data: any, dir: string, name?: string): Promise<string>;
+  saveFile(data: any, dir: string, name?: string, prefixTime?: boolean): Promise<string>;
 
   /**
    * remove a remporary file, resolves empty promise if null path

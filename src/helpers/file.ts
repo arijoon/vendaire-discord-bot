@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { commands } from '../static';
+import { toPromise } from './promise';
 
 /**
  * Recursively creates the directory structure if not exists
@@ -116,6 +117,15 @@ export function filenameFromPath(path) {
   return parts[parts.length - 1];
 }
 
+/**
+ * Return folder stats
+ */
+export async function stat(path): Promise<fs.Stats> {
+  return toPromise(fs.stat)
+    (path)
+    .catch(() => false)
+}
+
 function sanitizePath(path: string) {
   return path.replace(/\.\.[\/\\]?/g, "");
 }
@@ -123,5 +133,3 @@ function sanitizePath(path: string) {
 function isValidDirectory(srcPath, item) {
   return fs.statSync(path.join(srcPath, item)).isDirectory();
 }
-
-

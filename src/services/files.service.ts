@@ -156,11 +156,11 @@ export class FilesService implements IFiles {
     });
   }
 
-  saveFile(data: Readable, dir: string, name?: string): Promise<string> {
+  saveFile(data: Readable, dir: string, name?: string, prefixTime: boolean = true): Promise<string> {
     return new Promise((resolve, reject) => {
-      const fullPath = this._config.pathFromRoot(dir);
+      const fullPath = this._config.pathFromRoot(dir)
       const [time, formatted] = this.readableTimeStamp();
-      const prefix = `${time}_${formatted}_`;
+      const prefix = prefixTime ? `${time}_${formatted}_` : ""
       const filename = name
         ? `${prefix}${name}`
         : `${prefix}${this.randomGenerator(8)}.png`
@@ -169,10 +169,10 @@ export class FilesService implements IFiles {
 
       createRecursive(fullPath)
 
-      const writeStream = fs.createWriteStream(filePath);
+      const writeStream = fs.createWriteStream(filePath)
       data.pipe(writeStream)
         .on('close', () => resolve(filename))
-        .on('error', reject);
+        .on('error', reject)
     });
   }
 

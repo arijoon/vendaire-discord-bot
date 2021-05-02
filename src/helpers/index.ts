@@ -5,6 +5,7 @@ export * from "./hash";
 export * from "./image";
 export * from "./indentation.helper";
 export * from "./logger";
+export * from "./promise";
 export * from "./message-utils.helper";
 export * from "./objects";
 export * from "./options";

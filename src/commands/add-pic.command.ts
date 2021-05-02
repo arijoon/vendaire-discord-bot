@@ -4,8 +4,11 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { FileServerApi } from '../services';
-import { getLastSection, readbleFromString, checkFolder, hash,
-   duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink, optimize, nameToJpg, hashName } from '../helpers';
+import {
+  getLastSection, readbleFromString, checkFolder, hash,
+  duplicateStream, getUrlFromCurrentOrFromHistory, shouldSaveAsLink,
+  optimize, nameToJpg, hashName, stat
+} from '../helpers';
 
 import * as path from 'path';
 import * as opt from 'optimist';
@@ -37,8 +40,6 @@ export class AddPicCommand implements ICommand {
   }
 
   private subscription(imsg: IMessage) {
-    const msg = imsg.Message;
-
     Promise.resolve().then(async _ => {
 
       const content = imsg.Content;
@@ -63,9 +64,13 @@ export class AddPicCommand implements ICommand {
         return imsg.send(`${folder} is not in available list of folders: ${readableFolders}`);
       }
 
+      const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
+      if(!(await stat(dir)) && !ops.n) { // Folder does not exist
+        return imsg.send(`Folder ${fullFolder} does not exist, use -n flag to create new folders`)
+      } 
+
       // Check for attachments or links
       const url = await getUrlFromCurrentOrFromHistory(imsg);
-      const dir = path.join(this._config.images["root"], commands.randomPic, fullFolder);
 
       let { data, size, name } = shouldSaveAsLink(url)
         ? { data: readbleFromString(url), size: url.length, name: `${getLastSection(url)}.link` }
@@ -133,7 +138,6 @@ export class AddPicCommand implements ICommand {
       imsg.send("ooops, something went wrong", { reply: imsg.Message, code: err });
       imsg.done('', err);
     });
-
   }
 
   private extractParentFolder(folder: string) {
@@ -162,6 +166,10 @@ export class AddPicCommand implements ICommand {
         alias: 'size',
         describe: `Set optimization file size ceil in KB`,
         default: 1000
+      }).options('n', {
+        alias: 'new',
+        describe: `create a new folder`,
+        default: false
       }).options('h', {
         alias: 'help',
         describe: 'show this message',

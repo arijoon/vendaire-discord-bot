@@ -33,6 +33,7 @@ let commands = {
     addPic: 'add',
     deletePic: 'delete',
     imageSearch: 'imsearch',
+    album: 'album',
 
     // Bog related
     quickrundown: 'quickrundown',

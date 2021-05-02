@@ -1,6 +1,7 @@
 export * from "./4chan";
 export * from "./add-pic.command";
 export * from "./add-pic.command";
+export * from "./album";
 export * from "./auth-gen.command";
 export * from "./authorize-command";
 export * from "./ban-phrase";
