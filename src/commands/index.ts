@@ -29,6 +29,7 @@ export * from "./imdb";
 export * from "./is.command";
 export * from "./math.command";
 export * from "./my-anime-list.command";
+export * from "./play";
 export * from "./play-trump.command";
 export * from "./question.command";
 export * from "./random-pic.command";

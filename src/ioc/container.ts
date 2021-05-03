@@ -112,6 +112,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.TextGen).inSingletonScope()
 container.bind<ICommand>(TYPES.ICommand).to(Commands.BinaryConverter).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.ImGray).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.AlbumCommand).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.PlayCommand).inSingletonScope();
 // container.bind<ICommand>(TYPES.ICommand).to(Commands.ImMeme).inSingletonScope();
 
 export { container };

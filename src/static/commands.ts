@@ -95,6 +95,9 @@ let commands = {
      "haveatthemboys", "shitpostingfucks", "ohnonono", "sam", "reddit",
      "leftthechat", "blackmesa"],
 
+    // Play youtube
+    play: 'play',
+
     // Movie search
     imdb: 'imdb',
 
