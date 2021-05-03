@@ -1,4 +1,4 @@
-FROM resin/raspberry-pi-alpine:latest
+FROM alpine:3.10
 
 RUN apk add --update make g++ gcc python ffmpeg autoconf libtool nodejs git automake
 RUN apk add --update imagemagick jpegoptim yarn cairo-dev pango-dev jpeg-dev giflib-dev freetype-dev libjpeg-turbo-dev
