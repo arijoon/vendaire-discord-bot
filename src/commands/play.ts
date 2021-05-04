@@ -3,10 +3,10 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
-import { getMainContent, } from '../helpers';
+import { getMainContent, lock, } from '../helpers';
 import { makeSubscription } from '../helpers/command';
 import * as opt from 'optimist';
-import { VoiceConnection } from 'discord.js';
+import { StreamDispatcher, VoiceConnection } from 'discord.js';
 
 const ytdl = require('ytdl-core')
 
@@ -17,6 +17,7 @@ export class PlayCommand implements ICommand, IHasHelp {
 
   // Move to redis to provide locking
   _playing: Map<string, IPlaying> = new Map()
+  _lock = lock()
 
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
@@ -47,26 +48,18 @@ export class PlayCommand implements ICommand, IHasHelp {
 
     if (ops.h) {
       return imsg.send(argv.help(), { code: 'md' });
-    }
-
-    if (ops.p) {
+    } if (ops.p) {
       return this.handlePop(imsg)
-    }
-
-    if (ops.d) {
+    } if (ops.d) {
       return this.handleShift(imsg)
-    }
-
-    if (ops.s) {
+    } if (ops.s) {
       return this.handleStop(imsg)
-    }
-
-    if (ops.s) {
+    } if (ops.c) {
       return this.handleClear(imsg)
-    }
-
-    if (ops.l) {
+    } if (ops.l) {
       return this.handleList(imsg)
+    } if (ops.k) {
+      return this.handleSkip(imsg)
     }
 
     return this.handleAdd(imsg, ops)
@@ -105,27 +98,50 @@ export class PlayCommand implements ICommand, IHasHelp {
     return imsg.send("Cleared the playlist")
   }
 
+  async handleSkip(imsg: IMessage) {
+    const playing = this.getPlaying(imsg.guidId)
+
+    if (playing && playing.dispatcher) {
+      playing.dispatcher.end()
+    }
+  }
+
   async handleList(imsg: IMessage) {
     const playlist = await this.getPlaylist(imsg.guidId)
-    const message: string = playlist.songs.map(({ title, addedBy }, index) => 
-      `${index+1})${title}\t- ${addedBy}`
+    const playing = this.getPlaying(imsg.guidId)
+
+    if ((!playlist || playlist.songs.length < 1) && !playing) {
+      return imsg.send('Queue is empty')
+    }
+
+    const current = playing
+      ? `current) ${playing.current.title} ${playing.current.url} - ${playing.current.addedBy}\n`
+      : ''
+
+    const message: string = current +
+     playlist.songs.map(({ title, url, addedBy }, index) => 
+      `${index+1}) ${title} ${url} - ${addedBy}`
     ).join('\n')
 
     return imsg.send(message, { code: 'md', split: true })
   }
 
   async handleAdd(imsg: IMessage, ops) {
-    const playlist = await this.getPlaylist(imsg.guidId)
-    const playing = this._playing.get(imsg.guidId)
-    let result
+    let { result, playlist, playing, url } = await this._lock.aquire(async () => {
+      let result
+      const playlist = await this.getPlaylist(imsg.guidId)
+      const playing = this._playing.get(imsg.guidId)
 
-    const url = getMainContent(ops)
-    if (url) {
-      const { videoDetails: { title, video_url } } = await ytdl.getInfo(url)
-      playlist.songs.push({ title, url: video_url, addedBy: imsg.author })
-      await this.savePlaylist(imsg.guidId, playlist)
-      result = imsg.send(`Added ${title} to playlist at ${playlist.songs.length}`)
-    }
+      const url = getMainContent(ops)
+      if (url) {
+        const { videoDetails: { title, video_url } } = await ytdl.getInfo(url)
+        playlist.songs.push({ title, url: video_url, addedBy: imsg.author })
+        await this.savePlaylist(imsg.guidId, playlist)
+        result = imsg.send(`Added ${title} to playlist at ${playlist.songs.length}`)
+      }
+
+      return { result, playlist, playing, url }
+    })
 
     // Check to join a channel
     if (!playing) {
@@ -152,33 +168,41 @@ export class PlayCommand implements ICommand, IHasHelp {
   }
 
   async playSongs(guidId: string, playlist?: IPlaylist, connection?: VoiceConnection) {
-    playlist = playlist || await this.getPlaylist(guidId)
-    connection = connection || this._playing.get(guidId)?.connection
+    return this._lock.aquire(async () => {
+      playlist = playlist || await this.getPlaylist(guidId)
+      connection = connection || this._playing.get(guidId)?.connection
+      const playing = this._playing.get(guidId)
 
-    if (!playlist || playlist.songs.length < 1) {
-      this._logger.info(`No more songs, closing connecction`)
-      this._playing.delete(guidId)
+      if (!playlist || playlist.songs.length < 1 || !playing) {
+        this._logger.info(`No more songs, closing connecction`)
+        this._playing.delete(guidId)
 
-      connection && connection.disconnect()
-      return
-    }
+        connection && connection.disconnect()
+        return
+      }
 
-    const { url, title } = await this.shiftSong(guidId)
+      const song = await this.shiftSong(guidId)
+      const { url, title } = song
+      playing.current = song
 
-    connection.playStream(ytdl(url, { filder: 'audioonly' }))
-      .on('end', () => {
-        this._logger.info(`Finished playing ${title}: ${url}`)
-        this.playSongs(guidId, null, connection)
-      })
-      .on('error', (err) => {
-        this._logger.error(`Error playing file, id: ${guidId}, title: ${title}, url: ${url}`, err)
-        const playing = this._playing.get(guidId)
-        if (playing) {
-          this._client.sendMessage(guidId, playing.channel, `<@${playing.initiatorId}>, something went wrong whilst trying to play the song ${title}, contact admin, id: ${guidId}`)
-          this._playing.delete(guidId)
-          playing.connection.disconnect()
-        }
-      })
+      const stream = ytdl(url, { filter: 'audioonly' })
+      playing.dispatcher = connection.playStream(stream)
+        .on('end', () => {
+          this._logger.info(`Finished playing ${title}: ${url}`)
+          playing && delete playing.current
+
+          this.playSongs(guidId, null, connection)
+        })
+        .on('error', (err) => {
+          this._logger.error(`Error playing file, id: ${guidId}, title: ${title}, url: ${url}`, err)
+          const playing = this._playing.get(guidId)
+          if (playing) {
+            this._client.sendMessage(guidId, playing.channel, `<@${playing.initiatorId}>, something went wrong whilst trying to play the song ${title}, contact admin, id: ${guidId}`)
+            this._playing.delete(guidId)
+            playing.connection.disconnect()
+          }
+        })
+    })
   }
 
   async shiftSong(guildId: string): Promise<ISong> {
@@ -251,6 +275,10 @@ export class PlayCommand implements ICommand, IHasHelp {
         alias: 'list',
         describe: 'list current playlist',
         default: false
+      }).options('k', {
+        alias: 'skip',
+        describe: 'skip current song',
+        default: false
       }).options('h', {
         alias: 'help',
         describe: 'show this message',
@@ -272,5 +300,6 @@ interface IPlaying {
   connection: VoiceConnection,
   channel: string,
   initiatorId: string,
-  current?: any
+  current?: ISong,
+  dispatcher?: StreamDispatcher
 }
