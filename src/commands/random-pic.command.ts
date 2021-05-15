@@ -160,6 +160,14 @@ export class RandomPic implements ICommand {
       filename = filename.replace(/\.jpg.+/g, '.jpg')
     }
 
+    if (filename.indexOf('.png') > 0 && !filename.endsWith('.png')) {
+      filename = filename.replace(/\.png.+/g, '.png')
+    }
+
+    if (filename.indexOf('formatjpg') > 0 && !filename.endsWith('.jpg')) {
+      filename = filename.replace(/formatjpg.+/g, '.jpg')
+    }
+
     return filename
   }
 
