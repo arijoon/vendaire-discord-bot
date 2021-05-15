@@ -57,7 +57,17 @@ export class MessageWrapper implements IMessage {
 
   async sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
     const channels = this.Message.guild.channels;
-    const channel = channels.filter((channel: TextChannel) => channel.nsfw).first() as TextChannel;
+
+    // Determine if this channel is nsfw, otherwise pick 'nsfw' channel or first nsfw channel
+    let channel: TextChannel
+    if ((this.Message.channel as TextChannel).nsfw) {
+      channel = this.Message.channel as TextChannel
+    } else {
+      const allNsfw = channels.filter((channel: TextChannel) => channel.nsfw)
+      channel = allNsfw.filter(c => c.name == 'nsfw').first() as TextChannel
+      || allNsfw.first() as TextChannel
+    }
+    
 
     return channel.send(await this.processPipes(content), options);
   }
