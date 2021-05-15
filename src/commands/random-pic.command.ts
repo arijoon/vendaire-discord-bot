@@ -139,7 +139,8 @@ export class RandomPic implements ICommand {
       return { message: await this._filesService.readFile(filename), shouldCache: false };
     }
 
-    const name = `${isSpoiler ? "SPOILER_" : ""}${filenameFromPath(filename)}`;
+    let leanname: string = this.patchFileExtension(filenameFromPath(filename))
+    const name = `${isSpoiler ? "SPOILER_" : ""}${leanname}`;
 
     return {
       message: '', shouldCache: true, options: {
@@ -151,6 +152,15 @@ export class RandomPic implements ICommand {
         }]
       }
     }
+  }
+
+  patchFileExtension(filename: string) {
+    // PATCH BUSTED NAMES
+    if (filename.indexOf('.jpg') > 0 && !filename.endsWith('.jpg')) {
+      filename = filename.replace(/\.jpg.+/g, '.jpg')
+    }
+
+    return filename
   }
 
   async postImage(imsg, imagePath) {
