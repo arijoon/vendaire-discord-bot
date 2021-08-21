@@ -85,10 +85,11 @@ export class IgImageCommand implements ICommand, IHasHelp {
             }))
 
           return imsg.send("", { files })
-        }).catch((err) => {
-          this._logger.error(err)
-          imsg.done('Failed igimage', true)
-        })
+        }).then(() => imsg.done())
+          .catch((err) => {
+            this._logger.error(err)
+            imsg.done('Failed igimage', true)
+          })
       }));
   }
 
