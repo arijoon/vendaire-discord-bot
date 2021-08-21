@@ -10,6 +10,8 @@ import * as opt from 'optimist';
 import { commonRegex } from '../helpers';
 import { GalleryDl } from '../services';
 
+const LIMIT = 10
+
 @injectable()
 export class IgImageCommand implements ICommand, IHasHelp {
 
@@ -69,6 +71,10 @@ export class IgImageCommand implements ICommand, IHasHelp {
             }
 
             mediaLinks = [mediaLinks[index]]
+          } else {
+            if (mediaLinks.length > LIMIT) {
+              mediaLinks = mediaLinks.slice(0, LIMIT)
+            }
           }
 
           this._logger.info(`Fetching data for ${mediaLinks}`)
