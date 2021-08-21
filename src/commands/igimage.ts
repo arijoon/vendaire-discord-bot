@@ -1,3 +1,4 @@
+import { IMessage } from './../contracts/IMessage';
 import { IDisposable } from 'rx';
 import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
@@ -5,11 +6,12 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 
 import * as _ from 'lodash';
+import * as opt from 'optimist';
 import { commonRegex } from '../helpers';
 import { GalleryDl } from '../services';
 
 @injectable()
-export class IgImageCommand implements ICommand {
+export class IgImageCommand implements ICommand, IHasHelp {
 
     _command: string = commands.igimage;
     _subscriptions: IDisposable[] = [];
@@ -22,31 +24,51 @@ export class IgImageCommand implements ICommand {
         @inject(GalleryDl) private _gallerydl: GalleryDl,
     ) { }
 
+  getHelp(): IHelp[] {
+    return [
+      {
+        Key: this._command,
+        Message: 'Fetch media content of an ig post link',
+        Usage: this.setupOptions(['']).help()
+      }
+    ]
+  }
+
   attach(): void {
     this._subscriptions.push(this._client
       .getCommandStream(this._command)
       .subscribe(imsg => {
         Promise.resolve().then(async _ => {
-          let msg = imsg.Message;
-
-          const content = imsg.Content;
+          let argv = this.setupOptions(imsg.Content.split(' '));
+          let ops = argv.argv
 
           // Ensure only instagram links are used here
-          let link = commonRegex.link.exec(content);
+          let link = commonRegex.link.exec(imsg.Content);
 
           if (!link || link.length < 1) {
-            msg.channel.send("No link found ...", { reply: msg });
-            imsg.done("No link", true);
-
-            return;
+            imsg.send("No link found ...");
+            return imsg.done("No link", true);
           }
 
-          const mediaLinks = await this._gallerydl.fetchMediaLink(link[0])
+          let mediaLinks = await this._gallerydl.fetchMediaLink(link[0])
 
           for (const mediaLink of mediaLinks) {
             if (!commonRegex.link.test(mediaLink)) {
               throw new Error(`${mediaLink} is not a link`)
             }
+          }
+
+          if (ops.i) {
+            const index = Number(ops.i) - 1
+
+            if (index >= mediaLinks.length || index < 0) {
+              return Promise.all([
+                imsg.send(`Index ${ops.i} is out of bounds (max links: ${mediaLinks.length})`),
+                imsg.done('Invalid links length', true)
+              ])
+            }
+
+            mediaLinks = [mediaLinks[index]]
           }
 
           this._logger.info(`Fetching data for ${mediaLinks}`)
@@ -66,5 +88,14 @@ export class IgImageCommand implements ICommand {
 
   async getDataStreamPeLink(links) {
     return Promise.all(links.map(link => this._http.getFile(link)))
+  }
+
+  setupOptions(args: string[]): any {
+    return opt(args)
+      .usage('Post direct media links of any content on instagram')
+      .options('i', {
+        alias: 'index',
+        describe: 'specify the index of the image you want, starting from `1` for first image',
+      });
   }
 }
