@@ -5,7 +5,7 @@ RUN apk add --update imagemagick jpegoptim yarn cairo-dev pango-dev jpeg-dev gif
 RUN apk add --update npm && npm install -g node-gyp
 
 # Install Python dependencies
-RUN pip3 intall gallery-dl
+RUN pip3 install gallery-dl
 
 WORKDIR /app
 COPY package*.json yarn.lock ./
