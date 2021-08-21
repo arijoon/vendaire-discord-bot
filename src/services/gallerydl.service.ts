@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../ioc/types';
-import { runCommand } from '../helpers';
+import { cmdSanitizeArgs, runCommand } from '../helpers';
 
 @injectable()
 export class GalleryDl {
@@ -9,7 +9,7 @@ export class GalleryDl {
   ) { }
 
   async fetchMediaLink(link: string, options: any = {}) {
-    return (await runCommand(`gallery-dl -g "${link}"`, this._logger))
+    return (await runCommand(`gallery-dl -g "${cmdSanitizeArgs(link)}"`, this._logger))
       .split('\n')
       .map(link => link.trim())
       .filter(link => link)
