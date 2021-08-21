@@ -41,16 +41,16 @@ export class IgImageCommand implements ICommand {
             return;
           }
 
-          const mediaLink = await this._gallerydl.fetchMediaLink(link[0])
+          const mediaLinks = await this._gallerydl.fetchMediaLink(link[0])
 
-          if (!commonRegex.link.test(mediaLink)) {
-            throw new Error(`${mediaLink} is not a link`)
+          for (const mediaLink of mediaLinks) {
+            if (!commonRegex.link.test(mediaLink)) {
+              throw new Error(`${mediaLink} is not a link`)
+            }
           }
 
-          const links = mediaLink.split('\r\n')
-            .filter(l => l)
-          
-          const files = (await this.getDataStreamPeLink(links))
+          this._logger.info(`Fetching data for ${mediaLinks}`)
+          const files = (await this.getDataStreamPeLink(mediaLinks))
             .map(({ data, name }) => ({
               attachment: data,
               name
