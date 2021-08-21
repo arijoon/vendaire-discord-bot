@@ -1,5 +1,6 @@
 export * from "./4chan.api.service";
 export * from "./audio-player.service";
+export * from "./gallerydl.service";
 export * from "./cache-redis.service";
 export * from "./cache-string.service";
 export * from "./config.service";

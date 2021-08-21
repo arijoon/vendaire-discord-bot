@@ -1,0 +1,13 @@
+{
+    "extractor":
+    {
+        "instagram":
+        {
+            "username": null,
+            "password": null,
+            "include": "posts",
+            "sleep-request": 5.0,
+            "videos": true
+        }
+    }
+}

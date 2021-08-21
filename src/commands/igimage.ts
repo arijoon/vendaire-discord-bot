@@ -5,8 +5,8 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 
 import * as _ from 'lodash';
-import * as cheerio from 'cheerio';
 import { commonRegex } from '../helpers';
+import { GalleryDl } from '../services';
 
 @injectable()
 export class IgImageCommand implements ICommand {
@@ -16,46 +16,55 @@ export class IgImageCommand implements ICommand {
 
     constructor(
         @inject(TYPES.IClient) private _client: IClient,
+        @inject(TYPES.IConfig) private _config: IConfig,
         @inject(TYPES.IHttp) private _http: IHttp,
+        @inject(TYPES.Logger) private _logger: ILogger,
+        @inject(GalleryDl) private _gallerydl: GalleryDl,
     ) { }
 
-    attach(): void {
-        this._subscriptions.push(this._client
-            .getCommandStream(this._command)
-            .subscribe(imsg => {
-                let msg = imsg.Message;
+  attach(): void {
+    this._subscriptions.push(this._client
+      .getCommandStream(this._command)
+      .subscribe(imsg => {
+        Promise.resolve().then(async _ => {
+          let msg = imsg.Message;
 
-                const content = imsg.Content;
+          const content = imsg.Content;
 
-                let link = commonRegex.link.exec(content);
+          // Ensure only instagram links are used here
+          let link = commonRegex.link.exec(content);
 
-                if(!link || link.length < 1) {
-                    msg.channel.send("No link found ...", { reply: msg });
-                    imsg.done("No link", true);
+          if (!link || link.length < 1) {
+            msg.channel.send("No link found ...", { reply: msg });
+            imsg.done("No link", true);
 
-                    return;
-                }
+            return;
+          }
 
-                this._http.get(link[0])
-                    .then((res) => {
-                        let a = res;
-                        let $ = cheerio.load(res);
-                        let vid = $('meta[property="og:video"]')
-                        
-                        let img = vid && vid.length > 0
-                            ? vid.attr('content')
-                            : $('meta[property="og:image"]').attr('content');
+          const mediaLink = await this._gallerydl.fetchMediaLink(link[0])
 
-                        let desc = $('meta[property="og:description"]').attr('content');
+          if (!commonRegex.link.test(mediaLink)) {
+            throw new Error(`${mediaLink} is not a link`)
+          }
 
-                        return msg.channel.send(desc, { file: img })
-                    }).then(() => imsg.done())
-                    .catch(err => {
-                        imsg.done(err, true);
-                    });
-            }));
-    }
+          const links = mediaLink.split('\r\n')
+            .filter(l => l)
+          
+          const files = (await this.getDataStreamPeLink(links))
+            .map(({ data, name }) => ({
+              attachment: data,
+              name
+            }))
 
+          return imsg.send("", { files })
+        }).catch((err) => {
+          this._logger.error(err)
+          imsg.done('Failed igimage', true)
+        })
+      }));
+  }
 
-    
+  async getDataStreamPeLink(links) {
+    return Promise.all(links.map(link => this._http.getFile(link)))
+  }
 }

@@ -1,4 +1,5 @@
 export * from "./async";
+export * from "./cmd";
 export * from "./common-regex";
 export * from "./discord";
 export * from "./file";

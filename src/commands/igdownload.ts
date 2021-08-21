@@ -40,8 +40,9 @@ export class IgDownload implements ICommand {
 
         this._httpClient.get(url)
           .then(body => {
-            return JSON.parse(body.split('window._sharedData = ')[1]
-              .split('\;\<\/script>')[0])
+            const parsed = JSON.parse(body.split('window._sharedData = ')[1]
+              .split('\;\<\/script>')[0]);
+            return parsed
               .entry_data.ProfilePage[0]
               .graphql.user.edge_owner_to_timeline_media.edges
           }).then(results => {

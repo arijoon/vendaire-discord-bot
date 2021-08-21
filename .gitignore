@@ -26,3 +26,6 @@ assets/images
 # Server key files
 assets/aleksa/*.pem
 assets/aleksa/*.cnf
+
+# Secret files
+gallery-dl.conf

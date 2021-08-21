@@ -17,6 +17,7 @@ If cache is enabled, a redis instance is required, configuration are set in [doc
 - Additionally all settings in that file can be fed in using env variables with `DiscordBot` prefix, please check [docker-compose.yml](docker-compose.yml) for reference
 - View audio, content and images config files in the `src` directory. They hold paths for the files to be run
 - Make sure you have populated image folder with the images you wish the command to post
+- edit `gallery-dl.conf.example` with relevant information and remove the `.example` extension
 
 ## Docker run
 
@@ -93,7 +94,7 @@ This bot has the capability to listen to Aleksa intents. In order to use this fe
 
 ### Architecture
 
-`ICommand` is every command that can attach the main stream and perform an action on a specific command. Example: 
+`ICommand` is every command that can attach the main stream and perform an action on a specific command. Example:
 
 ```ts
  _command: string = commands.dc; // dc
