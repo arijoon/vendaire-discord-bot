@@ -9,7 +9,7 @@ export class GalleryDl {
   ) { }
 
   async fetchMediaLink(link: string, options: any = {}) {
-    return (await runCommand(`gallery-dl -g ${link}`, this._logger))
+    return (await runCommand(`gallery-dl -g "${link}"`, this._logger))
       .split('\n')
       .map(link => link.trim())
       .filter(link => link)
