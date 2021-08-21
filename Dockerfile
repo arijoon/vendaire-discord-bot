@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json yarn.lock ./
 
 RUN yarn install
-COPY gallery-dl.conf ~/.gallery-dl.conf
+COPY gallery-dl.conf /root/.gallery-dl.conf
 ARG EXTRA_PATH
 ENV PATH ${EXTRA_PATH}:${PATH}
 COPY . .
