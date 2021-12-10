@@ -5,6 +5,7 @@ import { verbs } from '../controllers/verbs';
 import { TYPES } from '../../ioc/types';
 import { unauthorized } from '../http-utils';
 import { constants } from '../constants';
+import { getDomain } from '../../helpers';
 
 @injectable()
 export class LoginController implements IControllerV2 {
@@ -28,7 +29,7 @@ export class LoginController implements IControllerV2 {
             .then(async (sess: ISession) => {
               const newSession = await this._sessionManager.genSession(sess.user);
 
-              const domain = req.get('origin') || req.headers.host
+              const domain = getDomain(req.get('origin') || req.headers.host)
 
               this._logger.info('Logging in', { user: sess.user, domain })
 

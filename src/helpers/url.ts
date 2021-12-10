@@ -11,3 +11,19 @@ export function getLastSection(url: string) {
 
   return "";
 }
+
+/**
+ * gets the domain
+ * @param url the url
+ */
+export function getDomain(url: string) {
+  const sections = url
+  .replace(/https?:\/\/?/, '')
+  .split(/[:\/]/);
+
+  if (sections.length > 0) {
+    return sections[0];
+  }
+
+  return "";
+}
