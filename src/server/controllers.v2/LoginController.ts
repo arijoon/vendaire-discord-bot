@@ -28,8 +28,11 @@ export class LoginController implements IControllerV2 {
             .then(async (sess: ISession) => {
               const newSession = await this._sessionManager.genSession(sess.user);
 
-              res.cookie(constants.sessionKey, newSession.id, { domain: this._config.app.server.domain});
-              // res.send("Session valid, singed in");
+              const domain = req.get('origin') || req.headers.host
+
+              this._logger.info('Logging in', { user: sess.user, domain })
+
+              res.cookie(constants.sessionKey, newSession.id, { domain });
               res.redirect('./');
             }).catch(err => {
                 this._logger.error("Failed to login", err);
