@@ -35,6 +35,8 @@ export class PlayTrump implements ICommand, IHasHelp {
     }
     else if (!msg.member.voiceChannel) {
       msg.channel.send("You aren't in any voice channels asshole");
+
+      return imsg.done('', true);
     } else {
       voiceChannel = msg.member.voiceChannel;
     }

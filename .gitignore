@@ -29,3 +29,6 @@ assets/aleksa/*.cnf
 
 # Secret files
 gallery-dl.conf
+
+# Audio files
+assets/audio
