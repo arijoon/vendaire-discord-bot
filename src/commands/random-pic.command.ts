@@ -92,9 +92,9 @@ export class RandomPic implements ICommand {
         .then((result) => imsg.send(result, { code: 'md' }));
 
       return this.selectRandomFile(dirs)
-        .then(async ({ filename, dir }) => {
+        .then(async ({ filename, dir, hash }) => {
 
-          this._logger.info(`Selected file: ${filename}, from: ${dir}`);
+          this._logger.info(`Selected file: ${filename}, from: ${dir}, hash: ${hash}`);
 
           const guildId = imsg.guidId;
           let channelId = imsg.channelId;
@@ -196,10 +196,10 @@ export class RandomPic implements ICommand {
     return imsg.send(message, { code: 'md', split: true });
   }
 
-  async selectRandomFile(paths: string[]): Promise<{ filename: string, dir: string }> {
+  async selectRandomFile(paths: string[]): Promise<{ filename: string, dir: string, hash: string }> {
     const { data: [item] } = await this._fileServer.randomFile(paths)
 
-    return { filename: fromImageRoot(this._config, item.path, item.filename), dir: item.path }
+    return { filename: fromImageRoot(this._config, item.path, item.filename), dir: item.path, hash: item.hash }
   }
 
   countFiles(fullPath: string): Promise<number> {
