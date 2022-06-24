@@ -1,3 +1,4 @@
+import { createReadStream } from 'fs';
 import { Readable, PassThrough } from 'stream';
 
 export function readbleFromString(data: string): Readable {
@@ -14,6 +15,11 @@ export function readbleFromBuffer(data: any): Readable {
   readable.push(null);
 
   return readable;
+}
+
+export function readbleFromFilePath(path: string): Readable {
+
+  return createReadStream(path);
 }
 
 /**

@@ -8,7 +8,7 @@ import * as opt from 'optimist';
 import * as path from 'path';
 import { Message, MessageAttachment } from 'discord.js';
 import { pathSeperator } from './add-pic.command';
-import { getMainContent, fromImageRoot, filenameFromPath } from '../helpers';
+import { getMainContent, fromImageRoot, filenameFromPath, hash, readbleFromFilePath } from '../helpers';
 import { FileServerApi } from '../services';
 
 const RandomRange: number = 1/20;
@@ -69,7 +69,7 @@ export class RandomPic implements ICommand {
       }
 
       if (ops.p) { // full path return image
-        return this.postImage(imsg, ops.p);
+        return this.postImage(imsg, ops.p, true);
       }
 
       const dir = this.extractDirectoryPathFromCommand(command, getMainContent(ops));
@@ -171,10 +171,13 @@ export class RandomPic implements ICommand {
     return filename
   }
 
-  async postImage(imsg, imagePath) {
+  async postImage(imsg, imagePath, withHash = false) {
     const fullPath = fromImageRoot(this._config, imagePath);
+    const hashStr = withHash 
+      ? await hash(readbleFromFilePath(fullPath))
+      : ''
 
-    return imsg.send('', { files: [fullPath ]});
+    return imsg.send(hashStr, { files: [ fullPath ]});
   }
 
   async listFolders(imsg: IMessage, fullPath: string) {
