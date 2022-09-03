@@ -69,7 +69,6 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.Help).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.Disconnect).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.RandomPic).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.Bog).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(Commands.QuestionCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.IsCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.RegionalCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.SpaceOutCommand).inSingletonScope();
@@ -81,10 +80,6 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.WhosOnline).inSingletonScop
 container.bind<ICommand>(TYPES.ICommand).to(Commands.BanPhrase).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.CountUsage).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.FourChan).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(Commands.Search).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(Commands.ImdbCommand).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(Commands.TranslateCommand).inSingletonScope();
-container.bind<ICommand>(TYPES.ICommand).to(Commands.RockPaperSiccors).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.SuggestCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.IgImageCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.IgDownload).inSingletonScope();

@@ -31,7 +31,7 @@ export class IgDownload implements ICommand {
         let ops = argv.argv
 
         if (ops.h || !ops._ || ops._.length < 1) {
-          msg.channel.send(argv.help(), { code: 'md' });
+          imsg.send(argv.help(), { code: 'md' });
           imsg.done();
           return;
         }
@@ -76,12 +76,12 @@ export class IgDownload implements ICommand {
             if (res.length > 10) {
               for (let i = 0; i < res.length / 10; i++) {
                 const files = res.slice(i * 10, Math.min(i * 10 + 10, res.length));
-                msg.channel.send('', { files: this.formatFiles(files) , split: true });
+                imsg.send('', { files: this.formatFiles(files) , split: true });
               }
 
-              return msg.channel.send("Sending all");
+              return imsg.send("Sending all");
             } else {
-              return msg.channel.send('', { files: this.formatFiles(res), split: true });
+              return imsg.send('', { files: this.formatFiles(res), split: true });
             }
           }).then(() => {
             imsg.done();

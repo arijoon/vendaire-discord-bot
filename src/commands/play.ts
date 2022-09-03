@@ -6,7 +6,7 @@ import { commands } from '../static';
 import { getMainContent, lock, } from '../helpers';
 import { makeSubscription } from '../helpers/command';
 import * as opt from 'optimist';
-import { StreamDispatcher, VoiceConnection } from 'discord.js';
+import { joinVoiceChannel, VoiceConnection, createAudioPlayer, AudioPlayer, createAudioResource, AudioPlayerStatus } from '@discordjs/voice';
 
 const ytdl = require('ytdl-core')
 
@@ -101,8 +101,8 @@ export class PlayCommand implements ICommand, IHasHelp {
   async handleSkip(imsg: IMessage) {
     const playing = this.getPlaying(imsg.guidId)
 
-    if (playing && playing.dispatcher) {
-      playing.dispatcher.end()
+    if (playing && playing.player) {
+      playing.player.stop()
     }
   }
 
@@ -145,7 +145,7 @@ export class PlayCommand implements ICommand, IHasHelp {
 
     // Check to join a channel
     if (!playing) {
-      const vc = imsg.Message.member.voiceChannel
+      const vc = imsg.Message.member.voice.channel
       if (!vc) {
         return imsg.send('You aren\' in any voice channels')
       }
@@ -155,8 +155,15 @@ export class PlayCommand implements ICommand, IHasHelp {
         return
       }
 
-      const connection = await vc.join()
-      this._playing.set(imsg.guidId, { connection, initiatorId: imsg.userId, channel: imsg.channelId })
+      const connection = joinVoiceChannel({
+        channelId: imsg.Message.member.voice.channel.id,
+        guildId: imsg.guidId,
+        adapterCreator: imsg.Message.member.voice.channel.guild.voiceAdapterCreator
+      })
+
+      const player = createAudioPlayer()
+
+      this._playing.set(imsg.guidId, { connection, player, initiatorId: imsg.userId, channel: imsg.channelId })
       await this.playSongs(imsg.guidId, playlist, connection)
     }
 
@@ -186,8 +193,12 @@ export class PlayCommand implements ICommand, IHasHelp {
       playing.current = song
 
       const stream = ytdl(url, { filter: 'audioonly' })
-      playing.dispatcher = connection.playStream(stream)
-        .on('end', () => {
+      const resource = createAudioResource(stream)
+
+      playing.player.play(resource)
+
+      playing.player
+        .on(AudioPlayerStatus.Idle, () => {
           this._logger.info(`Finished playing ${title}: ${url}`)
           playing && delete playing.current
 
@@ -301,5 +312,5 @@ interface IPlaying {
   channel: string,
   initiatorId: string,
   current?: ISong,
-  dispatcher?: StreamDispatcher
+  player: AudioPlayer
 }

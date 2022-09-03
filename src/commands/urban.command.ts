@@ -40,7 +40,7 @@ export class UrbanDicCommand implements ICommand {
                 this._httpClient.getJson(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(content)}`)
                     .then(res => {
                         if (!res.list || res.list.length < 1) {
-                            return msg.channel.send(`No result found for ${content}, search again dumbass`, { reply: msg });
+                            return imsg.send(`No result found for ${content}, search again dumbass`, { reply: msg });
                         }
 
                         let result = [];
@@ -51,7 +51,7 @@ export class UrbanDicCommand implements ICommand {
                             result.push(`**${item.word}**: ${item.definition}\n${thumbsUp} ${item.thumbs_up}, ${thumbsDown} ${item.thumbs_down}, by *${item.author}*`);
                         }
 
-                        return msg.channel.send(result.join('\n\n'), { split: true });
+                        return imsg.send(result.join('\n\n'), { split: true });
 
                     }).then(res => {
                         imsg.done();

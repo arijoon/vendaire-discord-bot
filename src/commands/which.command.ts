@@ -42,7 +42,7 @@ export class WhichCommand implements ICommand {
 
                     let result = options.crandom();
 
-                    return msg.channel.send(`**${result}**`);
+                    return imsg.send(`**${result}**`);
 
                 }).then(() => {
                     imsg.done();

@@ -17,6 +17,7 @@ export class StubMessage implements IMessage {
      public channelId: string = "1",
      public userId: string = "1"
     ) {
+    // @ts-expect-error
     this.Message = new discord.Message(null, null, null);
     this.Content = content;
     this.Command = command;

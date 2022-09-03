@@ -4,63 +4,60 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 
-import * as path from 'path';
 import * as Table from 'cli-table';
 
 @injectable()
 export class WhosOnline implements ICommand {
 
-    get _statuses(): string[] { return [ 'joke', ' leaf', 'waste of space', 'god amongst men', 'a legend', 'a wanker', 'jerking off non stop',
-        'face looks more like a dick than a face', 'is a true homo', 'true Aryan', 'masterrace', 'not a masterrace', 'subhuman']; 
-    }
+  get _statuses(): string[] {
+    return ['joke', ' leaf', 'waste of space', 'god amongst men', 'a legend', 'a wanker', 'jerking off non stop',
+      'face looks more like a dick than a face', 'is a true homo', 'true Aryan', 'masterrace', 'not a masterrace', 'subhuman'];
+  }
 
-    _command: string = commands.whosonline;
-    _subscription: IDisposable;
+  _command: string = commands.whosonline;
+  _subscription: IDisposable;
 
-    constructor(
-        @inject(TYPES.IClient) private _client: IClient,
-    ) { }
+  constructor(
+    @inject(TYPES.IClient) private _client: IClient,
+  ) { }
 
-    attach(): void {
-        this._subscription = this._client
-            .getCommandStream(this._command)
-            .subscribe(imsg => {
-                const msg = imsg.Message;
+  attach(): void {
+    this._subscription = this._client
+      .getCommandStream(this._command)
+      .subscribe(imsg => {
+        const msg = imsg.Message;
 
-                if (!msg.guild) {
-                    imsg.done();
-                    return;
-                }
+        if (!msg.guild) {
+          imsg.done();
+          return;
+        }
 
-                const presences = msg.guild.presences;
-                const members = msg.guild.members;
+        const presences = msg.guild.presences;
+        const members = msg.guild.members;
 
-                let result = "These people are here now with their status: \n\n"
+        let result = "These people are here now with their status: \n\n"
 
-                let statuses = this._statuses;
-                let table = new Table({
-                    head: [ '* Username *' , '* Status *']
-                });
+        let statuses = this._statuses;
+        let table = new Table({
+          head: ['* Username *', '* Status *']
+        });
 
-                presences.forEach((val, key) => {
-                    let member = members.get(key);
+        presences.cache.forEach((val, key) => {
+          if (val.user.bot) return;
 
-                    if(member.user.bot) return;
+          if (statuses.length < 1) statuses = this._statuses;
 
-                    if(statuses.length < 1) statuses = this._statuses;
+          table.push([val.user.username, statuses.popRandom()])
+        });
 
-                    table.push([member.user.username, statuses.popRandom()])
-                });
+        result += table.toString();
 
-                result += table.toString();
-
-                msg.channel.send(result, { code: '', split: true })
-                    .then(() => imsg.done())
-                    .catch(err => {
-                        console.error(err);
-                        imsg.done(err, true);
-                    });
-            });
-    }
+        imsg.send(result, { code: '', split: true })
+          .then(() => imsg.done())
+          .catch(err => {
+            imsg.done(err, true);
+          });
+      });
+  }
 
 }

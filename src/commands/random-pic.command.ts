@@ -6,7 +6,7 @@ import { commands } from '../static';
 import * as opt from 'optimist';
 
 import * as path from 'path';
-import { Message, MessageAttachment } from 'discord.js';
+import { Message, Attachment } from 'discord.js';
 import { pathSeperator } from './add-pic.command';
 import { getMainContent, fromImageRoot, filenameFromPath, hash, readbleFromFilePath } from '../helpers';
 import { FileServerApi } from '../services';
@@ -113,7 +113,7 @@ export class RandomPic implements ICommand {
           return !shouldCache
             ? sentMsg
             : sentMsg.then(async (res: Message) => {
-              const attach: MessageAttachment = res.attachments.values().next().value;
+              const attach: Attachment = res.attachments.values().next().value;
               if (!attach) return res;
 
               const url = attach.url;

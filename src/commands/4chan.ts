@@ -34,15 +34,13 @@ export class FourChan implements ICommand {
     this._subscriptions.push(this._client
       .getCommandStream(this._command)
       .subscribe(async imsg => {
-        let msg = imsg.Message;
-
         const content = imsg.Content;
 
         let argv = this.setupOptions(content.split(' '));
         let ops = argv.argv
 
         if (this._bannedBoards[ops.b]) {
-          let res = msg.channel.send(`board ${ops.b} is not allowed`, { reply: msg });
+          let res = imsg.send(`board ${ops.b} is not allowed`, { reply: imsg.Message });
           this.onEnd(res, imsg);
           return;
         }
@@ -81,7 +79,7 @@ export class FourChan implements ICommand {
   }
 
   showHelp(imsg: IMessage, argv: any): void {
-    let res = imsg.Message.channel.send(argv.help(), { code: 'md' })
+    let res = imsg.send(argv.help(), { code: 'md' })
     this.onEnd(res, imsg);
   }
 
@@ -97,7 +95,7 @@ export class FourChan implements ICommand {
       let url = `http://boards.4chan.org/${ops.b}/thread/${post.no}`;
       let file = `http://i.4cdn.org/${ops.b}/${post.tim}${post.ext}`
 
-      let res = imsg.Message.channel.send(url, { file: file })
+      let res = imsg.send(url, { file: file })
       this.onEnd(res, imsg);
 
     });
@@ -141,7 +139,7 @@ export class FourChan implements ICommand {
         });
 
         if (threads.length < 1) {
-          imsg.Message.channel.send("Nothing matched your search term", { reply: imsg.Message });
+          imsg.send("Nothing matched your search term", { reply: imsg.Message });
           imsg.done();
           return;
         }
@@ -179,7 +177,7 @@ export class FourChan implements ICommand {
   }
 
   onError(err, imsg: IMessage) {
-    imsg.Message.channel.send("Oops something went wrong", { reply: imsg.Message });
+    imsg.send("Oops something went wrong", { reply: imsg.Message });
     imsg.done(err, true);
   }
 

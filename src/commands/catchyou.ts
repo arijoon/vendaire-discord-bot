@@ -42,7 +42,7 @@ export class CatchYou implements ICommand, IHasHelp {
 
     const buffers = [];
     const process = spawn("ffmpeg", this.ffmpegargs(videoFile, this._fontPath, data.caption, content));
-    await new Promise((r,x) => {
+    await new Promise<void>((r,x) => {
       const errors = [];
       process.on("close", (code) => {
         this._logger.info(`finished ffmpeg(${code}) processing of ${videoFile}`)

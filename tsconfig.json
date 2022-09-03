@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es5",
+        "target": "es2015",
+        "downlevelIteration": true,
         "lib": [
             "es6",
             "dom"
@@ -15,11 +16,15 @@
         "rootDir": "src",
         "baseUrl": "src",
         "allowSyntheticDefaultImports": true,
-        "allowUnreachableCode": true
+        "allowUnreachableCode": true,
+        "skipLibCheck": true,
+        "types": []
     },
     "compileOnSave": false,
     "exclude": [
       "node_modules",
+      "./node_module/*",
+      "./node_module/**",
       "**/*.spec.ts"
     ]
 }

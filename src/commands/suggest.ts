@@ -39,7 +39,7 @@ export class SuggestCommand implements ICommand {
                             res += `\t - ${item}\n`;
                         }
 
-                        return msg.channel.send(res, { code: 'md' });
+                        return imsg.send(res, { code: 'md' });
                     }).then(_ => imsg.done())
                     .catch(err => {
                         imsg.done(err, true);

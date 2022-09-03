@@ -34,8 +34,8 @@ export class ImGray implements ICommand {
                 image.greyscale().getBuffer(jimp.MIME_JPEG, (err, res) => {
                     if (err) { reject(err); return; }
 
-                    msg.channel.send('', { file: { attachment: res, name: `result.jpg` } })
-                        .then(_ => resolve())
+                    imsg.send('', { file: { attachment: res, name: `result.jpg` } })
+                        .then(_ => resolve(''))
                         .catch(err => reject(err));
                 })
             });

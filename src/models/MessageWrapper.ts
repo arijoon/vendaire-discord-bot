@@ -1,5 +1,5 @@
 import { IMessage, IPipe } from './../contracts';
-import { Message, TextChannel } from 'discord.js';
+import { Message, MessageOptions, TextChannel } from 'discord.js';
 
 export class MessageWrapper implements IMessage {
   Message: Message;
@@ -47,12 +47,12 @@ export class MessageWrapper implements IMessage {
     this._onDoneResolver({msg, err});
   }
 
-  async send(content?: string, options?: any): Promise<Message | Message[]> {
+  async send(content?: string, options?: MessageOptions): Promise<Message | Message[]> {
     if(options && !content) {
       return this.Message.channel.send(options);
     }
 
-    return this.Message.channel.send(await this.processPipes(content), options);
+    return this.Message.channel.send({ content: await this.processPipes(content), ...options });
   }
 
   async sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
@@ -63,18 +63,18 @@ export class MessageWrapper implements IMessage {
     if ((this.Message.channel as TextChannel).nsfw) {
       channel = this.Message.channel as TextChannel
     } else {
-      const allNsfw = channels.filter((channel: TextChannel) => channel.nsfw)
+      const allNsfw = channels.cache.filter((channel: TextChannel) => channel.nsfw)
       channel = allNsfw.filter(c => c.name == 'nsfw').first() as TextChannel
       || allNsfw.first() as TextChannel
     }
     
 
-    return channel.send(await this.processPipes(content), options);
+    return channel.send({ content: await this.processPipes(content), ...options });
   }
 
   fetchMessages(options?: any): Promise<string[]> {
     return this.Message.channel
-      .fetchMessages(options)
+      .awaitMessages(options)
       .then(msgs => {
         return msgs.map(m => m.content);
       });
@@ -82,7 +82,7 @@ export class MessageWrapper implements IMessage {
 
   fetchFullMessages(options?: any): Promise<IMessage[]> {
     return this.Message.channel
-      .fetchMessages(options)
+      .awaitMessages(options)
       .then(msgs => {
         return msgs.map(m => new MessageWrapper(() => undefined, m, this.Timer, m.content, this.Command));
       });
@@ -93,7 +93,7 @@ export class MessageWrapper implements IMessage {
   }
 
   replyDm(content?: string, options?: any): Promise<Message | Message[]> {
-    return this.Message.author.send(content, options);
+    return this.Message.author.send({ content, ...options });
   }
 
   private async processPipes(content: string): Promise<string> {

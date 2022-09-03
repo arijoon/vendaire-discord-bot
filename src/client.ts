@@ -1,6 +1,6 @@
 import { Timer, makeSearcher } from './helpers';
 import { MessageWrapper } from './models/MessageWrapper';
-import { Message } from 'discord.js';
+import { GatewayIntentBits, Message } from 'discord.js';
 import { Subject, ISubject, IObservable } from 'rx';
 import { injectable, inject } from 'inversify';
 import { IClient, ISearcher } from './contracts';
@@ -42,7 +42,33 @@ export class Client implements IClient {
     this.prefix = _config.app.prefix;
     this.botPrefix = this.prefix+"+";
 
-    this._client = new discord.Client();
+      // intents: [
+      //   GatewayIntentBits.MessageContent,
+      //   GatewayIntentBits.GuildMessages,
+      //   GatewayIntentBits.DirectMessages,
+      //   GatewayIntentBits.GuildMessageTyping,
+      //   GatewayIntentBits.GuildMessageReactions,
+      //   GatewayIntentBits.GuildMembers,
+      //   GatewayIntentBits.Guilds,
+      // ]
+
+    const intents = new discord.IntentsBitField([37211200])
+
+    this._client = new discord.Client({
+      // Constructed in Discord developer portal
+      intents: [
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildIntegrations,
+      ]
+    });
+
     this._pipesManager = new PipeManager();
 
     this._mappings = new Map<string, ISubject<IMessage>>();
@@ -54,7 +80,7 @@ export class Client implements IClient {
         this._logger.error(`Login failed`, err)
       });;
 
-    this._client.on("ready", () => this.attachListener())
+    this._client.once("ready", () => this.attachListener())
 
     let queue = new TimerQueue();
 
@@ -100,10 +126,10 @@ export class Client implements IClient {
   }
 
   public async processDiscordMessage(guildId: string, channelId: string, messageId: string, baseMsgId?: string) {
-    const channel = this.getChannel(guildId, channelId);
-    const msg = await channel.fetchMessage(messageId);
+    const channel = await this.getChannel(guildId, channelId);
+    const msg = await channel.messages.fetch(messageId);
     const baseMsg = baseMsgId
-      ? await channel.fetchMessage(baseMsgId)
+      ? await channel.messages.fetch(baseMsgId)
       : undefined;
 
     if(!msg)
@@ -112,30 +138,30 @@ export class Client implements IClient {
     this.onDiscordMessage(msg, baseMsg);
   }
 
-  public sendMessage(guildId: string, channelId: string, content: string, options?: any, botOptions?: any): Promise<any> {
+  public async sendMessage(guildId: string, channelId: string, content: string, options?: any, botOptions?: any): Promise<any> {
     if(botOptions && botOptions.isCommand) {
       content = this.botPrefix + content;
     }
 
-    const channel = this.getChannel(guildId, channelId);
-    return channel.send(content, options);
+    const channel = await this.getChannel(guildId, channelId);
+    return channel.send({ ...options, content });
   }
 
-  public getNsfwChannel(guildId: string): Promise<string> {
-    const channels = this._client.guilds.get(guildId).channels;
-    const channel = channels.filter((channel: discord.TextChannel) => channel.nsfw).first();
+  public async getNsfwChannel(guildId: string): Promise<string> {
+    const { channels } = await this._client.guilds.fetch(guildId);
+    const channel = channels.cache.find((ch: discord.TextChannel) => ch.name === 'nsfw' && ch.nsfw)
 
     return Promise.resolve(channel && channel.id);
   }
 
   async getUserName(userId: string): Promise<string> {
-    const user = await this._client.fetchUser(userId);
+    const user = await this._client.users.fetch(userId);
     return user.username;
   }
 
-  private getChannel(guildId: string, channelId: string) {
-    const guild = this._client.guilds.get(guildId);
-    return guild.channels.get(channelId) as discord.TextChannel;
+  private async getChannel(guildId: string, channelId: string) {
+    const guild = await this._client.guilds.fetch(guildId);
+    return (await guild.channels.fetch(channelId)) as discord.TextChannel;
   }
 
   private attachListener() {
@@ -144,13 +170,13 @@ export class Client implements IClient {
 
     this._isAttached = true;
 
-    this._client.on("message", (msg) => {
+    this._client.on("messageCreate", (msg) => {
       if (!msg.content.startsWith(this.prefix)) return;
 
       if (msg.author.bot && !msg.content.startsWith(this.botPrefix)) return;
 
       if (!this._permission.isAdmin(msg.author.id) && this.isAtRequestLimit(msg.author.id)) {
-        msg.channel.send(`Calm down you ${swearWords.crandom()}`, { reply: msg });
+        msg.channel.send({ content: `Calm down you ${swearWords.crandom()}`, reply: { messageReference: msg } });
         return;
       }
 
@@ -158,15 +184,15 @@ export class Client implements IClient {
     });
   }
 
-  private onDiscordMessage(msg: Message, baseMsg?: Message) {
+  private async onDiscordMessage(msg: Message, baseMsg?: Message) {
     try {
-      this.processMessage(msg, baseMsg);
+      await this.processMessage(msg, baseMsg);
     } catch (err) {
       this._logger.error(`Error while processing message ${msg.id}, content: ${msg.content}`, err);
     }
   }
 
-  private processMessage(msg: Message, baseMsg?: Message) {
+  private async processMessage(msg: Message, baseMsg?: Message) {
     let foundCommand: boolean = false;
 
     if(msg.content.startsWith(this.botPrefix)) {
@@ -228,11 +254,7 @@ export class Client implements IClient {
 
   private buildMessageWrapper(msg: Message, command: string, content: string, pipes: IPipe<string, string>[], baseMsg?: Message): IMessage {
     const timer = new Timer().start();
-    msg.channel.startTyping();
-
-    setTimeout(() => { // Force terminate typing after 10 secs
-      if (msg.channel.typing) msg.channel.stopTyping();
-    }, 10000);
+    msg.channel.sendTyping()
 
     const onDone = (cmsg?: string, err?: any, del?: boolean) => {
 
@@ -251,7 +273,6 @@ export class Client implements IClient {
       } else {
         this._logger.info(`Processed command: ${command} in ${secondsTaken} seconds ${response}`);
       }
-      msg.channel.stopTyping(true);
 
       // Collect stats of the command
       this._statsCollector.collectResponseTime(secondsTaken, command);

@@ -35,7 +35,7 @@ export class RollCommand implements ICommand {
           let match = this._reg.exec(content);
 
           if (!match) {
-            resolve(msg.channel.send("Bad format mofo", { reply: msg }));
+            resolve(imsg.send("Bad format mofo", { reply: msg }));
           }
 
           while (match != null) {
@@ -53,7 +53,7 @@ export class RollCommand implements ICommand {
             match = this._reg.exec(content);
           }
 
-          resolve(msg.channel.send(result.join('\n'), { code: 'md' }));
+          resolve(imsg.send(result.join('\n'), { code: 'md' }));
 
         })).then(() => {
           imsg.done();

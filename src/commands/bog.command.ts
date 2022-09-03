@@ -26,7 +26,7 @@ export class Bog implements ICommand {
                 const msg = imsg.Message;
                 this.getRundownImage()
                     .then(imagePath => {
-                        msg.channel.sendFile(imagePath)
+                        imsg.send('', { file: imagePath })
                             .then(isSent => {
 
                                 if (!isSent) return;

@@ -33,14 +33,14 @@ export class BanPhrase implements ICommand {
                     return;
                 }
 
-                const collector = msg.channel.createCollector(m => !m.author.bot
+                const collector = msg.channel.createMessageCollector({ filter: m => !m.author.bot
                     && m.content.includes(content)
-                    && !m.content.startsWith(this._config.app.prefix));
+                    && !m.content.startsWith(this._config.app.prefix)});
 
                 this._collectors.push(collector);
 
                 collector.on('collect', m => {
-                    m.channel.send(`yo, stop saying ${content} you ${swearWords.crandom()}`, { reply: m });
+                    m.channel.send({ content: `yo, stop saying ${content} you ${swearWords.crandom()}`, reply: { messageReference: m } });
                 });
 
                 collector.on('end', collected => {
@@ -61,7 +61,7 @@ export class BanPhrase implements ICommand {
                         result += `\t${username}: said it ${count} times\n`
                     });
 
-                    msg.channel.send(result, { code: '' });
+                    imsg.send(result, { code: '' });
                 });
 
                 imsg.done();

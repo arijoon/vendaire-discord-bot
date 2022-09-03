@@ -1,8 +1,8 @@
 import { injectable, inject } from 'inversify';
-import { IAudioPlayer } from './../contracts';
-import { VoiceChannel, VoiceConnection } from 'discord.js';
+import { IAudioPlayer, IMessage } from './../contracts';
 import * as path from 'path';
 import { TYPES } from '../ioc/types';
+import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, VoiceConnection } from '@discordjs/voice';
 
 @injectable()
 export class AudioPlayerService implements IAudioPlayer {
@@ -20,28 +20,21 @@ export class AudioPlayerService implements IAudioPlayer {
     this._audioPath = path.join(_config.app.assets.root, _config.app.assets.audio.root);
   }
 
-  playFromYoutube(channel: VoiceChannel, url: string) {
-    if (!channel || !url) return;
+  playFromYoutube(imsg: IMessage, url: string) {
+    if (!imsg || !url) return;
 
     if (!this._ytdl) {
       this._ytdl = require('ytdl-core')
     }
 
-    channel.join().then(con => {
+    const stream = this._ytdl(url, { filter: 'audioonly' });
 
-      let stream = this._ytdl(url, { filter: 'audioonly' });
-      const listener = con.playStream(stream);
-
-      listener.on('end', () => con.disconnect());
-      listener.once('error', (err) => con.disconnect());
-    }).catch(err => {
-      this._logger.error(err);
-    })
+    return this.playFile(imsg, stream)
   }
 
-  playRandomFile(channel: VoiceChannel, query?: string, folderName?: string): Promise<void> {
+  playRandomFile(imsg: IMessage, query?: string, folderName?: string, channelId?: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
-      if (!channel) {
+      if (!imsg.Message.member.voice.channel) {
         reject("no voice channels");
         return;
       }
@@ -62,30 +55,41 @@ export class AudioPlayerService implements IAudioPlayer {
         filename = filenames.crandom();
       }
 
-      this.playFile(channel, this._config.pathFromRoot(audioPath, filename));
+      this.playFile(imsg, this._config.pathFromRoot(audioPath, filename), channelId);
 
       resolve();
     });
   }
 
-  playFile(channel: VoiceChannel, filename: string): void {
-    if (!channel || !filename || this._working) return;
+  async playFile(imsg: IMessage, filename: string | ReadableStream, channelId?: string): Promise<void> {
+    if (!imsg || !filename || this._working) return;
 
     this._working = true;
 
-    channel.join().then(con => {
-      const listener = con.playFile(filename);
+    const connection = joinVoiceChannel({
+      channelId: channelId || imsg.Message.member.voice.channel.id,
+      guildId: imsg.guidId,
+      adapterCreator: imsg.Message.member.voice.channel.guild.voiceAdapterCreator
+    })
 
-      listener.on('end', () => this.onEnd(con));
-      listener.once('error', (err) => this.onEnd(con, err));
-    }).catch(err => {
-      this.onEnd(null, err);
-    });
+    const player = createAudioPlayer()
+    const resource = createAudioResource(filename)
+
+    player.play(resource)
+    player.on(AudioPlayerStatus.Idle, () => {
+      this._logger.info('Finished playing the audio')
+      this.onEnd(connection, player)
+    })
+    .on('error', (err) => {
+      this.onEnd(connection, player, err)
+    })
+
+    connection.subscribe(player)
   }
 
-  private onEnd(con: VoiceConnection, err?: any) {
-    if (con)
-      con.disconnect();
+  private onEnd(con: VoiceConnection, player: AudioPlayer, err?: any) {
+    con && con.destroy()
+    player && player.stop()
 
     if (err) {
       this._logger.error(err)

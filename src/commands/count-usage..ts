@@ -3,7 +3,7 @@ import { IClient } from '../contracts';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../ioc/types';
 import { commands } from '../static';
-import { MessageCollector, Message } from 'discord.js';
+import { MessageCollector, Message, FetchMessagesOptions } from 'discord.js';
 
 @injectable()
 export class CountUsage implements ICommand, IHasHelp {
@@ -74,7 +74,7 @@ export class CountUsage implements ICommand, IHasHelp {
               result += `\t${uname}: ${count}\n`;
             })
 
-            msg.channel.sendCode('md', result).then(() => imsg.done());
+            imsg.send(result, { code: 'md' }).then(() => imsg.done());
           }).catch(err => {
             console.error(err);
             imsg.done();
@@ -139,25 +139,22 @@ export class CountUsage implements ICommand, IHasHelp {
 
   fetchMessages(mainMessage: Message, remaining: number, result: Message[] = []): Promise<Message[]> {
     return new Promise<Message[]>((resolve, reject) => {
-
-      let innerFetch = (mainMsg: Message, remaining: number, result: Message[], resolve: Function, reject: Function) => {
+      let innerFetch = async (mainMsg: Message, remaining: number, result: Message[], resolve: Function, reject: Function) => {
         let current = remaining > 100 ? 100 : remaining;
         remaining -= current;
 
-        let options: any = { limit: current };
+        let options: FetchMessagesOptions = { limit: current };
         if (result.length > 0) options.before = result[result.length - 1].id
 
-        mainMsg.channel.fetchMessages(options)
-          .then(msgs => {
-            result.push.apply(result, msgs.array())
+        const msgs = await mainMsg.channel.messages.fetch(options)
+        result.push.apply(result, [...msgs.values()])
 
-            if (remaining == 0) {
-              resolve(result);
-              return;
-            }
+        if (remaining == 0) {
+          resolve(result);
+          return;
+        }
 
-            innerFetch(mainMsg, remaining, result, resolve, reject);
-          });
+        return innerFetch(mainMsg, remaining, result, resolve, reject);
       };
 
       innerFetch(mainMessage, remaining, result, resolve, reject);

@@ -46,7 +46,7 @@ export class MyAnimeListCommand implements ICommand {
                         result += `\n${title}`
                     });
 
-                    return msg.channel.send(result, { split: true })
+                    return imsg.send(result, { split: true })
                 }).then(_ => imsg.done())
                 .catch(err => {
                     imsg.done(err, true);

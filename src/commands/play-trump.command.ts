@@ -4,9 +4,10 @@ import { TYPES } from '../ioc/types';
 import { commands } from '../static';
 import { inject, injectable } from 'inversify';
 import { IDisposable } from 'rx';
-import { VoiceChannel, Message } from 'discord.js';
 
 import * as opt from 'optimist';
+import { joinVoiceChannel } from '@discordjs/voice';
+import { VoiceBasedChannel } from 'discord.js';
 
 @injectable()
 export class PlayTrump implements ICommand, IHasHelp {
@@ -29,16 +30,16 @@ export class PlayTrump implements ICommand, IHasHelp {
 
   handler(imsg: IMessage, command: string) {
     const msg = imsg.Message;
-    let voiceChannel;
+    let voiceChannel: VoiceBasedChannel;
     if (imsg.isBot) {
-      voiceChannel = msg.mentions.members.first().voiceChannel
+      voiceChannel = msg.mentions.members.first().voice.channel
     }
-    else if (!msg.member.voiceChannel) {
+    else if (!msg.member.voice.channel) {
       msg.channel.send("You aren't in any voice channels asshole");
 
       return imsg.done('', true);
     } else {
-      voiceChannel = msg.member.voiceChannel;
+      voiceChannel = msg.member.voice.channel;
     }
 
     const argv = this.setupOptions(imsg.Content.split(' '));
@@ -48,7 +49,8 @@ export class PlayTrump implements ICommand, IHasHelp {
       return imsg.send(argv.help(), { code: 'md' });
     }
 
-    this._audioPlayer.playRandomFile(voiceChannel, ops.q, command)
+    voiceChannel.id
+    this._audioPlayer.playRandomFile(imsg, ops.q, command, voiceChannel.id)
       .then(_ => imsg.done())
       .catch(err => {
         msg.channel.send('Bad query');
