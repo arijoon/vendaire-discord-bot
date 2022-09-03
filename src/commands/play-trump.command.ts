@@ -49,7 +49,6 @@ export class PlayTrump implements ICommand, IHasHelp {
       return imsg.send(argv.help(), { code: 'md' });
     }
 
-    voiceChannel.id
     this._audioPlayer.playRandomFile(imsg, ops.q, command, voiceChannel.id)
       .then(_ => imsg.done())
       .catch(err => {
