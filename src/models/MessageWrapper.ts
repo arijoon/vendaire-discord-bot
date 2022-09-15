@@ -73,16 +73,24 @@ export class MessageWrapper implements IMessage {
   }
 
   fetchMessages(options?: any): Promise<string[]> {
-    return this.Message.channel
-      .awaitMessages(options)
+    return this.Message.channel.messages
+      .fetch({
+        before: this.Message.id,
+        limit: 10,
+        ...options
+      })
       .then(msgs => {
         return msgs.map(m => m.content);
       });
   }
 
   fetchFullMessages(options?: any): Promise<IMessage[]> {
-    return this.Message.channel
-      .awaitMessages(options)
+    return this.Message.channel.messages
+      .fetch({
+        before: this.Message.id,
+        limit: 10,
+        ...options
+      })
       .then(msgs => {
         return msgs.map(m => new MessageWrapper(() => undefined, m, this.Timer, m.content, this.Command));
       });
