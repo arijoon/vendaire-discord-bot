@@ -31,14 +31,14 @@ export function shouldSaveAsLink(url: string) {
  */
 export async function getUrlFromCurrentOrFromHistory(imsg: IMessage) {
   try {
-    return this.getUrl(imsg);
+    return getUrl(imsg);
   } catch (_) {
     // Current message has none, search in history:
     const msgs = await imsg.fetchFullMessages({ limit: 10 });
 
     for (let msg of msgs) {
       try { // TODO very ugly, refactor asap
-        return this.getUrl(msg);
+        return getUrl(msg);
       } catch (_) { }
     }
   }
