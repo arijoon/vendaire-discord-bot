@@ -1,6 +1,7 @@
-FROM alpine:3.10
+FROM alpine:3.16.2
 
-RUN apk add --update make g++ gcc python ffmpeg autoconf libtool nodejs git automake
+RUN apk update
+RUN apk add --update make g++ gcc python3 py3-pip ffmpeg autoconf libtool nodejs git automake
 RUN apk add --update imagemagick jpegoptim yarn cairo-dev pango-dev jpeg-dev giflib-dev freetype-dev libjpeg-turbo-dev
 RUN apk add --update npm && npm install -g node-gyp
 
