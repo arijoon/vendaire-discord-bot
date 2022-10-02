@@ -278,7 +278,7 @@ export class Client implements IClient {
       this._statsCollector.collectResponseTime(secondsTaken, command);
     }
 
-    const wrapper = new MessageWrapper(onDone, msg, timer, content, command, pipes);
+    const wrapper = new MessageWrapper(onDone, msg, timer, content, command, baseMsg, pipes);
 
     return wrapper;
   }

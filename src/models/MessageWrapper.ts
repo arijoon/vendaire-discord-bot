@@ -3,6 +3,7 @@ import { Message, MessageOptions, TextChannel } from 'discord.js';
 
 export class MessageWrapper implements IMessage {
   Message: Message;
+  BaseMessage?: Message;
   Timer: ITimer;
   Content: string;
   Command: string;
@@ -24,9 +25,11 @@ export class MessageWrapper implements IMessage {
     timer: ITimer,
     content: string,
     command: string,
+    baseMsg?: Message,
     pipes?: IPipe<string, string>[]
   ) {
     this.Message = msg;
+    this.BaseMessage = baseMsg;
     this.Timer = timer;
     this.Content = content;
     this.Command = command;
@@ -47,12 +50,16 @@ export class MessageWrapper implements IMessage {
     this._onDoneResolver({msg, err});
   }
 
+  get currentMessage() {
+    return this.BaseMessage ?? this.Message
+  }
+
   async send(content?: string, options?: MessageOptions): Promise<Message | Message[]> {
     if(options && !content) {
-      return this.Message.channel.send(options);
+      return this.currentMessage.channel.send(options);
     }
 
-    return this.Message.channel.send({ content: await this.processPipes(content), ...options });
+    return this.currentMessage.channel.send({ content: await this.processPipes(content), ...options });
   }
 
   async sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
@@ -73,9 +80,9 @@ export class MessageWrapper implements IMessage {
   }
 
   fetchMessages(options?: any): Promise<string[]> {
-    return this.Message.channel.messages
+    return this.currentMessage.channel.messages
       .fetch({
-        before: this.Message.id,
+        before: this.currentMessage.id,
         limit: 10,
         ...options
       })
@@ -85,9 +92,9 @@ export class MessageWrapper implements IMessage {
   }
 
   fetchFullMessages(options?: any): Promise<IMessage[]> {
-    return this.Message.channel.messages
+    return this.currentMessage.channel.messages
       .fetch({
-        before: this.Message.id,
+        before: this.currentMessage.id,
         limit: 10,
         ...options
       })
