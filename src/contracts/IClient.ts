@@ -28,6 +28,13 @@ export interface IClient {
     sendMessage(guildId: string, channelId: string, content: string, options?: any, botOptions?: any): Promise<any>;
 
     /**
+     * Send a message to a specific user
+     * @param userId snowflake Id of the user
+     * @param content content of the message to send
+     */
+    sendMessageToUser(userId: string, content: string): Promise<any>;
+
+    /**
      * get the channel Id of the NSFW channel
      * @param guildId Id of the guild
      */

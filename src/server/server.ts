@@ -27,11 +27,13 @@ export class Server implements IStartable {
     const config = this._config.app.server;
     this.app = express();
     this.app.use(errorHandler());
+    this.app.use(express.json())
 
     const router: express.Router = express.Router();
     const publicRouter: express.Router = express.Router();
     publicRouter.use(this._middlewares.authentication([constants.loginApi]));
     publicRouter.use(this._middlewares.logger());
+    router.use(this._middlewares.logger());
 
     this.addRoutesV2(publicRouter, this._controllersv2);
     this.addRoutes(router);
@@ -75,7 +77,7 @@ export class Server implements IStartable {
 
   private makeController(promise: (...args: any[]) => Promise<any>, params?) {
     return async (req, res, next) => {
-      const boundParams = params ? params(req, res, next) : [];
+      const boundParams = params ? params(req, res, next) : [req, res];
       try {
         const { result, type } = await promise(...boundParams);
         if(!type || type == 'json') {

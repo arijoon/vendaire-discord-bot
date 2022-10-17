@@ -147,6 +147,12 @@ export class Client implements IClient {
     return channel.send({ ...options, content });
   }
 
+  public async sendMessageToUser(userId: string, content: string): Promise<any> {
+    (await this._client.users.fetch(userId)).send(
+      { content }
+    )
+  }
+
   public async getNsfwChannel(guildId: string): Promise<string> {
     const { channels } = await this._client.guilds.fetch(guildId);
     const channel = channels.cache.find((ch: discord.TextChannel) => ch.name === 'nsfw' && ch.nsfw)

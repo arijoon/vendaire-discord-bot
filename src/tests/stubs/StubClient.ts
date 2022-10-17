@@ -48,6 +48,10 @@ export class StubClient implements IClient {
     });
   }
 
+  sendMessageToUser(userId: string, content: string): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
   getUserName(userId: string): Promise<string> {
     throw new Error("Method not implemented.");
   }
