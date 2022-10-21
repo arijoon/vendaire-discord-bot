@@ -6,7 +6,7 @@ import { commands } from '../static';
 import { getMainContent, lock, } from '../helpers';
 import { makeSubscription } from '../helpers/command';
 import * as opt from 'optimist';
-import { joinVoiceChannel, VoiceConnection, createAudioPlayer, AudioPlayer, createAudioResource, AudioPlayerStatus } from '@discordjs/voice';
+import { joinVoiceChannel, VoiceConnection, createAudioPlayer, AudioPlayer, createAudioResource, AudioPlayerStatus, StreamType } from '@discordjs/voice';
 
 const ytdl = require('ytdl-core')
 
@@ -192,7 +192,7 @@ export class PlayCommand implements ICommand, IHasHelp {
       const { url, title } = song
       playing.current = song
 
-      const stream = ytdl(url, { filter: 'audioonly' })
+      const stream = await ytdl(url, { filter: 'audioonly' })
       const resource = createAudioResource(stream)
 
       playing.player.play(resource)
@@ -213,6 +213,8 @@ export class PlayCommand implements ICommand, IHasHelp {
             playing.connection.disconnect()
           }
         })
+
+      connection.subscribe(playing.player)
     })
   }
 
