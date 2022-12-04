@@ -29,16 +29,16 @@ export function shouldSaveAsLink(url: string) {
 /**
  * Get url from current message or previous 10
  */
-export async function getUrlFromCurrentOrFromHistory(imsg: IMessage) {
+export async function getUrlFromCurrentOrFromHistory(imsg: IMessage): Promise<string[]> {
   try {
-    return getUrl(imsg);
+    return getUrls(imsg);
   } catch (_) {
     // Current message has none, search in history:
     const msgs = await imsg.fetchFullMessages({ limit: 10 });
 
     for (let msg of msgs) {
       try { // TODO very ugly, refactor asap
-        return getUrl(msg);
+        return getUrls(msg);
       } catch (_) { }
     }
   }
@@ -48,17 +48,17 @@ export async function getUrlFromCurrentOrFromHistory(imsg: IMessage) {
 /**
  * If message has any urls, extract that, otherwise get the attachments
  */
-export function getUrl(imsg: IMessage) {
+export function getUrls(imsg: IMessage): string[] {
   const urls = getAll(imsg.Content, commonRegex.allLinks);
 
   if (urls && urls.length > 0) {
-    return urls[0];
+    return urls;
   }
 
   if (imsg.Message.attachments.size < 1) {
     throw new Error("No Attachments or links found");
   }
-  const attachment = imsg.Message.attachments.first();
+  const attachmentUrls = imsg.Message.attachments.map(a => a.url)
 
-  return attachment.url;
+  return attachmentUrls;
 }

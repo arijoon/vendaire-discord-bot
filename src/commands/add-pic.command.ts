@@ -70,66 +70,70 @@ export class AddPicCommand implements ICommand {
       } 
 
       // Check for attachments or links
-      const url = await getUrlFromCurrentOrFromHistory(imsg);
+      const urls = await getUrlFromCurrentOrFromHistory(imsg);
+      let result = "```";
 
-      let { data, size, name } = shouldSaveAsLink(url)
-        ? { data: readbleFromString(url), size: url.length, name: `${getLastSection(url)}.link` }
-        : await this._http.getFile(url);
+      for (const url of urls) {
+        let { data, size, name } = shouldSaveAsLink(url)
+          ? { data: readbleFromString(url), size: url.length, name: `${getLastSection(url)}.link` }
+          : await this._http.getFile(url);
 
-      let tmpFile: string = null
-      if (ops.p && size < MaxOptimizationSize) {
-        // attempt optimization
-        const ceil = ops.size;
-        tmpFile = await optimize(await this._filesService.writeTmpFile(data, name), this._logger);
-        name = nameToJpg(name);
-        data = await this._filesService.readStream(tmpFile);
-        size = ceil;
-      }
+        let tmpFile: string = null
+        if (ops.p && size < MaxOptimizationSize) {
+          // attempt optimization
+          const ceil = ops.size;
+          tmpFile = await optimize(await this._filesService.writeTmpFile(data, name), this._logger);
+          name = nameToJpg(name);
+          data = await this._filesService.readStream(tmpFile);
+          size = ceil;
+        }
 
-      if(size > MaxFileSize) {
-        if(!ops.o || !this._permission.isAdmin(imsg.userId))
-          return imsg.send(`Attachment too big ${size}, max size: ${MaxFileSize} bytes`);
-      }
+        if (size > MaxFileSize) {
+          if (!ops.o || !this._permission.isAdmin(imsg.userId))
+            result += `Attachment too big ${size}, max size: ${MaxFileSize} bytes`;
+            continue
+        }
 
-      const uname = hashName(imsg.author);
-      const [ hashStream, fileStream] = duplicateStream(data);
-      const hashStr = await hash(hashStream);
-      let result = "";
+        const uname = hashName(imsg.author);
+        const [hashStream, fileStream] = duplicateStream(data);
+        const hashStr = await hash(hashStream);
 
-      try {
+        try {
+          let { data: hashSearch } = await this._fileServer.searchHash(hashStr);
 
-        let { data: hashSearch } = await this._fileServer.searchHash(hashStr);
+          const hasDuplicates = hashSearch && hashSearch.length > 0;
 
-        const hasDuplicates = hashSearch && hashSearch.length > 0;
+          if (!hasDuplicates || ops.d) {
+            const filename = await this._filesService.saveFile(fileStream, dir, `_${uname}_` + name);
 
-        if (!hasDuplicates || ops.d) {
-          const filename = await this._filesService.saveFile(fileStream, dir, `_${uname}_` + name);
+            result += `\nSuccessfully added as ${filename} in ${fullFolder}, hash: ${hashStr}`;
+            this._logger.info(`${uname} - ${result}`)
 
-          result = `Successfully added as ${filename} in ${fullFolder}, hash: ${hashStr}`;
-          this._logger.info(`${uname} - ${result}`)
+            const { data: { hash } } = await this._fileServer
+              .newFile({ filename, folder: fullFolder, path: `${fullFolder}/${filename}` });
 
-          const { data: { hash } } = await this._fileServer
-            .newFile({ filename, folder: fullFolder, path: `${fullFolder}/${filename}` });
-
-          if (hash !== hashStr) {
-            result += "\n Unmatching hashes, something has gone wrong!!"
-            this._logger.error("Unmatching hashes", {fullFolder, filename, hash, hashStr})
+            if (hash !== hashStr) {
+              result += "\n Unmatching hashes, something has gone wrong!!"
+              this._logger.error("Unmatching hashes", { fullFolder, filename, hash, hashStr })
+            }
+          } else {
+            result += "No Image added, use -d flag to add duplicates"
           }
-        } else {
-          result += "No Image added, use -d flag to add duplicates"
-        }
 
-        if (hasDuplicates) {
-          result += "\n\n**Duplicate Item**:";
-          result += hashSearch.map(h => `\n${h.path}/${h.filename}`).join("");
+          if (hasDuplicates) {
+            result += "\n\n**Duplicate Item**:";
+            result += hashSearch.map(h => `\n${h.path}/${h.filename}`).join("");
+          }
+        }
+        catch (e) {
+          this._logger.error("Failed to get hash info", e)
+        }
+        finally {
+          await this._filesService.removeTmpFile(tmpFile);
         }
       }
-      catch(e) {
-        this._logger.error("Failed to get hash info", e)
-      }
-      finally {
-        await this._filesService.removeTmpFile(tmpFile);
-      }
+
+      result += "```"
 
       return imsg.send(result, { code: 'md' });
     }).then(_ => {

@@ -74,7 +74,7 @@ export class ImageSearchCommand implements ICommand, IHasHelp {
     }
 
     // Check for attachments or links
-    const url = await getUrlFromCurrentOrFromHistory(imsg);
+    const [url] = await getUrlFromCurrentOrFromHistory(imsg);
 
     const { data } = shouldSaveAsLink(url)
       ? { data: readbleFromString(url) }
