@@ -80,7 +80,7 @@ export class MessageWrapper implements IMessage {
   }
 
   private split(str: string, parts: string[] = []): string[] {
-    const len = 4000
+    const len = 1950
     if (str.length < len) {
       return [...parts, str]
     }
