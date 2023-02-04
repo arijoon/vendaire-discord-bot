@@ -59,22 +59,15 @@ export class MessageWrapper implements IMessage {
       return this.currentMessage.channel.send(options);
     }
 
-    if ((options as any).split) {
-      return Promise.all(
-        this.split(content).map(
-          (content) => 
-          this.currentMessage.channel.send({
-            content: this.applyCodeBlock(content, options),
-            ...options
-          })
-        )
+    return Promise.all(
+      this.split(content).map(
+        async (content) => 
+        this.currentMessage.channel.send({
+          content: this.applyCodeBlock(await this.processPipes(content), options),
+          ...options
+        })
       )
-    }
-
-    return this.currentMessage.channel.send({ 
-      content: this.applyCodeBlock(await this.processPipes(content), options),
-      ...options 
-    });
+    )
   }
 
   private applyCodeBlock(str: string, options: any = {}): string {
