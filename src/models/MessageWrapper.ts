@@ -59,7 +59,45 @@ export class MessageWrapper implements IMessage {
       return this.currentMessage.channel.send(options);
     }
 
-    return this.currentMessage.channel.send({ content: await this.processPipes(content), ...options });
+    if ((options as any).split) {
+      return Promise.all(
+        this.split(content).map(
+          (content) => 
+          this.currentMessage.channel.send({
+            content: this.applyCodeBlock(content, options),
+            ...options
+          })
+        )
+      )
+    }
+
+    return this.currentMessage.channel.send({ 
+      content: this.applyCodeBlock(await this.processPipes(content), options),
+      ...options 
+    });
+  }
+
+  private applyCodeBlock(str: string, options: any = {}): string {
+    if (options.code) {
+      const wrapper = '```'
+      return `${wrapper}${str}${wrapper}`
+    }
+
+    return str
+  }
+
+  private split(str: string, parts: string[] = []): string[] {
+    const len = 4000
+    if (str.length < len) {
+      return [...parts, str]
+    }
+
+    const idx = str.substring(0, len).lastIndexOf('\n')
+
+    return this.split(
+      str.substring(idx, str.length),
+      [...parts, str.substring(0, idx)]
+    )
   }
 
   async sendNsfw(content?: string, options?: any): Promise<Message | Message[]> {
