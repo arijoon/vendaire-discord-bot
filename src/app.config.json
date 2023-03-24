@@ -1,7 +1,7 @@
 {
   "env": {
     "development": {
-      "cache": false,
+      "cache": true,
       "prefix": "~!!"
     },
     "production": {
@@ -20,7 +20,7 @@
     "wcup": "http://worldcup.sfg.io",
     "imageStyle": "http://localhost:5000",
     "fileServer": "http://localhost:4000",
-    "textgenServer": "http://localhost:5001"
+    "textgenServer": "ws://localhost:3015"
   },
   "assets": {
     "root": "assets",

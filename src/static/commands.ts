@@ -8,6 +8,8 @@ let commands = {
     
     // Disconnect from voice chat
     dc: 'dc',
+
+    chat: 'ch',
     
     // Post random Pics
     // Dependencies: rate, addpic

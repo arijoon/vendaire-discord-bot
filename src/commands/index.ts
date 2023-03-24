@@ -13,6 +13,7 @@ export * from "./delete-pic.command";
 export * from "./didthanoskillme.command";
 export * from "./disconnect.command";
 export * from "./eight-ball.command";
+export * from "./chat";
 export * from "./flip.command";
 export * from "./folder-search";
 export * from "./hashname";

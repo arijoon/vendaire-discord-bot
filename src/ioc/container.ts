@@ -79,6 +79,7 @@ container.bind<ICommand>(TYPES.ICommand).to(Commands.MyAnimeListCommand).inSingl
 container.bind<ICommand>(TYPES.ICommand).to(Commands.WhosOnline).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.BanPhrase).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.CountUsage).inSingletonScope();
+container.bind<ICommand>(TYPES.ICommand).to(Commands.ChatCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.FourChan).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.SuggestCommand).inSingletonScope();
 container.bind<ICommand>(TYPES.ICommand).to(Commands.IgImageCommand).inSingletonScope();
