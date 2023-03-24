@@ -125,8 +125,12 @@ export class TextGenApi implements IDependency {
     .first().html();
 
     // convert italic to discord version
-    return botResponse
+    const finalResult = botResponse
       .replace(/<\/?em>/g, '*')
+
+    this._logger.info(`chat html result: ${finalResult}`)
+
+    return cheerio.load(finalResult).text()
   }
 
   private url(url) {
