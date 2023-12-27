@@ -71,7 +71,7 @@ export class AddPicCommand implements ICommand {
 
       // Check for attachments or links
       const urls = await getUrlFromCurrentOrFromHistory(imsg);
-      let result = "```";
+      let result = "";
 
       for (const url of urls) {
         let { data, size, name } = shouldSaveAsLink(url)
@@ -132,8 +132,6 @@ export class AddPicCommand implements ICommand {
           await this._filesService.removeTmpFile(tmpFile);
         }
       }
-
-      result += "```"
 
       return imsg.send(result, { code: 'md' });
     }).then(_ => {
