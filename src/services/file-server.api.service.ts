@@ -34,9 +34,12 @@ export class FileServerApi {
     return this.post(url, {filename, path, folder});
   }
 
-  randomFile(paths: string[]) {
-    const url = this.url("/items/rand-search/:query");
-    const args = this.transformPaths(paths)
+  toEpoch(date: Date) {
+    return Math.floor(date.getTime() / 1000) || 0
+  }
+
+  randomFile(paths: string[], minDate: Date = new Date(0), maxDate: Date = new Date()) {
+    const url = this.url(`/items/rand-search/${this.toEpoch(minDate)}/${this.toEpoch(maxDate)}/:query`);
     return this.get(url, { query: this.transformPaths(paths) })
   }
 

@@ -8,7 +8,7 @@
     "forever": "forever start build/bootstrap.js",
     "unix:prod:run": "npm run compile && export NODE_ENV=production && npm run forever",
     "prod:single": "npm run compile & SET NODE_ENV=production && nodemon --exec node build/bootstrap.js",
-    "dev:run": "npm run compile & nodemon --exec node build/bootstrap.js",
+    "dev:run": "NODE_ENV=development yarn ts-node src/bootstrap.ts",
     "compile": "npm run clean && tsc && npm run copyFiles",
     "compile:fromclean": "tsc && npm run copyFiles",
     "copyFiles": "copyfiles -u 1 src/**/*.json build/",

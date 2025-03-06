@@ -91,7 +91,9 @@ export class RandomPic implements ICommand {
         return this.getStatsMesasge(dirs)
         .then((result) => imsg.send(result, { code: 'md' }));
 
-      return this.selectRandomFile(dirs)
+      const minDate = ops.d ? new Date(ops.d) : new Date(0)
+      const maxDate = ops.m ? new Date(ops.m) : new Date()
+      return this.selectRandomFile(dirs, minDate, maxDate)
         .then(async ({ filename, dir, hash }) => {
 
           this._logger.info(`Selected file: ${filename}, from: ${dir}, hash: ${hash}`);
@@ -196,8 +198,14 @@ export class RandomPic implements ICommand {
     return imsg.send(message, { code: 'md', split: true });
   }
 
-  async selectRandomFile(paths: string[]): Promise<{ filename: string, dir: string, hash: string }> {
-    const { data: [item] } = await this._fileServer.randomFile(paths)
+  async selectRandomFile(paths: string[], minDate?: Date, maxDate?: Date): Promise<{ filename: string, dir: string, hash: string }> {
+    const { data: [item] } = await this._fileServer.randomFile(paths, minDate, maxDate)
+
+    if (!item) {
+      this._logger.error(`No file found matching ${paths} min: ${minDate.toISOString()} max: ${maxDate.toISOString()}`)
+    }
+
+    this._logger.info(`Received file ${item.filename} at ${item.path} hash: ${item.hash}`)
 
     return { filename: fromImageRoot(this._config, item.path, item.filename), dir: item.path, hash: item.hash }
   }
@@ -258,6 +266,12 @@ export class RandomPic implements ICommand {
       .options('l', {
         alias: 'list',
         describe: 'list all available folders',
+      }).options('d', {
+        alias: 'mindate',
+        describe: 'set minimum date for the image addition (default: 0)',
+      }).options('m', {
+        alias: 'maxdate',
+        describe: 'set maximum date for the image addition (default: now)',
       }).options('c', {
         alias: 'count',
         describe: 'count the files, does not include album content',

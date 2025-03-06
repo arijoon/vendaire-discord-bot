@@ -19,6 +19,10 @@ export class Logger implements ILogger {
       ? stackTrace.parse(err[0])[0]
       : stackTrace.get()[1];
 
+    if (!trace) {
+      console.error(msg, args)
+      throw new Error('Unexpected no trace')
+    }
     const info = this.serialiseTrace(trace, msg);
     this._output.error(info, ...args);
   }

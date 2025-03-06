@@ -90,6 +90,8 @@ export class FilesService implements IFiles {
     if (!isFromRoot)
       filePath = this._config.pathFromRoot(filePath);
 
+    this._logger.info(`Reading file ${filePath}`)
+
     return new Promise((resolve, reject) => {
       fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
         if (err) {
