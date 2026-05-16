@@ -3,6 +3,7 @@ build
 node_modules
 obj
 bin
+result
 
 # Swap files
 *.swp
@@ -13,6 +14,7 @@ bin
 *.secret.*
 *.secret
 secret
+.env
 
 # Tmp files
 .cache/

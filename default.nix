@@ -1,13 +1,145 @@
-{ sources ? import ./nix/sources.nix }:
+{ sources ? import ./nix/sources.nix
+, pkgs ? import sources.nixpkgs { inherit system; config.allowUnfree = true; }
+, system ? builtins.currentSystem
+}:
+
 let
-  pkgs = import sources.nixpkgs {
-    overlays = [ ];
+  nodejs = pkgs.nodejs-18_x;
+
+  pname = "vandaire";
+  version = "1.0.0";
+  src = pkgs.nix-gitignore.gitignoreSource [ "*.nix" "nix/" "result" "update.sh" ] ./.;
+
+  nativeBuildDeps = with pkgs; [
+    pkg-config
+    python3
+    nodejs.pkgs.node-gyp
+    libjpeg.dev
+    giflib
+    cairo.dev
+    pango.dev
+    pixman
+    fontconfig
+    freetype
+    glib.dev
+    harfbuzz.dev
+    librsvg.dev
+    gdk-pixbuf.dev
+  ];
+
+  yarnOfflineCache = pkgs.fetchYarnDeps {
+    yarnLock = ./yarn.lock;
+    sha256 = "sha256-Kvu5X69ziR2zdjUC/Kp75JvacB8r/0BlfNlyaujgbCg=";
+  };
+
+  app = pkgs.stdenv.mkDerivation {
+    inherit pname version src;
+
+    nativeBuildInputs = [ nodejs pkgs.yarn pkgs.fixup-yarn-lock ] ++ nativeBuildDeps;
+
+    configurePhase = ''
+      export HOME=$TMPDIR
+      export npm_config_nodedir=${nodejs}
+      yarn config --offline set yarn-offline-mirror ${yarnOfflineCache}
+      fixup-yarn-lock yarn.lock
+      yarn install --offline --frozen-lockfile --ignore-scripts --no-progress
+      patchShebangs node_modules
+      cd node_modules/canvas
+      node ../../node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp install --fallback-to-build --build-from-source
+      cd ../..
+      patchShebangs node_modules
+    '';
+
+    buildPhase = ''
+      node node_modules/typescript/bin/tsc
+      node node_modules/copyfiles/copyfiles -u 1 "src/**/*.json" build/
+    '';
+
+    installPhase = ''
+      mkdir -p $out
+      cp -r build node_modules package.json $out/
+    '';
+  };
+
+  runtimeDeps = pkgs.buildEnv {
+    name = "${pname}-runtime";
+    paths = with pkgs; [
+      nodejs
+      bash
+      coreutils
+      ffmpeg
+      imagemagick
+      gallery-dl
+      cairo
+      pango
+      giflib
+      libjpeg
+      librsvg
+    ];
+  };
+
+  appDir = pkgs.runCommand "${pname}-appdir" {} ''
+    mkdir -p $out/app
+    ln -s ${app}/build $out/app/build
+    ln -s ${app}/node_modules $out/app/node_modules
+    ln -s ${app}/package.json $out/app/package.json
+    ln -s /assets $out/app/assets
+  '';
+
+  startScript = pkgs.writeShellScript "start-${pname}" ''
+    ln -sf /config/config.secret.json ${app}/build/config.secret.json
+    exec ${nodejs}/bin/node ${app}/build/bootstrap.js
+  '';
+
+  dockerImage = pkgs.dockerTools.buildLayeredImage {
+    name = pname;
+    tag = "latest";
+    contents = [ app appDir runtimeDeps pkgs.dockerTools.binSh ];
+    extraCommands = "mkdir -p tmp config assets discord-ui";
     config = {
-      allowUnfree = true;
+      Cmd = [ "${startScript}" ];
+      WorkingDir = "/app";
+      Env = [
+        "NODE_ENV=production"
+        "HOME=/tmp"
+        "PATH=${runtimeDeps}/bin"
+        "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+      ];
     };
   };
 
-  nodejs = pkgs.nodejs-18_x;
+  buildDocker = pkgs.writeShellScriptBin "build-docker" ''
+    set -euo pipefail
+    args=()
+    [ -n "''${1:-}" ] && args+=(--argstr system "$1")
+    nix-build ${toString ./.}/default.nix -A dockerImage "''${args[@]}"
+  '';
+
+  loadDocker = pkgs.writeShellScriptBin "load-docker" ''
+    set -euo pipefail
+    args=()
+    [ -n "''${1:-}" ] && args+=(--argstr system "$1")
+    image=$(nix-build ${toString ./.}/default.nix -A dockerImage --no-out-link "''${args[@]}")
+    docker load < "$image"
+    echo "Loaded image: ${pname}:latest"
+  '';
+
+  updateCompose = pkgs.writeShellScriptBin "update-compose" ''
+    set -euo pipefail
+    compose="''${1:-${toString ./.}/docker-compose.yml}"
+    ${pkgs.gnused}/bin/sed -i '/^\s*build:/,/^\s*args:/{
+      /^\s*build:/s|.*|    image: ${pname}:latest|
+      /^\s*context:/d
+      /^\s*args:/d
+      /^\s*EXTRA_PATH:/d
+    }' "$compose"
+    echo "Updated $compose to use image: ${pname}:latest"
+  '';
+
+in {
+  inherit app yarnOfflineCache dockerImage;
+  inherit buildDocker loadDocker updateCompose;
+
   deps = with pkgs; [
     nodejs
     yarn
@@ -26,15 +158,17 @@ let
     imagemagick.dev
   ];
 
-in
-{
-  inherit deps pkgs;
-
   shell = pkgs.mkShell {
     buildInputs = [
-    ] ++ deps;
+      nodejs
+      pkgs.yarn
+      pkgs.python310
+      pkgs.nodejs.pkgs.node-gyp
+    ] ++ nativeBuildDeps;
+  };
 
-    shellHook = ''
-    '';
+  scripts = pkgs.buildEnv {
+    name = "${pname}-scripts";
+    paths = [ buildDocker loadDocker updateCompose ];
   };
 }

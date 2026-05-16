@@ -9,13 +9,11 @@ services:
   discord-bot:
     depends_on:
       - redis
-    build: 
-      context: .
-      args:
-        EXTRA_PATH: /app/assets/vendor/ffmpeg-armhf
+    image: vandaire:latest
     volumes:
-      - /home/pi/prod/discord/assets:/app/assets
-      - /home/pi/prod/discord-ui:/discord-ui
+      - ${ASSETS_PATH}:/assets
+      - ${DISCORD_UI_PATH}:/discord-ui
+      - ${CONFIG_PATH}:/config/config.secret.json:ro
     restart: always
     environment:
       - NODE_ENV=production
@@ -32,5 +30,4 @@ services:
 
 volumes:
   redis_data:
-    
 

@@ -1,5 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")"
+
 git pull
-if docker-compose build; then
-  docker-compose down
-  docker-compose up -d
-fi
+
+nix run -f . loadDocker
+docker-compose down
+docker-compose up -d
