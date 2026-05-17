@@ -14,6 +14,8 @@ services:
       - ${ASSETS_PATH}:/assets
       - ${DISCORD_UI_PATH}:/discord-ui
       - ${CONFIG_PATH}:/config/config.secret.json:ro
+      - ${APP_CONFIG_PATH}:/config/app.config.json:ro
+      - ${GALLERY_DL_CONF_PATH}:/config/gallery-dl.conf:ro
     restart: always
     environment:
       - NODE_ENV=production

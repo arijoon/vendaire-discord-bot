@@ -1,4 +1,16 @@
 {
+    "nix-filter": {
+        "branch": "main",
+        "description": "A small self-contained source filtering library for Nix",
+        "homepage": null,
+        "owner": "numtide",
+        "repo": "nix-filter",
+        "rev": "59c44d1909c72441144b93cf0f054be7fe764de5",
+        "sha256": "11a018r8qy34i7hh1szy8frqfrb2j2gy5yix9yjxcl3ni1hb3h7r",
+        "type": "tarball",
+        "url": "https://github.com/numtide/nix-filter/archive/59c44d1909c72441144b93cf0f054be7fe764de5.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs": {
         "branch": "nixos-unstable",
         "description": "Nix Packages collection",

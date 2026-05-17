@@ -1,5 +1,6 @@
 { sources ? import ./nix/sources.nix
 , pkgs ? import sources.nixpkgs { inherit system; config.allowUnfree = true; }
+, nix-filter ? import sources.nix-filter
 , system ? builtins.currentSystem
 }:
 
@@ -8,7 +9,19 @@ let
 
   pname = "vandaire";
   version = "1.0.0";
-  src = pkgs.nix-gitignore.gitignoreSource [ "*.nix" "nix/" "result" "update.sh" ] ./.;
+  src = nix-filter {
+    root = ./.;
+    include = [
+      "src"
+      "package.json"
+      "yarn.lock"
+      "tsconfig.json"
+    ];
+    exclude = [
+      (nix-filter.matchExt "secret.json")
+      "src/app.config.json"
+    ];
+  };
 
   nativeBuildDeps = with pkgs; [
     pkg-config
@@ -88,6 +101,8 @@ let
 
   startScript = pkgs.writeShellScript "start-${pname}" ''
     ln -sf /config/config.secret.json ${app}/build/config.secret.json
+    ln -sf /config/app.config.json ${app}/build/app.config.json
+    ln -sf /config/gallery-dl.conf /tmp/.gallery-dl.conf
     exec ${nodejs}/bin/node ${app}/build/bootstrap.js
   '';
 
