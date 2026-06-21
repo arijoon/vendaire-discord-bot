@@ -6,6 +6,7 @@
 
 let
   nodejs = pkgs.nodejs-18_x;
+  yarn = pkgs.yarn.override { inherit nodejs; };
 
   pname = "vandaire";
   version = "1.0.0";
@@ -48,7 +49,7 @@ let
   app = pkgs.stdenv.mkDerivation {
     inherit pname version src;
 
-    nativeBuildInputs = [ nodejs pkgs.yarn pkgs.fixup-yarn-lock ] ++ nativeBuildDeps;
+    nativeBuildInputs = [ nodejs yarn pkgs.fixup-yarn-lock ] ++ nativeBuildDeps;
 
     configurePhase = ''
       export HOME=$TMPDIR
@@ -176,9 +177,9 @@ in {
   shell = pkgs.mkShell {
     buildInputs = [
       nodejs
-      pkgs.yarn
+      yarn
       pkgs.python310
-      pkgs.nodejs.pkgs.node-gyp
+      nodejs.pkgs.node-gyp
     ] ++ nativeBuildDeps;
   };
 

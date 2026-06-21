@@ -3,12 +3,12 @@ import { IMessage } from '.././../contracts';
 import { IClient } from '../../contracts';
 import { TYPES } from '../../ioc/types';
 import { commands } from '../../static';
-import { countries } from './countries';
+import { getFlag } from './countries';
 import * as moment from 'moment';
-import { ITeam } from './api-contracts';
+import { IMatch, IWorldCup } from './api-contracts';
 
-const secondsTillEndOfDay = () => Math.ceil((-new Date() + new Date().setHours(24,0,0,0))/1e3);
-const secondsInFullDay = 24*60*60;
+const secondsTillEndOfDay = () => Math.ceil((-new Date() + new Date().setHours(24, 0, 0, 0)) / 1e3);
+const HOUR = 60 * 60;
 
 @injectable()
 export class WorldCupCommand implements ICommand, IHasHelp {
@@ -34,9 +34,10 @@ export class WorldCupCommand implements ICommand, IHasHelp {
 
   getHelp(): IHelp[] {
     const commands = {
-      'matches': 'shows the matches of the day',
+      'matches [today|tomorrow]': 'shows the matches of the day',
       'country': 'picks a daily country for you from teams playing',
-      'flag': 'post a flag of a country in World Cup'
+      'groups': 'shows the group standings',
+      'team': 'picks a random team from the tournament'
     }
     return [{
       Key: this._command,
@@ -63,7 +64,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
           return this.groups();
         case 'team':
           return this.team();
-        default: 
+        default:
           return this.getHelp()[0].Usage;
       }
 
@@ -75,17 +76,21 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   }
 
   private async matches(day: string) {
-    const suffix = `/matches/${day}`;
-    const data = await this.fetch(suffix, 60);
+    const target = day === 'tomorrow' ? moment().add(1, 'day') : moment();
+    const dateStr = target.format('YYYY-MM-DD');
 
-    const messages: string[] = ['Matches'];
+    const matches = (await this.fetchMatches()).filter(m => m.date === dateStr);
 
-    for(let item of data) {
-      const home = item["home_team"];
-      const away = item["away_team"];
-      let message = `:flag_${this.getIsoCode(home.code)}: vs :flag_${this.getIsoCode(away.code)}: at ${this.getTimeString(item.datetime)}`;
-      if(item.winner) {
-        message += ` (${home.goals} : ${away.goals})`;
+    if (!matches.length) {
+      return `No matches ${day}`;
+    }
+
+    const messages: string[] = [`**Matches ${day}**`];
+
+    for (const item of matches) {
+      let message = `${this.label(item.team1)} vs ${this.label(item.team2)} at ${item.time}`;
+      if (item.score) {
+        message += ` (${item.score.ft[0]} : ${item.score.ft[1]})`;
       }
 
       messages.push(message);
@@ -96,42 +101,62 @@ export class WorldCupCommand implements ICommand, IHasHelp {
 
   private async country(uuid: string) {
     // if the user already has a country for the day, return it
-    let isoCode: string;
     const key = `${this._command}::country:uuid:${uuid}`;
 
+    let flag: string;
     if (await this._cache.has(key)) {
-      isoCode = await this._cache.get(key);
+      flag = await this._cache.get(key);
     } else {
+      const matches = await this.fetchMatches();
+      const dateStr = moment().format('YYYY-MM-DD');
 
-      // Get all teams for today
-      const suffix = '/matches/today';
-      const data: any[] = await this.fetch(suffix, secondsTillEndOfDay(), 'country');
-      const countryCodes: string[] = []
-
-      for (let item of data) {
-        countryCodes.push(this.getIsoCode(item["home_team"].code));
-        countryCodes.push(this.getIsoCode(item["away_team"].code));
+      // teams playing today, falling back to the whole tournament out of season
+      let flags = this.distinctFlags(matches.filter(m => m.date === dateStr));
+      if (!flags.length) {
+        flags = this.distinctFlags(matches);
       }
 
-      isoCode = countryCodes.popRandom();
-      await this._cache.set(key, isoCode, secondsTillEndOfDay());
+      flag = flags.popRandom();
+      await this._cache.set(key, flag, secondsTillEndOfDay());
     }
 
-    return `:flag_${isoCode}:`.repeat(Math.ceil(Math.random() * 30));
+    return flag.repeat(Math.ceil(Math.random() * 30));
   }
 
   private async groups() {
-    const suffix = '/teams/group_results';
+    const matches = await this.fetchMatches();
 
-    const data: any[] = await this.fetch(suffix, 60*60);
-    const messages: string[] = ['Groups'];
+    // groupLetter -> teamName -> standing
+    const table: { [letter: string]: { [team: string]: { pts: number, gd: number } } } = {};
 
-    for(let group of data) {
-      let message = `:regional_indicator_${group.letter.toLowerCase()}:\t`
-      for(let team of group.ordered_teams) {
-        message += `:flag_${this.getIsoCode(team.fifa_code)}: ${team.points} \t`
+    for (const m of matches) {
+      if (!m.group || !getFlag(m.team1) || !getFlag(m.team2)) continue;
+
+      const letter = m.group.replace(/^Group\s+/i, '').trim();
+      const group = table[letter] || (table[letter] = {});
+      const home = group[m.team1] || (group[m.team1] = { pts: 0, gd: 0 });
+      const away = group[m.team2] || (group[m.team2] = { pts: 0, gd: 0 });
+
+      if (m.score) {
+        const [h, a] = m.score.ft;
+        home.gd += h - a;
+        away.gd += a - h;
+        if (h > a) home.pts += 3;
+        else if (a > h) away.pts += 3;
+        else { home.pts++; away.pts++; }
       }
+    }
 
+    const messages: string[] = ['**Groups**'];
+
+    for (const letter of Object.keys(table).sort()) {
+      const teams = Object.keys(table[letter])
+        .sort((x, y) => table[letter][y].pts - table[letter][x].pts || table[letter][y].gd - table[letter][x].gd);
+
+      let message = `:regional_indicator_${letter.toLowerCase()}:\t`;
+      // Wrap points in inline code so Discord renders them monospace (equal-width
+      // digits), keeping the columns aligned across rows.
+      message += teams.map(t => `${getFlag(t)} \`${table[letter][t].pts}\``).join(' \t');
       messages.push(message);
     }
 
@@ -139,43 +164,39 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   }
 
   private async team() {
-    const suffix = '/teams';
-
-    const data: ITeam[] = await this.fetch(suffix, secondsInFullDay);
-
-    const team = data.crandom();
-    const flag = `:flag_${this.getIsoCode(team.fifa_code)}:`;
-
-    return `**${team.country}** ${flag.repeat(3)}`
+    const flags = this.distinctFlags(await this.fetchMatches());
+    return flags.crandom().repeat(3);
   }
 
-  private async fetch(suffix: string, expiry: number, extraKey?: string) {
-    const key = `${this._command}::${extraKey ? `${extraKey}:` : ''}${suffix}`;
+  private async fetchMatches(): Promise<IMatch[]> {
+    const key = `${this._command}::matches`;
     if (await this._cache.has(key)) {
       return JSON.parse(await this._cache.get(key));
     }
 
-    const result = await this._http.getJson(this._api + suffix);
+    const result: IWorldCup = await this._http.getJson(this._api);
+    const matches = result.matches || [];
 
-    this._cache.set(key, JSON.stringify(result), expiry);
+    this._cache.set(key, JSON.stringify(matches), HOUR);
 
-    return result;
+    return matches;
   }
 
-  private getIsoCode(fifaCode: string) {
-    const country = countries[fifaCode]
-    if (!country) {
-      throw new Error(`country not found for Fifa code: ${fifaCode}`);
+  /** Distinct flag emojis for every real team appearing in the given matches. */
+  private distinctFlags(matches: IMatch[]): string[] {
+    const flags = new Set<string>();
+    for (const m of matches) {
+      const home = getFlag(m.team1);
+      const away = getFlag(m.team2);
+      if (home) flags.add(home);
+      if (away) flags.add(away);
     }
-    return country.code.toLowerCase()
+    return [...flags];
   }
 
-  private getTimeString(dateTime: string) {
-    const date = moment(dateTime);
-    date.locale('en');
-    if (!date.isDST())
-      date.add(1, 'hour'); // will be ahead of UTC
-
-    return date.format('LT');
+  /** Renders a team as "<flag> <name>", or just the name for knockout placeholders. */
+  private label(teamName: string): string {
+    const flag = getFlag(teamName);
+    return flag ? `${flag} ${teamName}` : teamName;
   }
 }
