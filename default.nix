@@ -46,12 +46,22 @@ let
     sha256 = "sha256-Kvu5X69ziR2zdjUC/Kp75JvacB8r/0BlfNlyaujgbCg=";
   };
 
-  app = pkgs.stdenv.mkDerivation {
-    inherit pname version src;
+  # node_modules (incl. the native canvas build) live in their own derivation
+  # keyed only on package.json + yarn.lock. Editing TypeScript sources does not
+  # change these inputs, so this expensive step is reused from the Nix store
+  # instead of re-running yarn install / rebuilding native deps every time.
+  nodeModules = pkgs.stdenv.mkDerivation {
+    pname = "${pname}-node-modules";
+    inherit version;
+
+    src = nix-filter {
+      root = ./.;
+      include = [ "package.json" "yarn.lock" ];
+    };
 
     nativeBuildInputs = [ nodejs yarn pkgs.fixup-yarn-lock ] ++ nativeBuildDeps;
 
-    configurePhase = ''
+    buildPhase = ''
       export HOME=$TMPDIR
       export npm_config_nodedir=${nodejs}
       yarn config --offline set yarn-offline-mirror ${yarnOfflineCache}
@@ -64,14 +74,29 @@ let
       patchShebangs node_modules
     '';
 
+    installPhase = ''
+      mkdir -p $out
+      cp -r node_modules $out/
+    '';
+  };
+
+  # Source-only build: just compiles TypeScript against the prebuilt
+  # node_modules. This is the only derivation that rebuilds on a source change.
+  app = pkgs.stdenv.mkDerivation {
+    inherit pname version src;
+
+    nativeBuildInputs = [ nodejs ];
+
     buildPhase = ''
+      ln -s ${nodeModules}/node_modules ./node_modules
       node node_modules/typescript/bin/tsc
       node node_modules/copyfiles/copyfiles -u 1 "src/**/*.json" build/
     '';
 
     installPhase = ''
       mkdir -p $out
-      cp -r build node_modules package.json $out/
+      cp -r build package.json $out/
+      ln -s ${nodeModules}/node_modules $out/node_modules
     '';
   };
 
@@ -153,7 +178,7 @@ let
   '';
 
 in {
-  inherit app yarnOfflineCache dockerImage;
+  inherit app nodeModules yarnOfflineCache dockerImage;
   inherit buildDocker loadDocker updateCompose;
 
   deps = with pkgs; [
