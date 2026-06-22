@@ -79,7 +79,10 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     const target = day === 'tomorrow' ? moment().add(1, 'day') : moment();
     const dateStr = target.format('YYYY-MM-DD');
 
-    const matches = (await this.fetchMatches()).filter(m => m.date === dateStr);
+    const matches = (await this.fetchMatches())
+      .filter(m => m.date === dateStr)
+      .map(m => this.toFixture(m))
+      .sort((a, b) => a.at.valueOf() - b.at.valueOf());
 
     if (!matches.length) {
       return `No matches ${day}`;
@@ -87,8 +90,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
 
     const messages: string[] = [`**Matches ${day}**`];
 
-    for (const item of matches) {
-      let message = `${this.label(item.team1)} vs ${this.label(item.team2)} at ${item.time}`;
+    for (const { match: item, at, time } of matches) {
+      let message = `${this.label(item.team1)} vs ${this.label(item.team2)} on ${this.ordinalDay(at)} at ${time}`;
       if (item.score) {
         message += ` (${item.score.ft[0]} : ${item.score.ft[1]})`;
       }
@@ -198,5 +201,55 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   private label(teamName: string): string {
     const flag = getFlag(teamName);
     return flag ? `${flag} ${teamName}` : teamName;
+  }
+
+  /**
+   * Parses a feed match into a British-local kickoff: the moment `at` (used for
+   * sorting and the date) and a display `time` like "18:00 BST"/"15:00 GMT".
+   * The feed time ("17:00 UTC-4") has its offset baked in; unknown formats fall
+   * back to the raw time on the match date.
+   */
+  private toFixture(m: IMatch): { match: IMatch, at: moment.Moment, time: string } {
+    const parsed = /^(\d{1,2}):(\d{2})\s*UTC([+-]\d{1,2})(?::(\d{2}))?/.exec(m.time);
+    if (!parsed) {
+      return { match: m, at: moment.utc(m.date, 'YYYY-MM-DD'), time: m.time };
+    }
+
+    const [, hh, mm, offH, offM] = parsed;
+    const sign = offH.startsWith('-') ? -1 : 1;
+    const offsetMin = parseInt(offH, 10) * 60 + sign * (offM ? parseInt(offM, 10) : 0);
+
+    // Clock time at the source offset → true UTC instant → British local.
+    const utc = moment.utc(`${m.date} ${hh}:${mm}`, 'YYYY-MM-DD H:mm').subtract(offsetMin, 'minutes');
+    const bst = this.isBst(utc);
+    const at = utc.add(bst ? 60 : 0, 'minutes');
+
+    return { match: m, at, time: `${at.format('HH:mm')} ${bst ? 'BST' : 'GMT'}` };
+  }
+
+  /** Day of month with an ordinal suffix, e.g. "1st", "3rd", "24th". */
+  private ordinalDay(at: moment.Moment): string {
+    const d = at.date();
+    const rem100 = d % 100;
+    const suffix = rem100 >= 11 && rem100 <= 13 ? 'th'
+      : ['th', 'st', 'nd', 'rd'][d % 10] || 'th';
+    return `${d}${suffix}`;
+  }
+
+  /** Whether a UTC instant falls within British Summer Time. */
+  private isBst(utc: moment.Moment): boolean {
+    const year = utc.year();
+    // BST runs from 01:00 UTC on the last Sunday of March to 01:00 UTC on the
+    // last Sunday of October.
+    const start = this.lastSundayUtc(year, 2, 1);
+    const end = this.lastSundayUtc(year, 9, 1);
+    return utc.isSameOrAfter(start) && utc.isBefore(end);
+  }
+
+  /** 0-indexed month → moment for the last Sunday of that month at hourUtc:00 UTC. */
+  private lastSundayUtc(year: number, month: number, hourUtc: number): moment.Moment {
+    const lastDay = moment.utc([year, month, 1]).endOf('month');
+    lastDay.subtract(lastDay.day(), 'days'); // step back to the Sunday on/before
+    return moment.utc([year, month, lastDay.date(), hourUtc]);
   }
 }
