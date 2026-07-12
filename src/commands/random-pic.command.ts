@@ -108,9 +108,15 @@ export class RandomPic implements ICommand {
               return imsg.send("No NSFW channels found to post this haram stuff you weirdo");
           }
 
+          const tOpts = Date.now();
           const { message, options, shouldCache } = await this.makeFileOptions(filename, ops.b);
+          const tSend = Date.now();
 
           const sentMsg = this._client.sendMessage(guildId, channelId, message, options)
+            .then((res) => {
+              this._logger.info(`Timing for ${filename}: makeFileOptions ${tSend - tOpts}ms, sendMessage ${Date.now() - tSend}ms, cached: ${shouldCache && options ? !!(options.files && typeof options.files[0].attachment === 'string' && options.files[0].attachment.startsWith('http')) : 'n/a'}`);
+              return res;
+            })
 
           return !shouldCache
             ? sentMsg

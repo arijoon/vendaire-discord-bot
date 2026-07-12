@@ -5,7 +5,9 @@ import { TYPES } from '../../ioc/types';
 import { commands } from '../../static';
 import { getFlag } from './countries';
 import * as moment from 'moment';
+import { registerFont } from 'canvas';
 import { IMatch, IWorldCup } from './api-contracts';
+import { renderBracket, BRACKET_FONT, FlagCache } from './bracket';
 
 const secondsTillEndOfDay = () => Math.ceil((-new Date() + new Date().setHours(24, 0, 0, 0)) / 1e3);
 const HOUR = 60 * 60;
@@ -16,6 +18,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   _command: string = commands.wcup;
   _patterns = ['Wins', 'Spares'];
   _api: string;
+  private _flagCache: FlagCache;
 
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
@@ -24,6 +27,9 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     @inject(TYPES.IBasicCache) private _cache: IBasicCache,
   ) {
     this._api = _config.api['wcup'];
+    this._flagCache = new Map();
+    const fontPath = _config.pathFromRoot(_config.app.assets.root, 'fonts', 'AnticSans.otf');
+    registerFont(fontPath, { family: BRACKET_FONT });
    }
 
   attach(): void {
@@ -37,7 +43,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
       'matches [today|tomorrow]': 'shows the matches of the day',
       'country': 'picks a daily country for you from teams playing',
       'groups': 'shows the group standings',
-      'team': 'picks a random team from the tournament'
+      'team': 'picks a random team from the tournament',
+      'diagram': 'renders the knockout bracket from the round of 16'
     }
     return [{
       Key: this._command,
@@ -64,12 +71,15 @@ export class WorldCupCommand implements ICommand, IHasHelp {
           return this.groups();
         case 'team':
           return this.team();
+        case 'diagram':
+        case 'bracket':
+          return this.diagram(imsg);
         default:
           return this.getHelp()[0].Usage;
       }
 
     }).then(async response => {
-      await imsg.send(response);
+      if (response !== undefined) await imsg.send(response);
       return imsg.done();
     }).catch(err => {
       imsg.done(err, true)});
@@ -169,6 +179,17 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   private async team() {
     const flags = this.distinctFlags(await this.fetchMatches());
     return flags.crandom().repeat(3);
+  }
+
+  private async diagram(imsg: IMessage): Promise<undefined> {
+    const buffer = await renderBracket(await this.fetchMatches(), this._flagCache);
+    if (!buffer) {
+      await imsg.send('The knockout bracket is not available yet');
+      return undefined;
+    }
+
+    await imsg.send('', { files: [{ attachment: buffer, name: 'knockout.png' }] });
+    return undefined;
   }
 
   private async fetchMatches(): Promise<IMatch[]> {

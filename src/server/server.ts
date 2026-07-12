@@ -32,8 +32,8 @@ export class Server implements IStartable {
     const router: express.Router = express.Router();
     const publicRouter: express.Router = express.Router();
     publicRouter.use(this._middlewares.authentication([constants.loginApi]));
-    publicRouter.use(this._middlewares.logger());
-    router.use(this._middlewares.logger());
+    publicRouter.use(this._middlewares.logger(['/metrics']));
+    router.use(this._middlewares.logger(['/metrics']));
 
     this.addRoutesV2(publicRouter, this._controllersv2);
     this.addRoutes(router);

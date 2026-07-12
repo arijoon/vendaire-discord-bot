@@ -73,6 +73,12 @@ const specialFlags: { [lowerName: string]: string } = {
   'wales': ':wales:',
 }
 
+const specialCodes: { [lowerName: string]: string } = {
+  'england': 'gb-eng',
+  'scotland': 'gb-sct',
+  'wales': 'gb-wls',
+}
+
 /**
  * Resolves a team name from the feed to a Discord flag emoji, or null when the
  * name is a knockout placeholder (e.g. "1A", "W74") that has no flag.
@@ -87,4 +93,13 @@ function getFlag(teamName: string): string | null {
   return iso ? `:flag_${iso}:` : null
 }
 
-export { countries, ICountry, getFlag }
+function getCode(teamName: string): string | null {
+  if (!teamName) return null
+  const key = teamName.toLowerCase().trim()
+
+  if (specialCodes[key]) return specialCodes[key]
+
+  return flagNameOverrides[key] || nameToIso[key] || null
+}
+
+export { countries, ICountry, getFlag, getCode }

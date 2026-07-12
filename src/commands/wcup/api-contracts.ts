@@ -9,6 +9,7 @@ export interface IWorldCup {
 
 export interface IMatch {
   round: string;
+  num?: number;
   /** ISO calendar date of the match, e.g. "2026-06-11" */
   date: string;
   /** Local kickoff time incl. utc offset, e.g. "13:00 UTC-6" */

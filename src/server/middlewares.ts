@@ -45,8 +45,12 @@ export class MiddleWares {
     }
   }
 
-  public logger() {
+  public logger(exclusions?: string[]) {
     return async (req: e.Request, _, next) => {
+      if (exclusions && exclusions.indexOf(req.path) > -1) {
+        return next();
+      }
+
       const session: ISession = (<any>req).session;
       try {
         if(session) {
