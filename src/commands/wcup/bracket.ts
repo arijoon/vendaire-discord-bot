@@ -134,6 +134,20 @@ function result(m: IMatch, all: IMatch[]): Result {
   return { pair, pens, winner };
 }
 
+function resolveTeam(team: string, all: IMatch[]): string {
+  const ph = /^([WL])(\d+)$/.exec(team);
+  if (!ph) return team;
+
+  const src = all.find(x => x.num === parseInt(ph[2], 10));
+  if (!src) return team;
+
+  const { winner } = result(src, all);
+  if (winner < 0) return team;
+
+  const idx = ph[1] === 'W' ? winner : 1 - winner;
+  return resolveTeam([src.team1, src.team2][idx], all);
+}
+
 function feeder(team: string, prev: IMatch[]): IMatch | undefined {
   const ph = /^[WL](\d+)$/.exec(team);
   if (ph) return prev.find(x => x.num === parseInt(ph[1], 10));
@@ -224,7 +238,7 @@ function drawMatch(ctx: CanvasRenderingContext2D, x: number, cy: number, m: IMat
   ctx.lineTo(x + BOXW - 8, rowsTop + ROWH);
   ctx.stroke();
 
-  const teams = [m.team1, m.team2];
+  const teams = [resolveTeam(m.team1, all), resolveTeam(m.team2, all)];
   const scoreStr = (i: number) => {
     if (!res.pair) return '';
     return res.pens ? `${res.pair[i]} (${res.pens[i]})` : String(res.pair[i]);
@@ -335,7 +349,7 @@ export async function renderBracket(matches: IMatch[], flagCache: FlagCache, bac
 
   const champIdx = result(finalMatch, matches).winner;
   const champX = colX(ROUNDS.length - 1) + BOXW + CONN;
-  const champName = champIdx >= 0 ? [finalMatch.team1, finalMatch.team2][champIdx] : null;
+  const champName = champIdx >= 0 ? resolveTeam([finalMatch.team1, finalMatch.team2][champIdx], matches) : null;
   if (champName && !isPlaceholder(champName)) {
     const cy = root.cy;
     roundedRect(ctx, champX, cy - ROWH / 2 - 4, CHAMPW, ROWH + 8, 8);
