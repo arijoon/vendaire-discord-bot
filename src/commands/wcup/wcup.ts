@@ -5,9 +5,10 @@ import { TYPES } from '../../ioc/types';
 import { commands } from '../../static';
 import { getFlag } from './countries';
 import * as moment from 'moment';
-import { registerFont } from 'canvas';
+import { registerFont, loadImage, Image } from 'canvas';
 import { IMatch, IWorldCup } from './api-contracts';
 import { renderBracket, BRACKET_FONT, FlagCache } from './bracket';
+import { toUkFixture } from './fixture';
 
 const secondsTillEndOfDay = () => Math.ceil((-new Date() + new Date().setHours(24, 0, 0, 0)) / 1e3);
 const HOUR = 60 * 60;
@@ -19,6 +20,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   _patterns = ['Wins', 'Spares'];
   _api: string;
   private _flagCache: FlagCache;
+  private _bgPath: string;
+  private _bgImage: Image | null | undefined;
 
   constructor(
     @inject(TYPES.IClient) private _client: IClient,
@@ -28,6 +31,7 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   ) {
     this._api = _config.api['wcup'];
     this._flagCache = new Map();
+    this._bgPath = _config.pathFromRoot(_config.app.assets.root, 'wcup', 'background.png');
     const fontPath = _config.pathFromRoot(_config.app.assets.root, 'fonts', 'AnticSans.otf');
     registerFont(fontPath, { family: BRACKET_FONT });
    }
@@ -182,7 +186,15 @@ export class WorldCupCommand implements ICommand, IHasHelp {
   }
 
   private async diagram(imsg: IMessage): Promise<undefined> {
-    const buffer = await renderBracket(await this.fetchMatches(), this._flagCache);
+    if (this._bgImage === undefined) {
+      try {
+        this._bgImage = await loadImage(this._bgPath);
+      } catch {
+        this._bgImage = null;
+      }
+    }
+
+    const buffer = await renderBracket(await this.fetchMatches(), this._flagCache, this._bgImage || undefined);
     if (!buffer) {
       await imsg.send('The knockout bracket is not available yet');
       return undefined;
@@ -224,28 +236,8 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     return flag ? `${flag} ${teamName}` : teamName;
   }
 
-  /**
-   * Parses a feed match into a British-local kickoff: the moment `at` (used for
-   * sorting and the date) and a display `time` like "18:00 BST"/"15:00 GMT".
-   * The feed time ("17:00 UTC-4") has its offset baked in; unknown formats fall
-   * back to the raw time on the match date.
-   */
   private toFixture(m: IMatch): { match: IMatch, at: moment.Moment, time: string } {
-    const parsed = /^(\d{1,2}):(\d{2})\s*UTC([+-]\d{1,2})(?::(\d{2}))?/.exec(m.time);
-    if (!parsed) {
-      return { match: m, at: moment.utc(m.date, 'YYYY-MM-DD'), time: m.time };
-    }
-
-    const [, hh, mm, offH, offM] = parsed;
-    const sign = offH.startsWith('-') ? -1 : 1;
-    const offsetMin = parseInt(offH, 10) * 60 + sign * (offM ? parseInt(offM, 10) : 0);
-
-    // Clock time at the source offset → true UTC instant → British local.
-    const utc = moment.utc(`${m.date} ${hh}:${mm}`, 'YYYY-MM-DD H:mm').subtract(offsetMin, 'minutes');
-    const bst = this.isBst(utc);
-    const at = utc.add(bst ? 60 : 0, 'minutes');
-
-    return { match: m, at, time: `${at.format('HH:mm')} ${bst ? 'BST' : 'GMT'}` };
+    return { match: m, ...toUkFixture(m) };
   }
 
   /** Day of month with an ordinal suffix, e.g. "1st", "3rd", "24th". */
@@ -255,22 +247,5 @@ export class WorldCupCommand implements ICommand, IHasHelp {
     const suffix = rem100 >= 11 && rem100 <= 13 ? 'th'
       : ['th', 'st', 'nd', 'rd'][d % 10] || 'th';
     return `${d}${suffix}`;
-  }
-
-  /** Whether a UTC instant falls within British Summer Time. */
-  private isBst(utc: moment.Moment): boolean {
-    const year = utc.year();
-    // BST runs from 01:00 UTC on the last Sunday of March to 01:00 UTC on the
-    // last Sunday of October.
-    const start = this.lastSundayUtc(year, 2, 1);
-    const end = this.lastSundayUtc(year, 9, 1);
-    return utc.isSameOrAfter(start) && utc.isBefore(end);
-  }
-
-  /** 0-indexed month → moment for the last Sunday of that month at hourUtc:00 UTC. */
-  private lastSundayUtc(year: number, month: number, hourUtc: number): moment.Moment {
-    const lastDay = moment.utc([year, month, 1]).endOf('month');
-    lastDay.subtract(lastDay.day(), 'days'); // step back to the Sunday on/before
-    return moment.utc([year, month, lastDay.date(), hourUtc]);
   }
 }

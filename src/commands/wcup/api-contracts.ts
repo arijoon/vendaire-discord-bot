@@ -21,6 +21,8 @@ export interface IMatch {
   score?: {
     ft: [number, number];
     ht?: [number, number];
+    et?: [number, number];
+    p?: [number, number];
   };
   /** e.g. "Group A" for the group stage, absent for knockout rounds */
   group?: string;

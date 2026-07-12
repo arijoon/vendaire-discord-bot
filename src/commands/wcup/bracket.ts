@@ -1,6 +1,7 @@
 import { createCanvas, loadImage, CanvasRenderingContext2D, Image } from 'canvas';
 import { IMatch } from './api-contracts';
 import { getCode } from './countries';
+import { toUkFixture } from './fixture';
 
 type FlagMap = Map<string, Image>;
 export type FlagCache = Map<string, Image | null>;
@@ -58,6 +59,7 @@ const C = {
   box: '#1b2233',
   boxBorder: '#2b3448',
   header: '#7f8aa3',
+  date: '#b6c0d4',
   title: '#e8ecf4',
   win: '#ffd24a',
   neutral: '#d3d9e6',
@@ -70,13 +72,16 @@ const C = {
 
 const BOXW = 178;
 const ROWH = 27;
-const BOXH = ROWH * 2;
-const VGAP = 18;
+const HEAD = 17;
+const BOXH = HEAD + ROWH * 2;
+const VGAP = 16;
 const COLGAP = 54;
 const TOP = 80;
 const LEFT = 26;
-const BOTTOM = 96;
+const BOTTOM = 34;
 const CONN = 32;
+const SCALE = 2;
+const THIRD_GAP = 46;
 const CHAMPW = 178;
 const RIGHT = 26;
 
@@ -89,16 +94,44 @@ interface Node {
 
 const isPlaceholder = (t: string): boolean => !t || /^[WL]\d+$/.test(t);
 
-function winnerIndex(m: IMatch, all: IMatch[]): number {
-  if (!m.score) return -1;
-  const [a, b] = m.score.ft;
-  if (a > b) return 0;
-  if (b > a) return 1;
-  const later = (t: string) =>
-    all.some(x => (x.num ?? 0) > (m.num ?? 0) && (x.team1 === t || x.team2 === t));
-  if (later(m.team1)) return 0;
-  if (later(m.team2)) return 1;
-  return -1;
+interface Result {
+  pair: [number, number] | null;
+  pens: [number, number] | null;
+  winner: number;
+}
+
+function decisive(a: number, b: number): number {
+  return a > b ? 0 : b > a ? 1 : -1;
+}
+
+function result(m: IMatch, all: IMatch[]): Result {
+  const s = m.score;
+  if (!s) return { pair: null, pens: null, winner: -1 };
+
+  let pair: [number, number];
+  let pens: [number, number] | null = null;
+  let winner: number;
+
+  if (s.p) {
+    pens = s.p;
+    pair = s.et ?? s.ft;
+    winner = decisive(s.p[0], s.p[1]);
+  } else if (s.et) {
+    pair = s.et;
+    winner = decisive(s.et[0], s.et[1]);
+  } else {
+    pair = s.ft;
+    winner = decisive(s.ft[0], s.ft[1]);
+  }
+
+  if (winner === -1) {
+    const later = (t: string) =>
+      all.some(x => (x.num ?? 0) > (m.num ?? 0) && (x.team1 === t || x.team2 === t));
+    if (later(m.team1)) winner = 0;
+    else if (later(m.team2)) winner = 1;
+  }
+
+  return { pair, pens, winner };
 }
 
 function feeder(team: string, prev: IMatch[]): IMatch | undefined {
@@ -135,9 +168,35 @@ function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: num
   ctx.closePath();
 }
 
+function drawBackground(ctx: CanvasRenderingContext2D, w: number, h: number, bg?: Image) {
+  if (bg) {
+    const scale = Math.max(w / bg.width, h / bg.height);
+    const dw = bg.width * scale;
+    const dh = bg.height * scale;
+    ctx.drawImage(bg, (w - dw) / 2, (h - dh) / 2, dw, dh);
+
+    ctx.fillStyle = 'rgba(9,12,20,0.55)';
+    ctx.fillRect(0, 0, w, h);
+  } else {
+    const base = ctx.createLinearGradient(0, 0, w, h);
+    base.addColorStop(0, '#161d30');
+    base.addColorStop(0.5, '#0f1420');
+    base.addColorStop(1, '#090c14');
+    ctx.fillStyle = base;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  const vig = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.28, w / 2, h / 2, Math.max(w, h) * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
 function drawMatch(ctx: CanvasRenderingContext2D, x: number, cy: number, m: IMatch, all: IMatch[], flags: FlagMap) {
   const y = cy - BOXH / 2;
-  const widx = winnerIndex(m, all);
+  const res = result(m, all);
+  const widx = res.winner;
 
   roundedRect(ctx, x, y, BOXW, BOXH, 7);
   ctx.fillStyle = C.box;
@@ -146,16 +205,38 @@ function drawMatch(ctx: CanvasRenderingContext2D, x: number, cy: number, m: IMat
   ctx.lineWidth = 1;
   ctx.stroke();
 
+  if (m.date) {
+    const fx = toUkFixture(m);
+    ctx.font = `11px "${BRACKET_FONT}"`;
+    ctx.fillStyle = C.date;
+    ctx.textBaseline = 'middle';
+    const hy = y + HEAD / 2 + 1;
+    ctx.textAlign = 'left';
+    ctx.fillText(fit(ctx, fx.at.format('ddd D MMM'), BOXW * 0.55), x + 12, hy);
+    ctx.textAlign = 'right';
+    ctx.fillText(fit(ctx, fx.time, BOXW * 0.45 - 8), x + BOXW - 12, hy);
+  }
+
+  const rowsTop = y + HEAD;
   ctx.strokeStyle = C.boxBorder;
   ctx.beginPath();
-  ctx.moveTo(x + 8, y + ROWH);
-  ctx.lineTo(x + BOXW - 8, y + ROWH);
+  ctx.moveTo(x + 8, rowsTop + ROWH);
+  ctx.lineTo(x + BOXW - 8, rowsTop + ROWH);
   ctx.stroke();
 
   const teams = [m.team1, m.team2];
+  const scoreStr = (i: number) => {
+    if (!res.pair) return '';
+    return res.pens ? `${res.pair[i]} (${res.pens[i]})` : String(res.pair[i]);
+  };
+
+  ctx.font = `15px "${BRACKET_FONT}"`;
+  const scoreW = Math.max(ctx.measureText(scoreStr(0)).width, ctx.measureText(scoreStr(1)).width);
+  const scoreLeft = x + BOXW - 12 - scoreW;
+
   ctx.textBaseline = 'middle';
   for (let i = 0; i < 2; i++) {
-    const rowY = y + ROWH / 2 + i * ROWH;
+    const rowY = rowsTop + ROWH / 2 + i * ROWH;
     const isWin = widx === i;
     const isLose = widx >= 0 && !isWin;
     const name = isPlaceholder(teams[i]) ? 'TBD' : teams[i];
@@ -169,18 +250,19 @@ function drawMatch(ctx: CanvasRenderingContext2D, x: number, cy: number, m: IMat
     ctx.font = `${isWin ? 'bold ' : ''}15px "${BRACKET_FONT}"`;
     ctx.fillStyle = isWin ? C.win : isLose ? C.lose : C.neutral;
     ctx.textAlign = 'left';
-    ctx.fillText(fit(ctx, name, x + BOXW - 30 - textX), textX, rowY);
+    ctx.fillText(fit(ctx, name, scoreLeft - 8 - textX), textX, rowY);
 
-    if (m.score) {
+    const ss = scoreStr(i);
+    if (ss) {
       ctx.font = `${isWin ? 'bold ' : ''}15px "${BRACKET_FONT}"`;
       ctx.fillStyle = isWin ? C.win : isLose ? C.lose : C.score;
       ctx.textAlign = 'right';
-      ctx.fillText(String(m.score.ft[i]), x + BOXW - 12, rowY);
+      ctx.fillText(ss, x + BOXW - 12, rowY);
     }
   }
 }
 
-export async function renderBracket(matches: IMatch[], flagCache: FlagCache): Promise<Buffer | null> {
+export async function renderBracket(matches: IMatch[], flagCache: FlagCache, background?: Image): Promise<Buffer | null> {
   const byRound = ROUNDS.map(r => matches.filter(m => m.round === r.round).sort((a, b) => (a.num ?? 0) - (b.num ?? 0)));
   const finalMatch = byRound[byRound.length - 1][0];
   if (!finalMatch || byRound[0].length === 0) return null;
@@ -205,13 +287,17 @@ export async function renderBracket(matches: IMatch[], flagCache: FlagCache): Pr
 
   const colX = (r: number) => LEFT + r * (BOXW + COLGAP);
   const width = colX(ROUNDS.length - 1) + BOXW + CONN + CHAMPW + RIGHT;
-  const height = TOP + leaves.length * BOXH + (leaves.length - 1) * VGAP + BOTTOM;
 
-  const canvas = createCanvas(width, height);
+  const bodyBottom = TOP + leaves.length * BOXH + (leaves.length - 1) * VGAP;
+  const third = matches.find(m => m.round === THIRD_PLACE);
+  const thirdCy = bodyBottom + THIRD_GAP + BOXH / 2;
+  const height = (third ? thirdCy + BOXH / 2 : bodyBottom) + BOTTOM;
+
+  const canvas = createCanvas(width * SCALE, height * SCALE);
   const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
 
-  ctx.fillStyle = C.bg;
-  ctx.fillRect(0, 0, width, height);
+  drawBackground(ctx, width, height, background);
 
   ctx.fillStyle = C.title;
   ctx.font = `bold 22px "${BRACKET_FONT}"`;
@@ -247,7 +333,7 @@ export async function renderBracket(matches: IMatch[], flagCache: FlagCache): Pr
     n.children.forEach(draw);
   })(root);
 
-  const champIdx = winnerIndex(finalMatch, matches);
+  const champIdx = result(finalMatch, matches).winner;
   const champX = colX(ROUNDS.length - 1) + BOXW + CONN;
   const champName = champIdx >= 0 ? [finalMatch.team1, finalMatch.team2][champIdx] : null;
   if (champName && !isPlaceholder(champName)) {
@@ -279,16 +365,13 @@ export async function renderBracket(matches: IMatch[], flagCache: FlagCache): Pr
     ctx.fillText('TBD', champX + CHAMPW / 2, root.cy);
   }
 
-  const third = matches.find(m => m.round === THIRD_PLACE);
   if (third) {
-    const tx = LEFT;
-    const tcy = height - BOTTOM + 52;
     ctx.fillStyle = C.header;
     ctx.font = `bold 12px "${BRACKET_FONT}"`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText('THIRD PLACE', tx, tcy - BOXH / 2 - 8);
-    drawMatch(ctx, tx, tcy, third, matches, flags);
+    ctx.fillText('THIRD PLACE', LEFT, thirdCy - BOXH / 2 - 10);
+    drawMatch(ctx, LEFT, thirdCy, third, matches, flags);
   }
 
   return canvas.toBuffer('image/png');
